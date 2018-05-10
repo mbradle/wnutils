@@ -7,32 +7,28 @@ import wnutils.params as plp
 import wnutils.utils as wu
 
 
-def plot_single_mass_fraction_vs_property_in_files(
-    files, prop, species, **keyword_parameters
+def plot_mass_fraction_vs_property_in_files(
+    files, prop, species, legend_labels = None, **keyword_parameters
 ):
 
     plp.set_plot_params(plt, keyword_parameters)
 
-    if('legend_labels' in keyword_parameters):
-        if(len(keyword_parameters['legend_labels']) != len(files)):
+    if legend_labels:
+        if(len(legend_labels) != len(files)):
             print("Invalid legend labels for input files.")
-            exit(1)
+            return
 
     fig = plt.figure()
-
-    y = []
-    l = []
 
     for i in range(len(files)):
         x = (wx.get_properties_in_zones_as_floats(files[i], [prop]))[prop]
         if('xfactor' in keyword_parameters):
             x /= float(keyword_parameters['xfactor'])
-        y = wx.get_mass_fractions_in_zones(files[i], [species])
-        if('legend_labels' in keyword_parameters):
-            ll, = plt.plot(x, y, label=keyword_parameters['legend_labels'][i])
+        y = wx.get_mass_fractions_in_zones(files[i], [species])[species]
+        if legend_labels:
+            ll, = plt.plot(x, y, label=legend_labels[i])
         else:
             ll, = plt.plot(x, y)
-        l.append(ll)
 
     plp.apply_class_methods(plt, keyword_parameters)
 
@@ -41,6 +37,9 @@ def plot_single_mass_fraction_vs_property_in_files(
             plt.ylabel(
                 'X(' + wu.get_latex_names([species])[species] + ')'
             )
+
+    if legend_labels:
+        plt.legend()
 
     plt.show()
 
