@@ -1,6 +1,4 @@
-rm source/modules.rst
-rm source/wnutils.rst
-rm source/wnutils.plot.rst
-rm source/wnutils.read.rst
+rm -f source/modules.rst source/wnutils.*.rst
+mkdir -p source/_static source/_templates
 sphinx-apidoc -M -f -o source ../wnutils
 make html

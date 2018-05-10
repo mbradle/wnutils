@@ -7,7 +7,7 @@ Welcome to wnutils's documentation!
 ===================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 7
    :caption: Contents:
 
    modules
