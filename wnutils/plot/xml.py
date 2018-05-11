@@ -10,7 +10,35 @@ import wnutils.utils as wu
 def plot_mass_fraction_vs_property_in_files(
     files, prop, species, legend_labels = None, **kwargs
 ):
-
+    """Function to plot the mass fraction of a species in multiple files versus a property.
+    Args:
+        files (:obj:`list`): A list of strings giving the files.
+        
+        prop (:obj:`str`): A string giving the property.
+        
+        species (:obj:`str`):  A string giving the species.
+        
+        legend_labels (:obj:`list`, optional): A list of strings giving the legend
+        labels.  Defaults to None.
+        
+        kwargs:  Acceptable matplotlib arguments.
+        
+    Returns:
+        A matplotlib plot.
+    .. code-block:: python
+       Example:
+           import wnutils.plot.xml as wp
+           files = ['file1.xml', 'file2.xml', 'file3.xml']
+           wp.plot_mass_fraction_vs_property_in_files(
+               files,
+               'time',
+               'o16',
+               legend_labels = ['file1', 'file2', 'file3'],
+               xlabel = 'time (s)',
+               ylim = [1.e-4,1]
+           )
+           
+    """
     plp.set_plot_params(plt, kwargs)
 
     if legend_labels:
