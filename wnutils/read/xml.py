@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def _get_root(file):
     from lxml import etree
 
@@ -25,11 +26,63 @@ def _get_species_data(root):
     return result
 
 
+def _get_species_data_for_zone(zone):
+
+    # Create output
+
+    result = {}
+
+    # Get species
+
+    species = zone.xpath('mass_fractions/nuclide')
+
+    for sp in species:
+        data = {}
+        data['z'] = int((sp.xpath('z'))[0].text)
+        data['a'] = int((sp.xpath('a'))[0].text)
+        data['n'] = data['a'] - data['z']
+        data['x'] = float((sp.xpath('x'))[0].text)
+        result[sp.xpath('@name')[0]] = data
+
+    return result
+
+
 def _get_zones(root, zone_xpath):
     return root.xpath('//zone' + zone_xpath)
 
 
+def _create_property_string(property):
+    result = property.xpath('@name')[0]
+    if(property.xpath('@tag1')):
+        result += ', ' + property.xpath('@tag1')[0]
+    if(property.xpath('@tag2')):
+        result += ', ' + property.xpath('@tag2')[0]
+
+    return result
+
+
 def get_all_properties_in_zone(file, zone_xpath):
+    """Function to return all properties of a single zone in an xml file
+
+    Args:
+        file (:obj:`str`): The xml file to be read.
+
+        zone_xpath (:obj:`str`): XPath expression to select the single zone.
+
+    Returns:
+        :obj:`dict`: A dictionary containing the properties of the zone
+        as strings.
+
+    .. code-block:: python
+
+       Example:
+
+           import wnutils.read.xml as wx
+           props = wx.get_properties_in_zones('my_output.xml', '[last()]' )
+           for key in props:
+               print( key, ':', props[key] )
+
+    """
 
     zones = _get_zones(_get_root(file), zone_xpath)
 
@@ -44,20 +97,34 @@ def get_all_properties_in_zone(file, zone_xpath):
     # Loop on properties
 
     for property in properties:
-        result[property.xpath('@name')[0]] = property.text
+        result[_create_property_string(property)] = property.text
 
     return result
 
 
-def get_properties_in_zones(file, properties):
+def get_properties_in_zones(file, properties, zone_xpath=' '):
     """Function to return the properties in zones in an xml file
 
     Args:
-        file (str): The name of the xml file.
+        file (:obj:`str`): The xml file to be read.
+
+        properties (:obj:`list`): List of strings giving requested properites.
+
+        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
+        Defaults to all zones.
 
     Returns:
-        A dictionary of lists containing the properties in the zones
-        as strings.
+        :obj:`dict`: A dictionary of lists containing the properties in the
+        zones as strings.
+
+    .. code-block:: python
+
+       Example:
+
+           import wnutils.read.xml as wx
+           my_list = list( ('time','t9','rho') )
+           props = wx.get_properties_in_zones('my_output.xml', my_list )
+           print( props['t9'] )
 
     """
 
@@ -89,7 +156,7 @@ def get_properties_in_zones(file, properties):
 
         tup = properties_t[property]
 
-        path = '//zone_data/zone/optional_properties/property'
+        path = '//zone' + zone_xpath + '/optional_properties/property'
 
         if len(tup) == 1:
             path += '[@name="%s"]' % tup[0].strip()
@@ -112,19 +179,36 @@ def get_properties_in_zones(file, properties):
     return dict
 
 
-def get_properties_in_zones_as_floats(file, properties):
+def get_properties_in_zones_as_floats(file, properties, zone_xpath=' '):
     """Function to return the properties in zones in an xml file
 
     Args:
-        file (str): The name of the xml file.
+        file (:obj:`str`): The xml file to be read.
+
+        properties (:obj:`list`): List of strings giving requested properites.
+
+        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
+        Defaults to all zones.
 
     Returns:
-        A dictionary of lists containing the properties in the zones
-        as floats.
+        :obj:`dict`: A dictionary of numpy arrays containing the properties in
+        the zones as floats.
+
+    .. code-block:: python
+
+       Example:
+
+           import wnutils as wn
+           props = wn.read.xml.get_properties_in_zones_as_floats(
+               'my_output.xml', ['t9','rho'],
+               zone_xpath='[position() > last() - 10]' # Get the last 10 zones
+           )
+           print( props['t9'] )
+           print( type( props['rho'] ) )
 
     """
 
-    props = get_properties_in_zones(file, properties)
+    props = get_properties_in_zones(file, properties, zone_xpath)
 
     dict = {}
 
@@ -134,19 +218,30 @@ def get_properties_in_zones_as_floats(file, properties):
     return dict
 
 
-def get_mass_fractions_in_zones(file, species, zone_xpath=""):
+def get_mass_fractions_in_zones(file, species, zone_xpath=' '):
     """Function to retrieve mass fractions of species in the zones.
 
     Args:
-        file (str): The name of the xml file.
+        file (:obj:`str`): The xml file to be read.
 
-        species (array): An array of strings giving the species whose mass fractions are to be retrieved.
+        species (:obj:`list`): List of strings giving requested species.
 
-        zone_xpath (str):  An XPath expression to select the zones.
+        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
+        Defaults to all zones.
 
     Returns:
-        A dictionary of numpy arrays with the mass fractions for the requested
-        species.
+        :obj:`dict`: A dictionary of numpy arrays containing the mass
+        fractions of the requested species in the zones as floats.
+
+    .. code-block:: python
+
+       Example:
+
+           import wnutils.read.xml as wx
+           x = wx.get_mass_fractions_in_zones(
+               'my_output.xml', ['n','h1','he4','c12']
+           )
+           print( x['c12'] )
 
     """
 
@@ -187,50 +282,44 @@ def get_mass_fractions_in_zones(file, species, zone_xpath=""):
     return result
 
 
-def _get_zone(root, zone_name):
+def get_abundances_vs_nucleon_number_in_zones(
+    file, nucleon='a', zone_xpath=' '
+):
+    """Function to retrieve abundances summed over nucleon number in zones.
 
-    if len(zone_name) == 1:
-        result = root.xpath('//zone[@label1 = "%s"]' % zone_name[0])
-    elif len(zone_name) == 2:
-        result = root.xpath('zone[@label1 = "%s" and @label2 = %s]' %
-                            zone_name[0], zone_name[1])
-    elif len(zone_name) == 3:
-        result = (
-            root.xpath(
-                'zone[@label1 = "%s" and @label2 = %s and @label3 = %s]' %
-                zone_name[0], zone_name[1]
-            )
-        )
+    Args:
+        file (:obj:`str`): The xml file to be read.
 
-    return result
+        nucleon (:obj:`str`): String giving the nucleon number to sum
+        over.  Must be 'z', 'n', or 'a'.  Defaults to 'a'.
 
+        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
+        Defaults to all zones.
 
-def _get_species_data_for_zone(zone):
+    Returns:
+        numpy.array: A two-dimensional numpy array in which the first
+        index gives the zone and the second gives the nucleon number value
 
-    # Create output
+    .. code-block:: python
 
-    result = {}
+       Example:
 
-    # Get species
+           import wnutils.read.xml as wx
+           y = wx.get_abundances_vs_nucleon_number_in_zones(
+               'my_output.xml', nucleon='z'
+           )
+           for i in range(y.shape[1]):
+               print( 'Z =', i, ', Y(Z) = ', y[10,i] )  # Abundances of zone 11
 
-    species = zone.xpath('mass_fractions/nuclide')
+    """
 
-    for sp in species:
-        data = {}
-        data['z'] = int((sp.xpath('z'))[0].text)
-        data['a'] = int((sp.xpath('a'))[0].text)
-        data['n'] = data['a'] - data['z']
-        data['x'] = float((sp.xpath('x'))[0].text)
-        result[sp.xpath('@name')[0]] = data
-
-    return result
-
-
-def get_abundances_vs_nucleon_number_in_zones(file, nucleon, zone_xpath):
+    if( nucleon != 'z' and nucleon != 'n' and nucleon != 'a' ):
+        print( "nucleon must be 'z', 'n', or 'a'." )
+        return
 
     zones = _get_zones(_get_root(file), zone_xpath)
 
-    result = []
+    result = np.array([])
 
     for zone in zones:
 
@@ -250,6 +339,9 @@ def get_abundances_vs_nucleon_number_in_zones(file, nucleon, zone_xpath):
         for s in sp:
             y[sp[s][nucleon]] += sp[s]['x'] / sp[s]['a']
 
-        result.append( y )
+        if(result.size == 0):
+            result = np.append(result, y)
+        else:
+            result = np.vstack([result, y])
 
     return result
