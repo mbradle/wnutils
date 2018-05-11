@@ -7,26 +7,26 @@ import wnutils.params as plp
 import wnutils.utils as wu
 
 def plot_zone_property_vs_property(
-       file, zone, prop1, prop2, **keyword_parameters
+       file, zone, prop1, prop2, **kwargs
     ):
 
     result = (
       w5.get_zone_properties_in_groups_as_floats( file, zone, [prop1, prop2] )
     )
 
-    if( 'xfactor' in keyword_parameters ):
+    if( 'xfactor' in kwargs ):
        result[prop1] /= xfactor 
 
-    plp.apply_class_methods( plt, keyword_parameters )
+    plp.apply_class_methods( plt, kwargs )
 
     plt.plot( result[prop1], result[prop2] )
     plt.show()
 
 def plot_group_mass_fractions(
-    file, group, species, **keyword_parameters
+    file, group, species, **kwargs
 ):
 
-    plp.set_plot_params( mpl, keyword_parameters )
+    plp.set_plot_params( mpl, kwargs )
 
     fig = plt.figure()
 
@@ -38,8 +38,8 @@ def plot_group_mass_fractions(
 
     nuclide_data = w5.get_nuclide_data_hash( file )
 
-    if( 'use_latex_names' in keyword_parameters ):
-       if( keyword_parameters['use_latex_names'] == 'yes' ):
+    if( 'use_latex_names' in kwargs ):
+       if( kwargs['use_latex_names'] == 'yes' ):
            laxtex_names = wu.get_latex_names(species)
 
     iy = 0
@@ -54,7 +54,7 @@ def plot_group_mass_fractions(
     if( len( species ) != 1 ):
       plt.legend(loc='upper right', prop={'size':14})
 
-    if( 'ylabel' not in keyword_parameters ):
+    if( 'ylabel' not in kwargs ):
       if( len( species ) != 1 ):
          plt.ylabel( 'Mass Fraction' )
       else:
@@ -63,15 +63,15 @@ def plot_group_mass_fractions(
          else:
             plt.ylabel( 'X(' + latex_names[species[0]] + ')' )      
 
-    plp.apply_class_methods( plt, keyword_parameters )
+    plp.apply_class_methods( plt, kwargs )
 
     plt.show()
 
 def plot_group_mass_fractions_vs_property(
-    file, group, prop, species, **keyword_parameters
+    file, group, prop, species, **kwargs
 ):
 
-    plp.set_plot_params( mpl, keyword_parameters )
+    plp.set_plot_params( mpl, kwargs )
 
     fig = plt.figure()
 
@@ -84,11 +84,11 @@ def plot_group_mass_fractions_vs_property(
 
     nuclide_data = w5.get_nuclide_data_hash( file )
 
-    if( 'xfactor' in keyword_parameters ):
-       x /= keyword_parameters['xfactor']
+    if( 'xfactor' in kwargs ):
+       x /= kwargs['xfactor']
 
-    if( 'use_latex_names' in keyword_parameters ):
-       if( keyword_parameters['use_latex_names'] == 'yes' ):
+    if( 'use_latex_names' in kwargs ):
+       if( kwargs['use_latex_names'] == 'yes' ):
            laxtex_names = wu.get_latex_names(species)
 
     iy = 0
@@ -103,7 +103,7 @@ def plot_group_mass_fractions_vs_property(
     if( len( species ) != 1 ):
       plt.legend(loc='upper right', prop={'size':14})
 
-    if( 'ylabel' not in keyword_parameters ):
+    if( 'ylabel' not in kwargs ):
       if( len( species ) != 1 ):
          plt.ylabel( 'Mass Fraction' )
       else:
@@ -112,18 +112,18 @@ def plot_group_mass_fractions_vs_property(
          else:
             plt.ylabel( 'X(' + latex_names[species[0]] + ')' )      
 
-    if( 'xlabel' not in keyword_parameters ):
+    if( 'xlabel' not in kwargs ):
        plt.xlabel( prop )
 
-    plp.apply_class_methods( plt, keyword_parameters )
+    plp.apply_class_methods( plt, kwargs )
 
     plt.show()
 
 def plot_zone_mass_fractions_vs_property(
-      file, zone, prop, species, **keyword_parameters
+      file, zone, prop, species, **kwargs
     ):
 
-    plp.set_plot_params( mpl, keyword_parameters )
+    plp.set_plot_params( mpl, kwargs )
 
     fig = plt.figure()
 
@@ -135,11 +135,11 @@ def plot_zone_mass_fractions_vs_property(
     x = w5.get_zone_properties_in_groups_as_floats( file, zone, [prop] )
     m = w5.get_zone_mass_fractions_in_groups( file, zone, species )
  
-    if( 'xfactor' in keyword_parameters ):
-       x /= keyword_parameters['xfactor']
+    if( 'xfactor' in kwargs ):
+       x /= kwargs['xfactor']
 
-    if( 'use_latex_names' in keyword_parameters ):
-       if( keyword_parameters['use_latex_names'] == 'yes' ):
+    if( 'use_latex_names' in kwargs ):
+       if( kwargs['use_latex_names'] == 'yes' ):
          latex_names = wu.get_latex_names(species)
 
     for i in range( len( species ) ):
@@ -153,7 +153,7 @@ def plot_zone_mass_fractions_vs_property(
     if( len( species ) != 1 ):
       plt.legend(loc='upper left', prop={'size':14})
 
-    if( 'ylabel' not in keyword_parameters ):
+    if( 'ylabel' not in kwargs ):
       if( len( species ) != 1 ):
          plt.ylabel( 'Mass Fraction' )
       else:
@@ -162,10 +162,10 @@ def plot_zone_mass_fractions_vs_property(
          else:
             plt.ylabel( 'X(' + latex_names[species[0]] + ')' )      
 
-    if( 'xlabel' not in keyword_parameters ):
+    if( 'xlabel' not in kwargs ):
        plt.xlabel( prop )
  
-    plp.apply_class_methods( plt, keyword_parameters )
+    plp.apply_class_methods( plt, kwargs )
 
     plt.show()
 
