@@ -6,11 +6,19 @@
 Welcome to wnutils's documentation!
 ===================================
 
-.. toctree::
-   :maxdepth: 7
-   :caption: Contents:
+Contents:
 
-   modules
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   readme
+
+.. toctree::
+   :maxdepth: 1
+   :glob:
+
+   documentation
 
 
 

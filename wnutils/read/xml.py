@@ -191,8 +191,8 @@ def get_properties_in_zones_as_floats(file, properties, zone_xpath=' '):
         Defaults to all zones.
 
     Returns:
-        :obj:`dict`: A dictionary of numpy arrays containing the properties in
-        the zones as floats.
+        :obj:`dict`: A dictionary of :obj:`numpy.array` containing the
+        properties in the zones as floats.
 
     .. code-block:: python
 
@@ -230,7 +230,7 @@ def get_mass_fractions_in_zones(file, species, zone_xpath=' '):
         Defaults to all zones.
 
     Returns:
-        :obj:`dict`: A dictionary of numpy arrays containing the mass
+        :obj:`dict`: A dictionary of :obj:`numpy.array` containing the mass
         fractions of the requested species in the zones as floats.
 
     .. code-block:: python
@@ -297,8 +297,9 @@ def get_abundances_vs_nucleon_number_in_zones(
         Defaults to all zones.
 
     Returns:
-        :obj:`numpy.array`: A two-dimensional numpy array in which the first
-        index gives the zone and the second gives the nucleon number value
+        :obj:`numpy.array`: A two-dimensional :obj:`numpy.array` in which the
+        first index gives the zone and the second gives the nucleon number
+        value.
 
     .. code-block:: python
 
