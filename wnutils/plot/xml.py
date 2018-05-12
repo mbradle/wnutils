@@ -27,7 +27,8 @@ def plot_mass_fraction_vs_property_in_files(
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
-        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.
+        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
+        directly, as a :obj:`dict`, or both.
 
     Returns:
         A matplotlib plot.
@@ -39,14 +40,15 @@ def plot_mass_fraction_vs_property_in_files(
            import wnutils.plot.xml as wp
            files = ['file1.xml', 'file2.xml', 'file3.xml']
            my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
+           kw = {'xlabel': 'time (s)'}
            wp.plot_mass_fraction_vs_property_in_files(
                files,
                'time',
                'o16',
                legend_labels = ['file1', 'file2', 'file3'],
                rcParams = my_params,
-               xlabel = 'time (s)',
-               ylim = [1.e-4,1]
+               ylim = [1.e-4,1],
+               **kw
            )
 
     """
