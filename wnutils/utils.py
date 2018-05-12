@@ -1,11 +1,24 @@
+"""A set of utility routines for wnutils."""
+
+
 def get_latex_names(nuclides):
     """Function to get latex string of a nuclide's name.
 
     Args:
-        nuclides (list): A list of strings giving the nuclides.
+        nuclides (:obj:`list`): A list of strings giving the nuclides.
 
     Returns:
-        A dictionary of latex strings.
+        :obj:`dict`: A dictionary of latex strings.
+
+    .. code-block:: python
+
+       Example:
+
+           import wnutils as wn
+           nuclides = ['n', 'n14', 'o16', 'u238']
+           lnames = wn.utils.get_latex_names( nuclides )
+           for key in lnames:
+               print( key, ":", lnames[key] )
 
     """
 

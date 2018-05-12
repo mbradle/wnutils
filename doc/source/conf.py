@@ -168,6 +168,10 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
+intersphinx_mapping = {'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+                       'matplolib': ('https://matplotlib.org', None),
+                       'h5py': ('http://docs.h5py.org/en/latest/', None)
+                      }
 
 # -- Options for todo extension ----------------------------------------------
 

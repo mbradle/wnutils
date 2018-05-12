@@ -8,38 +8,49 @@ import wnutils.utils as wu
 
 
 def plot_mass_fraction_vs_property_in_files(
-    files, prop, species, legend_labels = None, **kwargs
+    files, prop, species, legend_labels=None, rcParams=None, **kwargs
 ):
-    """Function to plot the mass fraction of a species in multiple files versus a property.
+    """Function to plot the mass fraction of a species in multiple files.
+
     Args:
         files (:obj:`list`): A list of strings giving the files.
-        
-        prop (:obj:`str`): A string giving the property.
-        
+
+        prop (:obj:`str`): A string giving the property (which will be the
+        abscissa of the plot).
+
         species (:obj:`str`):  A string giving the species.
-        
-        legend_labels (:obj:`list`, optional): A list of strings giving the legend
-        labels.  Defaults to None.
-        
-        kwargs:  Acceptable matplotlib arguments.
-        
+
+        legend_labels (:obj:`list`, optional): A list of strings giving the
+        legend labels.  Defaults to None.
+
+        rcParams (:obj:`dict`): A dictionary of
+        :obj:`matplotlib.rcParams` to be applied to the plot.
+        Defaults to leaving the current rcParams unchanged.
+
+        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.
+
     Returns:
         A matplotlib plot.
+
     .. code-block:: python
+
        Example:
+
            import wnutils.plot.xml as wp
            files = ['file1.xml', 'file2.xml', 'file3.xml']
+           my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
            wp.plot_mass_fraction_vs_property_in_files(
                files,
                'time',
                'o16',
                legend_labels = ['file1', 'file2', 'file3'],
+               rcParams = my_params,
                xlabel = 'time (s)',
                ylim = [1.e-4,1]
            )
-           
+
     """
-    plp.set_plot_params(plt, kwargs)
+    plp.set_plot_params(mpl, rcParams)
 
     if legend_labels:
         if(len(legend_labels) != len(files)):
@@ -73,10 +84,10 @@ def plot_mass_fraction_vs_property_in_files(
 
 
 def plot_mass_fractions(
-    file, species, **kwargs
+    file, species, rcParams=None, **kwargs
 ):
 
-    plp.set_plot_params(mpl, kwargs)
+    plp.set_plot_params(mpl, rcParams)
 
     fig = plt.figure()
 
@@ -115,10 +126,10 @@ def plot_mass_fractions(
 
 
 def plot_mass_fractions_vs_property(
-    file, prop, species, **kwargs
+    file, prop, species, rcParams=None, **kwargs
 ):
 
-    plp.set_plot_params(mpl, kwargs)
+    plp.set_plot_params(mpl, rcParams)
 
     fig = plt.figure()
 
@@ -164,10 +175,10 @@ def plot_mass_fractions_vs_property(
 
 
 def plot_property(
-    file, prop, **kwargs
+    file, prop, rcParms, **kwargs
 ):
 
-    plp.set_plot_params(mpl, kwargs)
+    plp.set_plot_params(mpl, rcParams)
 
     x = (wx.get_properties_in_zones_as_floats(file, [prop]))[prop]
     if('xfactor' in kwargs):
@@ -180,10 +191,10 @@ def plot_property(
 
 
 def plot_property_vs_property(
-    file, prop1, prop2, **kwargs
+    file, prop1, prop2, rcParams=None, **kwargs
 ):
 
-    plp.set_plot_params(mpl, kwargs)
+    plp.set_plot_params(mpl, rcParams)
 
     result = wx.get_properties_in_zones_as_floats(file, [prop1, prop2])
 
@@ -197,13 +208,15 @@ def plot_property_vs_property(
 
     plp.apply_class_methods(plt, kwargs)
 
-    plt.plot(x,y)
+    plt.plot(x, y)
     plt.show()
 
 
 def plot_zone_abundances_vs_nucleon_number(
-    file, nucleon, zone_xpath, **kwargs
+    file, nucleon, zone_xpath, rcParams=None, **kwargs
 ):
+
+    plp.set_plot_params(mpl, rcParams)
 
     y = (
         wx.get_abundances_vs_nucleon_number_in_zones(
@@ -213,5 +226,5 @@ def plot_zone_abundances_vs_nucleon_number(
 
     plp.apply_class_methods(plt, kwargs)
 
-    plt.plot(y[0])
+    plt.plot(y[0, :])
     plt.show()

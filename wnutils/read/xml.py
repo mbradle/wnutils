@@ -297,7 +297,7 @@ def get_abundances_vs_nucleon_number_in_zones(
         Defaults to all zones.
 
     Returns:
-        numpy.array: A two-dimensional numpy array in which the first
+        :obj:`numpy.array`: A two-dimensional numpy array in which the first
         index gives the zone and the second gives the nucleon number value
 
     .. code-block:: python
@@ -313,8 +313,8 @@ def get_abundances_vs_nucleon_number_in_zones(
 
     """
 
-    if( nucleon != 'z' and nucleon != 'n' and nucleon != 'a' ):
-        print( "nucleon must be 'z', 'n', or 'a'." )
+    if(nucleon != 'z' and nucleon != 'n' and nucleon != 'a'):
+        print("nucleon must be 'z', 'n', or 'a'.")
         return
 
     zones = _get_zones(_get_root(file), zone_xpath)

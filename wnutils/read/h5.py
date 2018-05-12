@@ -1,6 +1,6 @@
 import warnings
 with warnings.catch_warnings():
-    warnings.filterwarnings("ignore",category=FutureWarning)
+    warnings.filterwarnings("ignore", category=FutureWarning)
     import h5py
 
 import numpy as np
@@ -170,18 +170,19 @@ def get_zone_properties_in_groups(file, zone, properties):
 
     return result
 
-def get_zone_properties_in_groups_as_floats(file, zone, properties ):
+
+def get_zone_properties_in_groups_as_floats(file, zone, properties):
 
     result = {}
 
-    props = get_zone_properties_in_groups(file, zone, properties )
+    props = get_zone_properties_in_groups(file, zone, properties)
 
     for prop in props:
-        result[prop] = np.array( map( float, props[prop] ) )
+        result[prop] = np.array(map(float, props[prop]))
 
     return result
 
-        
+
 def get_group_properties_in_zones(file, group, properties):
 
     zone_labels_array = _get_group_zone_labels_array(file, group)
