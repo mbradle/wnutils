@@ -24,17 +24,17 @@ def plot_mass_fraction_vs_property_in_files(
         legend_labels (:obj:`list`, optional): A list of strings giving the
         legend labels.  Defaults to None.
 
-        xfactor (:obj:`float`): A float giving the scaling for the abscissa
-        values.  Defaults to 1.
+        xfactor (:obj:`float`, optional): A float giving the scaling for the
+        abscissa values.  Defaults to 1.
 
-        use_latex_names (:obj:`bool`): If set to True, and if ylabel not
-        set in kwargs, converts ordinate label to latex format.
+        use_latex_names (:obj:`bool`, optional): If set to True, and if
+        ylabel not set in kwargs, converts ordinate label to latex format.
 
-        rcParams (:obj:`dict`): A dictionary of
+        rcParams (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
-        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
+        ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
         directly, as a :obj:`dict`, or both.
 
     Returns:
@@ -44,7 +44,7 @@ def plot_mass_fraction_vs_property_in_files(
 
        Example:
 
-           import wnutils.plot.xml as wp
+           import wnutils.plot2d.xml as wp
            files = ['file1.xml', 'file2.xml', 'file3.xml']
            my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
            kw = {'xlabel': 'time (s)'}
@@ -70,10 +70,8 @@ def plot_mass_fraction_vs_property_in_files(
     fig = plt.figure()
 
     for i in range(len(files)):
-        x = (
-            (wx.get_properties_in_zones_as_floats(files[i], [prop]))[prop]
-            / xfactor
-        )
+        x = wx.get_properties_in_zones_as_floats(files[i], [prop])
+        x /= xfactor
         y = wx.get_mass_fractions_in_zones(files[i], [species])[species]
         if legend_labels:
             ll, = plt.plot(x, y, label=legend_labels[i])
@@ -104,14 +102,14 @@ def plot_mass_fractions_in_zones(
 
         species (:obj:`list`):  A list of strings giving the species.
 
-        use_latex_names (:obj:`bool`): If set to True, converts species
-        labels to latex format.
+        use_latex_names (:obj:`bool`, optional): If set to True,
+        converts species labels to latex format.
 
-        rcParams (:obj:`dict`): A dictionary of
+        rcParams (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
-        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
+        ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
         directly, as a :obj:`dict`, or both.
 
     Returns:
@@ -121,7 +119,7 @@ def plot_mass_fractions_in_zones(
 
        Example:
 
-           import wnutils.plot.xml as wp
+           import wnutils.plot2d.xml as wp
            my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
            wp.plot_mass_fractions_in_zones(
                'my_output.xml',
@@ -132,7 +130,6 @@ def plot_mass_fractions_in_zones(
            )
 
     """
-
 
     plp.set_plot_params(mpl, rcParams)
 
@@ -185,17 +182,17 @@ def plot_mass_fractions_vs_property(
 
         species (:obj:`list`):  A list of strings giving the species.
 
-        xfactor (:obj:`float`): A float giving the scaling for the abscissa
-        values.  Defaults to 1.
+        xfactor (:obj:`float`, optional): A float giving the scaling for the
+        abscissa values.  Defaults to 1.
 
-        use_latex_names (:obj:`bool`): If set to True, converts species
-        labels to latex format.
+        use_latex_names (:obj:`bool`, optional): If set to True,
+        converts species labels to latex format.
 
-        rcParams (:obj:`dict`): A dictionary of
+        rcParams (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
-        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
+        ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
         directly, as a :obj:`dict`, or both.
 
     Returns:
@@ -205,7 +202,7 @@ def plot_mass_fractions_vs_property(
 
        Example:
 
-           import wnutils.plot.xml as wp
+           import wnutils.plot2d.xml as wp
            my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
            kw = {'xlabel': 'time (yr)'}
            wp.plot_mass_fractions_vs_property(
@@ -277,17 +274,17 @@ def plot_property_vs_property(
         prop2 (:obj:`str`): A string giving the property (which will be the
         ordinate of the plot).
 
-        xfactor (:obj:`float`): A float giving the scaling for the abscissa
-        values.  Defaults to 1.
+        xfactor (:obj:`float`, optional): A float giving the scaling for the
+        abscissa values.  Defaults to 1.
 
-        yfactor (:obj:`float`): A float giving the scaling for the ordinate
-        values.  Defaults to 1.
+        yfactor (:obj:`float`, optional): A float giving the scaling for the
+        ordinate values.  Defaults to 1.
 
-        rcParams (:obj:`dict`): A dictionary of
+        rcParams (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
-        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
+        ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
         directly, as a :obj:`dict`, or both.
 
     Returns:
@@ -297,7 +294,7 @@ def plot_property_vs_property(
 
        Example:
 
-           import wnutils.plot.xml as wp
+           import wnutils.plot2d.xml as wp
            kw = {'xlabel': 'time (yr)'}
            wp.plot_property_vs_property(
                'my_output.xml',
@@ -335,11 +332,11 @@ def plot_zone_abundances_vs_nucleon_number(
         zone_xpath (:obj:`str`): A string giving the XPath expression to select
         the (single) zone.
 
-        rcParams (:obj:`dict`): A dictionary of
+        rcParams (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
-        kwargs:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
+        ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.  Include
         directly, as a :obj:`dict`, or both.
 
     Returns:
@@ -349,7 +346,7 @@ def plot_zone_abundances_vs_nucleon_number(
 
        Example:
 
-           import wnutils.plot.xml as wp
+           import wnutils.plot2d.xml as wp
            wp.plot_zone_abundances_vs_nucleon_number(
                'my_output.xml',
                'z',
