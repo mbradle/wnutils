@@ -14,23 +14,23 @@ def plot_mass_fraction_vs_property_in_files(
     """Function to plot the mass fraction of a species in multiple files.
 
     Args:
-        files (:obj:`list`): A list of strings giving the files.
+        ``files`` (:obj:`list`): A list of strings giving the files.
 
-        prop (:obj:`str`): A string giving the property (which will be the
+        ``prop`` (:obj:`str`): A string giving the property (which will be the
         abscissa of the plot).
 
-        species (:obj:`str`):  A string giving the species.
+        ``species``:obj:`str`):  A string giving the species.
 
-        legend_labels (:obj:`list`, optional): A list of strings giving the
-        legend labels.  Defaults to None.
+        ``legend_labels`` (:obj:`list`, optional): A list of strings giving
+        the legend labels.  Defaults to None.
 
-        xfactor (:obj:`float`, optional): A float giving the scaling for the
-        abscissa values.  Defaults to 1.
+        ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
+        the abscissa values.  Defaults to 1.
 
-        use_latex_names (:obj:`bool`, optional): If set to True, and if
+        ``use_latex_names`` (:obj:`bool`, optional): If set to True, and if
         ylabel not set in kwargs, converts ordinate label to latex format.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -98,14 +98,14 @@ def plot_mass_fractions_in_zones(
     """Function to plot the mass fractions in zones.
 
     Args:
-        file (:obj:`str`): A string giving the xml file.
+        ``files`` (:obj:`str`): A string giving the xml file.
 
-        species (:obj:`list`):  A list of strings giving the species.
+        ``species``:obj:`list`):  A list of strings giving the species.
 
-        use_latex_names (:obj:`bool`, optional): If set to True,
+        ``use_latex_names`` (:obj:`bool`, optional): If set to True,
         converts species labels to latex format.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -175,20 +175,20 @@ def plot_mass_fractions_vs_property(
     """Function to plot the mass fractions versus a property.
 
     Args:
-        file (:obj:`str`): A string giving the xml file.
+        ``files`` (:obj:`str`): A string giving the xml file.
 
-        prop (:obj:`str`): A string giving the property (which will be the
+        ``prop`` (:obj:`str`): A string giving the property (which will be the
         abscissa of the plot).
 
-        species (:obj:`list`):  A list of strings giving the species.
+        ``species``:obj:`list`):  A list of strings giving the species.
 
-        xfactor (:obj:`float`, optional): A float giving the scaling for the
-        abscissa values.  Defaults to 1.
+        ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
+        the abscissa values.  Defaults to 1.
 
-        use_latex_names (:obj:`bool`, optional): If set to True,
+        ``use_latex_names`` (:obj:`bool`, optional): If set to True,
         converts species labels to latex format.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -266,21 +266,21 @@ def plot_property_vs_property(
     """Function to plot a property vs. a property.
 
     Args:
-        file (:obj:`str`): A string giving the xml file.
+        ``files`` (:obj:`str`): A string giving the xml file.
 
-        prop1 (:obj:`str`): A string giving the property (which will be the
-        abscissa of the plot).
+        ``prop1`` (:obj:`str`): A string giving the property (which will be
+        the abscissa of the plot).
 
-        prop2 (:obj:`str`): A string giving the property (which will be the
-        ordinate of the plot).
+        ``prop2`` (:obj:`str`): A string giving the property (which will be
+        the ordinate of the plot).
 
-        xfactor (:obj:`float`, optional): A float giving the scaling for the
-        abscissa values.  Defaults to 1.
+        ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
+        the abscissa values.  Defaults to 1.
 
-        yfactor (:obj:`float`, optional): A float giving the scaling for the
-        ordinate values.  Defaults to 1.
+        ``yfactor`` (:obj:`float`, optional): A float giving the scaling for
+        the ordinate values.  Defaults to 1.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -324,15 +324,15 @@ def plot_zone_abundances_vs_nucleon_number(
     """Function to plot abundances summed by nucleon number.
 
     Args:
-        file (:obj:`str`): A string giving the xml file.
+        ``files`` (:obj:`str`): A string giving the xml file.
 
-        nucleon (:obj:`str`): A string giving the nucleon (must be 'z', 'n',
-        or 'a').
+        ``nucleon`` (:obj:`str`): A string giving the nucleon (must be 'z',
+        'n', or 'a').
 
-        zone_xpath (:obj:`str`): A string giving the XPath expression to select
-        the (single) zone.
+        ``zone_xpath`` (:obj:`str`): A string giving the XPath expression to
+        select the (single) zone.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 

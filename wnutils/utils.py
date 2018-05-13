@@ -5,7 +5,7 @@ def get_latex_names(nuclides):
     """Function to get latex strings of nuclides' names.
 
     Args:
-        nuclides (:obj:`list`): A list of strings giving the nuclides.
+        ``nuclides`` (:obj:`list`): A list of strings giving the nuclides.
 
     Returns:
         :obj:`dict`: A dictionary of latex strings.

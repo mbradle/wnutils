@@ -65,9 +65,10 @@ def get_zone_properties(file, zone_xpath):
     """Function to return all properties of a single zone in an xml file
 
     Args:
-        file (:obj:`str`): The xml file to be read.
+        ``file`` (:obj:`str`): The xml file to be read.
 
-        zone_xpath (:obj:`str`): XPath expression to select the single zone.
+        ``zone_xpath`` (:obj:`str`): XPath expression to select the single
+        zone.
 
     Returns:
         :obj:`dict`: A dictionary containing the properties of the zone
@@ -106,12 +107,13 @@ def get_properties_in_zones(file, properties, zone_xpath=' '):
     """Function to return the properties in zones in an xml file
 
     Args:
-        file (:obj:`str`): The xml file to be read.
+        ``file`` (:obj:`str`): The xml file to be read.
 
-        properties (:obj:`list`): List of strings giving requested properites.
+        ``properties`` (:obj:`list`): List of strings giving requested
+        properites.
 
-        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
-        Defaults to all zones.
+        ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
+        zones.  Defaults to all zones.
 
     Returns:
         :obj:`dict`: A dictionary of lists containing the properties in the
@@ -183,12 +185,13 @@ def get_properties_in_zones_as_floats(file, properties, zone_xpath=' '):
     """Function to return the properties in zones in an xml file
 
     Args:
-        file (:obj:`str`): The xml file to be read.
+        ``file`` (:obj:`str`): The xml file to be read.
 
-        properties (:obj:`list`): List of strings giving requested properites.
+        ``properties`` (:obj:`list`): List of strings giving requested
+        properites.
 
-        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
-        Defaults to all zones.
+        ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
+        zones.  Defaults to all zones.
 
     Returns:
         :obj:`dict`: A dictionary of :obj:`numpy.array` containing the
@@ -222,12 +225,12 @@ def get_mass_fractions_in_zones(file, species, zone_xpath=' '):
     """Function to retrieve mass fractions of species in the zones.
 
     Args:
-        file (:obj:`str`): The xml file to be read.
+        ``file`` (:obj:`str`): The xml file to be read.
 
-        species (:obj:`list`): List of strings giving requested species.
+        ``species`` (:obj:`list`): List of strings giving requested species.
 
-        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
-        Defaults to all zones.
+        ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
+        zones.  Defaults to all zones.
 
     Returns:
         :obj:`dict`: A dictionary of :obj:`numpy.array` containing the mass
@@ -288,13 +291,13 @@ def get_abundances_vs_nucleon_number_in_zones(
     """Function to retrieve abundances summed over nucleon number in zones.
 
     Args:
-        file (:obj:`str`): The xml file to be read.
+        ``file`` (:obj:`str`): The xml file to be read.
 
-        nucleon (:obj:`str`): String giving the nucleon number to sum
+        ``nucleon`` (:obj:`str`): String giving the nucleon number to sum
         over.  Must be 'z', 'n', or 'a'.  Defaults to 'a'.
 
-        zone_xpath (:obj:`str`, optional): XPath expression to select zones.
-        Defaults to all zones.
+        ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
+        zones.  Defaults to all zones.
 
     Returns:
         :obj:`numpy.array`: A two-dimensional :obj:`numpy.array` in which the

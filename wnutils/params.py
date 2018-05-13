@@ -5,9 +5,10 @@ def set_plot_params(my_mpl, my_params):
     """Function to set plot parameters.
 
     Args:
-        my_mpl (matplotlib): A matplotlib instance.
+        ``my_mpl`` (matplotlib): A matplotlib instance.
 
-        my_params (:obj:`dict`): A dictionary with rcParams to be applied.
+        ``my_params`` (:obj:`dict`): A dictionary with rcParams to be
+        applied.
 
     Returns:
         On successful return, the :obj:`matplotlib.rcParams` have first
@@ -35,11 +36,11 @@ def apply_class_methods(plt, keyword_params):
     """Function to apply plot functions.
 
     Args:
-        plt (:obj:`matplotlib.pyplot`): A pyplot plot instance.
+        ``plt`` (:obj:`matplotlib.pyplot`): A pyplot plot instance.
 
-        keyword_params (:obj:`dict`): A dictionary of functions that will be
-        applied to the plot.  The key is the function and the value is
-        the argument of the function.
+        ``keyword_params`` (:obj:`dict`): A dictionary of functions that
+        will be applied to the plot.  The key is the function and the value
+        is the argument of the function.
 
     Returns:
         On successful return, the functions have been applied to the plot.
@@ -90,7 +91,7 @@ def list_rcParams(my_mpl):
     """Function to list current rcParams.
 
     Args:
-        my_mpl (matplotlib): A matplotlib instance.
+        ``my_mpl`` (matplotlib): A matplotlib instance.
 
     Returns:
         Prints the current :obj:`matplotlib.rcParams`.

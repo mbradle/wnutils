@@ -13,23 +13,23 @@ def plot_zone_property_vs_property(
     """Function to plot a property vs. a property in a zone.
 
     Args:
-        file (:obj:`str`): A string giving the hdf5 file.
+        ``file`` (:obj:`str`): A string giving the hdf5 file.
 
-        zone (:obj:`tuple`): A three element tuple giving the zone labels.
+        ``zone`` (:obj:`tuple`): A three element tuple giving the zone labels.
 
-        prop1 (:obj:`str`): A string giving the property (which will be the
-        abscissa of the plot).
+        ``prop1`` (:obj:`str`): A string giving the property (which will be
+        the abscissa of the plot).
 
-        prop2 (:obj:`str`): A string giving the property (which will be the
-        ordinate of the plot).
+        ``prop2`` (:obj:`str`): A string giving the property (which will be
+        the ordinate of the plot).
 
-        xfactor (:obj:`float`, optional): A float giving the scaling for the
-        abscissa values.  Defaults to 1.
+        ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
+        the abscissa values.  Defaults to 1.
 
-        yfactor (:obj:`float`, optional): A float giving the scaling for the
-        ordinate values.  Defaults to 1.
+        ``yfactor`` (:obj:`float`, optional): A float giving the scaling for
+        the ordinate values.  Defaults to 1.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -76,16 +76,17 @@ def plot_group_mass_fractions(
     """Function to plot group mass fractions vs. zone.
 
     Args:
-        file (:obj:`str`): A string giving the hdf5 file.
+        ``file`` (:obj:`str`): A string giving the hdf5 file.
 
-        group (:obj:`str`): A string giving the group.
+        ``group`` (:obj:`str`): A string giving the group.
 
-        species (:obj:`list`): A list of strings giving the species to plot.
+        ``species`` (:obj:`list`): A list of strings giving the species to
+        plot.
 
-        use_latex_names (:obj:`bool`, optional): If set to True, species
+        ``use_latex_names`` (:obj:`bool`, optional): If set to True, species
         names converted to latex format.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams``` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -156,22 +157,23 @@ def plot_group_mass_fractions_vs_property(
     """Function to plot group mass fractions vs. zone property.
 
     Args:
-        file (:obj:`str`): A string giving the hdf5 file.
+        ``file`` (:obj:`str`): A string giving the hdf5 file.
 
-        group (:obj:`str`): A string giving the group.
+        ``group`` (:obj:`str`): A string giving the group.
 
-        prop (:obj:`str`): A string giving the property (which will serve
+        ``prop`` (:obj:`str`): A string giving the property (which will serve
         as the plot abscissa).
 
-        species (:obj:`list`): A list of strings giving the species to plot.
+        ``species`` (:obj:`list`): A list of strings giving the species to
+        plot.
 
-        xfactor (:obj:`float`, optional): A float giving the scaling for
+        ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
         the abscissa values.  Defaults to 1.
 
-        use_latex_names (:obj:`bool`, optional): If set to True, species
+        ``use_latex_names`` (:obj:`bool`, optional): If set to True, species
         names converted to latex format.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams``` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 
@@ -248,22 +250,23 @@ def plot_zone_mass_fractions_vs_property(
     """Function to plot zone mass fractions vs. zone property.
 
     Args:
-        file (:obj:`str`): A string giving the hdf5 file.
+        ``file`` (:obj:`str`): A string giving the hdf5 file.
 
-        zone (:obj:`tuple`): A three element tuple giving the zone.
+        ``zone`` (:obj:`tuple`): A three element tuple giving the zone.
 
-        prop (:obj:`str`): A string giving the property (which will serve
+        ``prop`` (:obj:`str`): A string giving the property (which will serve
         as the plot abscissa).
 
-        species (:obj:`list`): A list of strings giving the species to plot.
+        ``species`` (:obj:`list`): A list of strings giving the species to
+        plot.
 
-        xfactor (:obj:`float`, optional): A float giving the scaling for
+        ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
         the abscissa values.  Defaults to 1.
 
-        use_latex_names (:obj:`bool`, optional): If set to True, species
+        ``use_latex_names`` (:obj:`bool`, optional): If set to True, species
         names converted to latex format.
 
-        rcParams (:obj:`dict`, optional): A dictionary of
+        ``rcParams`` (:obj:`dict`, optional): A dictionary of
         :obj:`matplotlib.rcParams` to be applied to the plot.
         Defaults to leaving the current rcParams unchanged.
 

@@ -69,7 +69,7 @@ def get_iterable_groups(file):
     """Function to return the non-nuclide data groups in a webnucleo hdf5 file.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
     Returns:
         :obj:`list`: A list of strings giving the names of the groups.
@@ -104,7 +104,7 @@ def get_nuclide_data_array(file):
     """Function to return an array of nuclide data from a webnucleo hdf5 file.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
     Returns:
         :obj:`list`: A list of the nuclide data.  Each
@@ -147,7 +147,7 @@ def get_nuclide_data_hash(file):
     """Function to return a nuclide data dictionary from a webnucleo hdf5 file.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
     Returns:
         :obj:`dict`: A dictionary of the nuclide data.  Each
@@ -188,9 +188,9 @@ def get_group_mass_fractions(file, group):
     """Function to return mass fractions from a group in a webnucleo hdf5 file.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
-        group (:obj:`str`): The name of the group.
+        ``group`` (:obj:`str`): The name of the group.
 
     Returns:
         :obj:`h5py:Dataset`: A 2d hdf5 dataset.  The first index indicates the
@@ -219,12 +219,12 @@ def get_zone_mass_fractions_in_groups(file, zone, nuclides):
     """Function to return zone mass fractions in all groups.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
-        zone (:obj:`tuple`): A three element tuple giving the three labels
+        ``zone`` (:obj:`tuple`): A three element tuple giving the three labels
         for the zone.
 
-        nuclides (:obj:`list`): A list of strings giving the nuclides
+        ``nuclides`` (:obj:`list`): A list of strings giving the nuclides
         whose mass fractions are to be retrieved.
 
     Returns:
@@ -269,12 +269,12 @@ def get_zone_properties_in_groups(file, zone, properties):
     """Function to return zone properties in all groups.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
-        zone (:obj:`tuple`): A three element tuple giving the three labels
+        ``zone`` (:obj:`tuple`): A three element tuple giving the three labels
         for the zone.
 
-        properties (:obj:`list`): A list of strings giving the properties
+        ``properties`` (:obj:`list`): A list of strings giving the properties
         to be retrieved.
 
     Returns:
@@ -314,12 +314,12 @@ def get_zone_properties_in_groups_as_floats(file, zone, properties):
     """Function to return zone properties in all groups as floats.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
-        zone (:obj:`tuple`): A three element tuple giving the three labels
+        ``zone`` (:obj:`tuple`): A three element tuple giving the three labels
         for the zone.
 
-        properties (:obj:`list`): A list of strings giving the properties
+        ``properties`` (:obj:`list`): A list of strings giving the properties
         to be retrieved.
 
     Returns:
@@ -353,11 +353,11 @@ def get_group_properties_in_zones(file, group, properties):
     """Function to return properties in all zones for a group.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
-        group (:obj:`str`): A string giving the group name.
+        ``group`` (:obj:`str`): A string giving the group name.
 
-        properties (:obj:`list`): A list of strings giving the properties
+        ``properties`` (:obj:`list`): A list of strings giving the properties
         to be retrieved.
 
     Returns:
@@ -402,11 +402,11 @@ def get_group_properties_in_zones_as_floats(file, group, properties):
     """Function to return properties in all zones for a group as floats.
 
     Args:
-        file (:obj:`str`): The hdf5 file to be read.
+        ``file`` (:obj:`str`): The hdf5 file to be read.
 
-        group (:obj:`str`): A string giving the group name.
+        ``group`` (:obj:`str`): A string giving the group name.
 
-        properties (:obj:`list`): A list of strings giving the properties
+        ``properties`` (:obj:`list`): A list of strings giving the properties
         to be retrieved.
 
     Returns:
