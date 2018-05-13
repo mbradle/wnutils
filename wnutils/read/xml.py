@@ -61,7 +61,7 @@ def _create_property_string(property):
     return result
 
 
-def get_all_properties_in_zone(file, zone_xpath):
+def get_zone_properties(file, zone_xpath):
     """Function to return all properties of a single zone in an xml file
 
     Args:
@@ -78,7 +78,7 @@ def get_all_properties_in_zone(file, zone_xpath):
        Example:
 
            import wnutils.read.xml as wx
-           props = wx.get_properties_in_zones('my_output.xml', '[last()]' )
+           props = wx.get_zone_properties('my_output.xml', '[last()]' )
            for key in props:
                print( key, ':', props[key] )
 
@@ -213,7 +213,7 @@ def get_properties_in_zones_as_floats(file, properties, zone_xpath=' '):
     dict = {}
 
     for prop in props:
-        dict[prop] = np.array(list(map(float, props[prop])))
+        dict[prop] = np.array(props[prop], np.float_)
 
     return dict
 
@@ -277,7 +277,7 @@ def get_mass_fractions_in_zones(file, species, zone_xpath=' '):
                 dict[my_species].append(data.text)
 
     for my_species in species:
-        result[my_species] = np.array(list(map(float, dict[my_species])))
+        result[my_species] = np.array(dict[my_species], np.float_)
 
     return result
 
