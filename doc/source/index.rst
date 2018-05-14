@@ -10,15 +10,11 @@ Contents:
 
 .. toctree::
    :maxdepth: 1
-   :glob:
+   :includehidden:
 
    readme
-
-.. toctree::
-   :maxdepth: 1
-   :glob:
-
    documentation
+   tutorials
 
 
 

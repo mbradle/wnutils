@@ -74,14 +74,13 @@ def get_iterable_groups(file):
     Returns:
         :obj:`list`: A list of strings giving the names of the groups.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           groups = w5.get_iterable_groups('my_output.h5')
-           for group in groups:
-               print( group )
+        >>> import wnutils.read.h5 as w5
+        >>> groups = w5.get_iterable_groups('my_output.h5')
+        >>> for group in groups:
+        ...     print( group )
+        ...
 
     """
 
@@ -111,14 +110,13 @@ def get_nuclide_data_array(file):
         entry is a dictionary containing the nuclide's index, name, z, a,
         source (data source), state, spin, and mass excess.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           nuclides = w5.get_nuclide_data_array('my_output.h5')
-           for nuclide in nuclides:
-               print( nuclide['name'], " has spin ", nuclide['spin'] )
+        >>> import wnutils.read.h5 as w5
+        >>> nuclides = w5.get_nuclide_data_array('my_output.h5')
+        >>> for nuclide in nuclides:
+        ...     print( nuclide['name'], " has spin ", nuclide['spin'] )
+        ...
 
     """
 
@@ -154,15 +152,14 @@ def get_nuclide_data_hash(file):
         entry is itself a dictionary containing the nuclide's index, name, z,
         a, source (data source), state, spin, and mass excess.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           nuclides = w5.get_nuclide_data_hash('my_output.h5')
-           print(
-             " o16 has mass excess ", nuclides['o16']['mass excess'], " MeV"
-           )
+        >>> import wnutils.read.h5 as w5
+        >>> nuclides = w5.get_nuclide_data_hash('my_output.h5')
+        >>> print(
+        ...   " o16 has mass excess ", nuclides['o16']['mass excess'], " MeV"
+        ... )
+        ...
 
     """
 
@@ -196,16 +193,15 @@ def get_group_mass_fractions(file, group):
         :obj:`h5py:Dataset`: A 2d hdf5 dataset.  The first index indicates the
         species and the second the zone.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           x = w5.get_group_mass_fractions('my_output.h5', 'Step 00001')
-           nuclides = w5.get_nuclide_data_hash('my_output.h5')
-           o16 = nuclides['o16']['index']
-           for i in range(len(x)):
-               print( x[i,o16] )
+        >>> import wnutils.read.h5 as w5
+        >>> x = w5.get_group_mass_fractions('my_output.h5', 'Step 00001')
+        >>> nuclides = w5.get_nuclide_data_hash('my_output.h5')
+        >>> o16 = nuclides['o16']['index']
+        >>> for i in range(len(x)):
+        ...     print( x[i,o16] )
+        ...
 
     """
 
@@ -231,16 +227,15 @@ def get_zone_mass_fractions_in_groups(file, zone, nuclides):
         :obj:`dict`: A dictionary of :obj:`numpy.array` giving the
         mass fractions in the groups.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           x = w5.get_zone_mass_fractions_in_groups(
-               'my_output.h5', ('1','0','0'), ['he4', 'c12', 'o16']
-           )
-           for i in range(len(x['o16'])):
-               print( x['o16'][i] )
+        >>> import wnutils.read.h5 as w5
+        >>> x = w5.get_zone_mass_fractions_in_groups(
+        ...     'my_output.h5', ('1','0','0'), ['he4', 'c12', 'o16']
+        ... )
+        >>> for i in range(len(x['o16'])):
+        ...     print( x['o16'][i] )
+        ...
 
     """
 
@@ -281,16 +276,16 @@ def get_zone_properties_in_groups(file, zone, properties):
         :obj:`dict`: A dictionary of :obj:`list` giving the properties
         in the groups as strings.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           x = w5.get_zone_properties_in_groups(
-               'my_output.h5', ('1','0','0'), ['time', 't9']
-           )
-           for i in range(len(x['time'])):
-               print( x['time'][i] )
+        >>> import wnutils.read.h5 as w5
+        >>> x = w5.get_zone_properties_in_groups(
+        ...     'my_output.h5', ('1','0','0'), ['time', 't9']
+        ... )
+        ...
+        >>> for i in range(len(x['time'])):
+        ...     print( x['time'][i] )
+        ...
 
     """
 
@@ -326,16 +321,16 @@ def get_zone_properties_in_groups_as_floats(file, zone, properties):
         :obj:`dict`: A dictionary of :obj:`numpy.array` giving the
         properties in the groups as floats.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           x = w5.get_zone_properties_in_groups_as_floats(
-               'my_output.h5', ('1','0','0'), ['time', 't9']
-           )
-           for i in range(len(x['time'])):
-               print( x['time'][i] )
+        >>> import wnutils.read.h5 as w5
+        >>> x = w5.get_zone_properties_in_groups_as_floats(
+        ...     'my_output.h5', ('1','0','0'), ['time', 't9']
+        ... )
+        ...
+        >>> for i in range(len(x['time'])):
+        ...     print( x['time'][i] )
+        ...
 
     """
 
@@ -364,16 +359,15 @@ def get_group_properties_in_zones(file, group, properties):
         :obj:`dict`: A dictionary of :obj:`list` giving the
         properties in the zones as strings.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           x = w5.get_group_properties_in_zones(
-               'my_output.h5', 'Step 00010', ['time', 't9']
-           )
-           for i in range(len(x['t9'])):
-               print( x['time'][i] )
+        >>> import wnutils.read.h5 as w5
+        >>> x = w5.get_group_properties_in_zones(
+        ...     'my_output.h5', 'Step 00010', ['time', 't9']
+        ... )
+        >>> for i in range(len(x['t9'])):
+        ...     print( x['time'][i] )
+        ...
 
     """
 
@@ -413,16 +407,16 @@ def get_group_properties_in_zones_as_floats(file, group, properties):
         :obj:`dict`: A dictionary of :obj:`numpy.array` giving the
         properties in the zones as floats.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.h5 as w5
-           x = w5.get_group_properties_in_zones_as_floats(
-               'my_output.h5', 'Step 00010', ['time', 't9']
-           )
-           for i in range(len(x['t9'])):
-               print( x['time'][i] )
+        >>> import wnutils.read.h5 as w5
+        >>> x = w5.get_group_properties_in_zones_as_floats(
+        ...      'my_output.h5', 'Step 00010', ['time', 't9']
+        ... )
+        ...
+        >>> for i in range(len(x['t9'])):
+        ...     print( x['time'][i] )
+        ...
 
     """
 

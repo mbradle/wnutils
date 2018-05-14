@@ -39,22 +39,18 @@ def plot_zone_property_vs_property(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.h5 as w5
-           kw = {'xlabel': 'time (yr)'}
-           w5.plot_zone_property_vs_property(
-               'my_output.h5',
-               ('2','1','0'),
-               'time',
-               't9',
-               xfactor = 3.15e7,
-               rcParams = {'lines.linewidth': 3},
-               ylim = [0,10],
-               **kw
-           )
+        >>> import wnutils.plot.h5 as w5
+        >>> kw = {'xlabel': 'time (yr)'}
+        >>> w5.plot_zone_property_vs_property(
+        ...     'my_output.h5', ('2','1','0'), 'time',
+        ...     't9', xfactor = 3.15e7,
+        ...     rcParams = {'lines.linewidth': 3},
+        ...     ylim = [0,10],
+        ...     **kw
+        ... )
+        ...
 
     """
 
@@ -96,18 +92,17 @@ def plot_group_mass_fractions(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.h5 as w5
-           w5.plot_group_mass_fractions(
-               'my_output.h5',
-               'Step 00040',
-               ['h1', 'he4', 'c12'],
-               rcParams = {'lines.linewidth': 3},
-               ylim = [0,1]
-           )
+        >>> import wnutils.plot.h5 as w5
+        >>> w5.plot_group_mass_fractions(
+        ...     'my_output.h5',
+        ...     'Step 00040',
+        ...     ['h1', 'he4', 'c12'],
+        ...     rcParams = {'lines.linewidth': 3},
+        ...     ylim = [0,1]
+        ... )
+        ...
 
     """
 
@@ -183,19 +178,18 @@ def plot_group_mass_fractions_vs_property(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.h5 as w5
-           w5.plot_group_mass_fractions_vs_property(
-               'my_output.h5',
-               'Step 00040',
-               'zone mass',
-               ['h1', 'he4', 'c12'],
-               rcParams = {'lines.linewidth': 3},
-               ylim = [0,1]
-           )
+        >>> import wnutils.plot.h5 as w5
+        >>> w5.plot_group_mass_fractions_vs_property(
+        ...     'my_output.h5',
+        ...     'Step 00040',
+        ...     'zone mass',
+        ...     ['h1', 'he4', 'c12'],
+        ...    rcParams = {'lines.linewidth': 3},
+        ...     ylim = [0,1]
+        ... )
+        ...
 
     """
 
@@ -276,21 +270,20 @@ def plot_zone_mass_fractions_vs_property(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.h5 as w5
-           kw = {'xlabel': 'time (s)', 'xscale': 'log'}
-           w5.plot_zone_mass_fractions_vs_property(
-               'my_output.h5',
-               ('1', '0', '0'),
-               'time',
-               ['h1', 'he4', 'c12'],
-               rcParams = {'lines.linewidth': 3},
-               ylim = [0,1]
-               **kw
-           )
+        >>> import wnutils.plot.h5 as w5
+        >>> kw = {'xlabel': 'time (s)', 'xscale': 'log'}
+        >>> w5.plot_zone_mass_fractions_vs_property(
+        ...     'my_output.h5',
+        ...     ('1', '0', '0'),
+        ...     'time',
+        ...     ['h1', 'he4', 'c12'],
+        ...     rcParams = {'lines.linewidth': 3},
+        ...     ylim = [0,1]
+        ...     **kw
+        ... )
+        ...
 
     """
 

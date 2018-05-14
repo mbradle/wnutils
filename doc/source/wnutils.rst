@@ -11,7 +11,7 @@ Subpackages
 
 .. toctree::
 
-    wnutils.plot2d
+    wnutils.plot
     wnutils.read
 
 Submodules

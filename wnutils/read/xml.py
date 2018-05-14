@@ -74,14 +74,13 @@ def get_zone_properties(file, zone_xpath):
         :obj:`dict`: A dictionary containing the properties of the zone
         as strings.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.xml as wx
-           props = wx.get_zone_properties('my_output.xml', '[last()]' )
-           for key in props:
-               print( key, ':', props[key] )
+        >>> import wnutils.read.xml as wx
+        >>> props = wx.get_zone_properties('my_output.xml', '[last()]' )
+        >>> for key in props:
+        ...     print( key, ':', props[key] )
+        ...
 
     """
 
@@ -119,14 +118,12 @@ def get_properties_in_zones(file, properties, zone_xpath=' '):
         :obj:`dict`: A dictionary of lists containing the properties in the
         zones as strings.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.xml as wx
-           my_list = list( ('time','t9','rho') )
-           props = wx.get_properties_in_zones('my_output.xml', my_list )
-           print( props['t9'] )
+        >>> import wnutils.read.xml as wx
+        >>> my_list = list( ('time','t9','rho') )
+        >>> props = wx.get_properties_in_zones('my_output.xml', my_list )
+        >>> print( props['t9'] )
 
     """
 
@@ -197,17 +194,16 @@ def get_properties_in_zones_as_floats(file, properties, zone_xpath=' '):
         :obj:`dict`: A dictionary of :obj:`numpy.array` containing the
         properties in the zones as floats.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils as wn
-           props = wn.read.xml.get_properties_in_zones_as_floats(
-               'my_output.xml', ['t9','rho'],
-               zone_xpath='[position() > last() - 10]' # Get the last 10 zones
-           )
-           print( props['t9'] )
-           print( type( props['rho'] ) )
+        >>> import wnutils as wn
+        >>> props = wn.read.xml.get_properties_in_zones_as_floats(
+        ...     'my_output.xml', ['t9','rho'],
+        ...     zone_xpath='[position() > last() - 10]' # Get the last 10 zones
+        ... )
+        ...
+        >>> print( props['t9'] )
+        >>> print( type( props['rho'] ) )
 
     """
 
@@ -236,15 +232,14 @@ def get_mass_fractions_in_zones(file, species, zone_xpath=' '):
         :obj:`dict`: A dictionary of :obj:`numpy.array` containing the mass
         fractions of the requested species in the zones as floats.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.xml as wx
-           x = wx.get_mass_fractions_in_zones(
-               'my_output.xml', ['n','h1','he4','c12']
-           )
-           print( x['c12'] )
+        >>> import wnutils.read.xml as wx
+        >>> x = wx.get_mass_fractions_in_zones(
+        ...     'my_output.xml', ['n','h1','he4','c12']
+        ... )
+        ...
+        >>> print( x['c12'] )
 
     """
 
@@ -304,16 +299,16 @@ def get_abundances_vs_nucleon_number_in_zones(
         first index gives the zone and the second gives the nucleon number
         value.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.read.xml as wx
-           y = wx.get_abundances_vs_nucleon_number_in_zones(
-               'my_output.xml', nucleon='z'
-           )
-           for i in range(y.shape[1]):
-               print( 'Z =', i, ', Y(Z) = ', y[10,i] )  # Abundances of zone 11
+        >>> import wnutils.read.xml as wx
+        >>> y = wx.get_abundances_vs_nucleon_number_in_zones(
+        ...     'my_output.xml', nucleon='z'
+        ... )
+        ...
+        >>> for i in range(y.shape[1]):
+        ...     print( 'Z =', i, ', Y(Z) = ', y[10,i] ) # For zone 11
+        ...
 
     """
 

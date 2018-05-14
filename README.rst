@@ -14,12 +14,8 @@ Install the package with pip::
 Authors
 -------
 
-* Bradley S. Meyer
-
-Contributors
-------------
-
-* Norberto Davila
+- Bradley S. Meyer <mbradle@clemson.edu>
+- Norberto Davila <ndavila@clemson.edu>
 
 Contribute
 ----------
@@ -30,10 +26,10 @@ Contribute
 License
 -------
 
-The project is licensed under the GNU Public License v3.
+The project is licensed under the GNU Public License v3 (or later).
 
 Usage
 -----
 
-The best way to get started using wnutils is to follow the examples
-in the `documentation <http://wnutils.readthedocs.io/en/latest/>`_.
+The best way to get started using wnutils is to follow the
+:ref:`tutorials`.

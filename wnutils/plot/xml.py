@@ -19,7 +19,7 @@ def plot_mass_fraction_vs_property_in_files(
         ``prop`` (:obj:`str`): A string giving the property (which will be the
         abscissa of the plot).
 
-        ``species``:obj:`str`):  A string giving the species.
+        ``species`` (:obj:`str`):  A string giving the species.
 
         ``legend_labels`` (:obj:`list`, optional): A list of strings giving
         the legend labels.  Defaults to None.
@@ -40,24 +40,23 @@ def plot_mass_fraction_vs_property_in_files(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.xml as wp
-           files = ['file1.xml', 'file2.xml', 'file3.xml']
-           my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
-           kw = {'xlabel': 'time (s)'}
-           wp.plot_mass_fraction_vs_property_in_files(
-               files,
-               'time',
-               'o16',
-               legend_labels = ['file1', 'file2', 'file3'],
-               use_latex_names = True,
-               rcParams = my_params,
-               ylim = [1.e-4,1],
-               **kw
-           )
+        >>> import wnutils.plot.xml as wp
+        >>> files = ['file1.xml', 'file2.xml', 'file3.xml']
+        >>> my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
+        >>> kw = {'xlabel': 'time (s)'}
+        >>> wp.plot_mass_fraction_vs_property_in_files(
+        ...     files,
+        ...     'time',
+        ...     'o16',
+        ...     legend_labels = ['file1', 'file2', 'file3'],
+        ...     use_latex_names = True,
+        ...     rcParams = my_params,
+        ...     ylim = [1.e-4,1],
+        ...     **kw
+        ... )
+        ...
 
     """
     plp.set_plot_params(mpl, rcParams)
@@ -115,19 +114,18 @@ def plot_mass_fractions_in_zones(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.xml as wp
-           my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
-           wp.plot_mass_fractions_in_zones(
-               'my_output.xml',
-               ['si28','ni56'],
-               use_latex_names = True,
-               rcParams = my_params,
-               ylim = [1.e-4,1]
-           )
+        >>> import wnutils.plot.xml as wp
+        >>> my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
+        >>> wp.plot_mass_fractions_in_zones(
+        ...     'my_output.xml',
+        ...     ['si28','ni56'],
+        ...     use_latex_names = True,
+        ...     rcParams = my_params,
+        ...    ylim = [1.e-4,1]
+        ... )
+        ...
 
     """
 
@@ -198,23 +196,23 @@ def plot_mass_fractions_vs_property(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
 
-       Example:
+    Example:
 
-           import wnutils.plot2d.xml as wp
-           my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
-           kw = {'xlabel': 'time (yr)'}
-           wp.plot_mass_fractions_vs_property(
-               'my_output.xml',
-               'time',
-               ['c12','o16'],
-               use_latex_names = True,
-               xfactor = 3.15e7,
-               rcParams = my_params,
-               ylim = [1.e-4,1],
-               **kw
-           )
+        >>> import wnutils.plot.xml as wp
+        >>> my_params = {'lines.linewidth': 3, 'legend.loc': 'center right' }
+        >>> kw = {'xlabel': 'time (yr)'}
+        >>> wp.plot_mass_fractions_vs_property(
+        ...     'my_output.xml',
+        ...     'time',
+        ...     ['c12','o16'],
+        ...     use_latex_names = True,
+        ...     xfactor = 3.15e7,
+        ...     rcParams = my_params,
+        ...     ylim = [1.e-4,1],
+        ...     **kw
+        ... )
+        ...
 
     """
 
@@ -290,21 +288,20 @@ def plot_property_vs_property(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.xml as wp
-           kw = {'xlabel': 'time (yr)'}
-           wp.plot_property_vs_property(
-               'my_output.xml',
-               'time',
-               't9',
-               xfactor = 3.15e7,
-               rcParams = {'lines.linewidth': 3},
-               ylim = [0,10],
-               **kw
-           )
+        >>> import wnutils.plot.xml as wp
+        >>> kw = {'xlabel': 'time (yr)'}
+        >>> wp.plot_property_vs_property(
+        ...     'my_output.xml',
+        ...     'time',
+        ...     't9',
+        ...     xfactor = 3.15e7,
+        ...     rcParams = {'lines.linewidth': 3},
+        ...     ylim = [0,10],
+        ...     **kw
+        ... )
+        ...
 
     """
 
@@ -342,19 +339,18 @@ def plot_zone_abundances_vs_nucleon_number(
     Returns:
         A matplotlib plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils.plot2d.xml as wp
-           wp.plot_zone_abundances_vs_nucleon_number(
-               'my_output.xml',
-               'z',
-               '[last()]',
-               rcParams = {'lines.linewidth': 3},
-               yscale = 'log', xlabel = 'Z', ylabel = 'Elemental Abundance',
-               ylim = [1.e-10,1]
-           )
+        >>> import wnutils.plot.xml as wp
+        >>> wp.plot_zone_abundances_vs_nucleon_number(
+        ...     'my_output.xml',
+        ...     'z',
+        ...     '[last()]',
+        ...     rcParams = {'lines.linewidth': 3},
+        ...     yscale = 'log', xlabel = 'Z', ylabel = 'Elemental Abundance',
+        ...     ylim = [1.e-10,1]
+        ... )
+        ...
 
     """
 

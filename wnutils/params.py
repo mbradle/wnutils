@@ -15,14 +15,12 @@ def set_plot_params(my_mpl, my_params):
         been set to their defaults and then updated with the values in
         my_params.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import matplotlib as mpl
-           import wnutils as wn
-           params = {'lines.linewidth': 3, 'font.size': 14}
-           wn.params.set_plot_params( mpl, params )
+        >>> import matplotlib as mpl
+        >>> import wnutils as wn
+        >>> params = {'lines.linewidth': 3, 'font.size': 14}
+        >>> wn.params.set_plot_params( mpl, params )
 
     """
 
@@ -45,14 +43,12 @@ def apply_class_methods(plt, keyword_params):
     Returns:
         On successful return, the functions have been applied to the plot.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import matplotlib.pyplot as plt
-           import wnutils as wn
-           keyword_params = {'ylim': [1.e-4,1], 'xlabel': 'time (s)'}
-           wn.params.apply_class_methods(plt, keyword_params)
+        >>> import matplotlib.pyplot as plt
+        >>> import wnutils as wn
+        >>> keyword_params = {'ylim': [1.e-4,1], 'xlabel': 'time (s)'}
+        >>> wn.params.apply_class_methods(plt, keyword_params)
 
     """
     with_kwargs = ['legend']
@@ -96,13 +92,11 @@ def list_rcParams(my_mpl):
     Returns:
         Prints the current :obj:`matplotlib.rcParams`.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import matplotlib as mpl
-           import wnutils as wn
-           wn.params.list_rcParams(mpl)
+        >>> import matplotlib as mpl
+        >>> import wnutils as wn
+        >>> wn.params.list_rcParams(mpl)
 
     """
     print(my_mpl.rcParams.keys())

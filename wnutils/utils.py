@@ -10,15 +10,14 @@ def get_latex_names(nuclides):
     Returns:
         :obj:`dict`: A dictionary of latex strings.
 
-    .. code-block:: python
+    Example:
 
-       Example:
-
-           import wnutils as wn
-           nuclides = ['n', 'n14', 'o16', 'u238']
-           lnames = wn.utils.get_latex_names( nuclides )
-           for key in lnames:
-               print( key, ":", lnames[key] )
+        >>> import wnutils as wn
+        >>> nuclides = ['n', 'n14', 'o16', 'u238']
+        >>> lnames = wn.utils.get_latex_names( nuclides )
+        >>> for key in lnames:
+        ...    print( key, ":", lnames[key] )
+        ...
 
     """
 
