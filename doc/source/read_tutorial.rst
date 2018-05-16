@@ -1,5 +1,5 @@
-Read in the Data
-================
+Reading in the Data
+===================
 
 `webnucleo <http://sourceforge.net/u/mbradle/blog/>`_ data files are
 in either in `XML <https://www.w3.org/TR/REC-xml/>`_ or

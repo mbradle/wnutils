@@ -9,7 +9,7 @@ import wnutils.utils as wu
 
 def plot_mass_fraction_vs_property_in_files(
     files, prop, species, legend_labels=None, xfactor=1,
-    use_latex_name=False, rcParams=None, **kwargs
+    use_latex_names=False, rcParams=None, **kwargs
 ):
     """Function to plot the mass fraction of a species in multiple files.
 
@@ -69,7 +69,7 @@ def plot_mass_fraction_vs_property_in_files(
     fig = plt.figure()
 
     for i in range(len(files)):
-        x = wx.get_properties_in_zones_as_floats(files[i], [prop])
+        x = wx.get_properties_in_zones_as_floats(files[i], [prop])[prop]
         x /= xfactor
         y = wx.get_mass_fractions_in_zones(files[i], [species])[species]
         if legend_labels:
@@ -312,6 +312,13 @@ def plot_property_vs_property(
     plp.apply_class_methods(plt, kwargs)
 
     plt.plot(result[prop1] / xfactor, result[prop2] / yfactor)
+
+    if('xlabel' not in kwargs):
+        plt.xlabel(prop1)
+
+    if('ylabel' not in kwargs):
+        plt.ylabel(prop2)
+
     plt.show()
 
 
