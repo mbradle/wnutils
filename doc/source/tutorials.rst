@@ -2,6 +2,7 @@ Tutorials
 =========
 
 .. toctree::
+   :maxdepth: 1
 
    installation_tutorial
    data_tutorial
