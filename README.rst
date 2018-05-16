@@ -32,4 +32,4 @@ Usage
 -----
 
 The best way to get started using wnutils is to follow the
-`tutorials <http://wnutils.readthedocs.io/en/latest/tutorials.html/>`_.
+`tutorials <http://wnutils.readthedocs.io/en/latest/tutorials.html>`_.

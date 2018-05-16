@@ -30,7 +30,7 @@ or, perhaps for version 3::
 
       $ python3
 
-and try importing wnutils:
+and try importing wnutils by typing at the python prompt:
 
      >>> import wnutils
 
