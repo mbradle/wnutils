@@ -123,7 +123,7 @@ def plot_mass_fractions_in_zones(
         ...     ['si28','ni56'],
         ...     use_latex_names = True,
         ...     rcParams = my_params,
-        ...    ylim = [1.e-4,1]
+        ...     ylim = [1.e-4,1]
         ... )
         ...
 

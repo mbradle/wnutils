@@ -66,14 +66,14 @@ Type::
      ...     print(group)
      ...
 
-Read properties of a zone in the groups.
-........................................
+Read properties of a zone in the groups as floats.
+..................................................
 
 Zones are retrieved by specifying the three labels as a tuple.  For example,
 type::
 
      >>> zone = ('1','0','0')
-     >>> props = wr5.get_zone_properties_in_groups('my_output.h5', zone, ['time','t9','rho'])
+     >>> props = wr5.get_zone_properties_in_groups_as_floats('my_output.h5', zone, ['time','t9','rho'])
      >>> groups = wr5.get_iterable_groups('my_output.h5')
      >>> for in in range(len(groups)):
      ...     print(
