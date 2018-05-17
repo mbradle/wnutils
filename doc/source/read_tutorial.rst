@@ -54,7 +54,7 @@ for example::
 
     >>> import wnutils.read.h5 as wr5
 
-Then use the `wh` namespace in subsequent calls.
+Then use the `wr5` namespace in subsequent calls.
 
 Read the names of the iterable groups.
 .......................................
