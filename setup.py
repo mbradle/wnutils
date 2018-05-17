@@ -17,15 +17,19 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
+about = {}
+with open(path.join(here, "wnutils", "__about__.py")) as f:
+    exec(f.read(), about)
+
 # Arguments marked as "Required" below must be included for upload to PyPI.
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='wnutils',  # Required
+    name=about['__title__'],  # Required
 
-    version='0.0.3',  # Required
+    version=about['__version__'],  # Required
 
-    description='Python project to read and plot webnucleo files',  # Required
+    description=about['__summary__'],  # Required
 
     long_description=long_description,  # Optional
 

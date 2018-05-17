@@ -16,18 +16,20 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
+base_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../..")
+
+about = {}
+with open(os.path.join(base_dir, "wnutils", "__about__.py")) as f:
+    exec(f.read(), about)
+
 
 # -- Project information -----------------------------------------------------
 
-project = 'wnutils'
-copyright = '2018, Clemson University'
-author = 'Clemson University'
+project = about['__title__']
+copyright = about['__copyright__']
+author = about['__author__']
 
-# The short X.Y version
-version = ''
-# The full version, including alpha/beta/rc tags
-release = '0.0.1'
-
+version = release = about['__version__']
 
 # -- General configuration ---------------------------------------------------
 

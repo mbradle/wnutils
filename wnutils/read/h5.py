@@ -191,7 +191,7 @@ def get_group_mass_fractions(file, group):
 
     Returns:
         :obj:`h5py:Dataset`: A 2d hdf5 dataset.  The first index indicates the
-        species and the second the zone.
+        zone and the second the species.
 
     Example:
 
