@@ -238,8 +238,8 @@ def plot_group_mass_fractions_vs_property(
 
 
 def plot_zone_mass_fractions_vs_property(
-    file, zone, prop, species, xfactor=1, use_latex_names=False,
-    rcParams=None, **kwargs
+    file, zone, prop, species, xfactor=1, yfactor=None,
+    use_latex_names=False, rcParams=None, **kwargs
 ):
     """Function to plot zone mass fractions vs. zone property.
 
@@ -256,6 +256,10 @@ def plot_zone_mass_fractions_vs_property(
 
         ``xfactor`` (:obj:`float`, optional): A float giving the scaling for
         the abscissa values.  Defaults to 1.
+
+        ``yfactor`` (:obj:`list`, optional): A list of floats giving factor
+        by which to scale the mass fractions.  Defaults to not scaling.
+        If supplied, must by the same length as ``species``.
 
         ``use_latex_names`` (:obj:`bool`, optional): If set to True, species
         names converted to latex format.
@@ -297,6 +301,13 @@ def plot_zone_mass_fractions_vs_property(
     x = w5.get_zone_properties_in_groups_as_floats(file, zone, [prop])[prop]
     m = w5.get_zone_mass_fractions_in_groups(file, zone, species)
 
+    if yfactor:
+        if len(yfactor) != len(species):
+            print('yfactor length must be the same as the number of species.')
+            return
+    else:
+        yfactor = np.full(len(species), 1.)
+
     if use_latex_names:
         latex_names = wu.get_latex_names(species)
 
@@ -305,7 +316,7 @@ def plot_zone_mass_fractions_vs_property(
             lab = latex_names[species[i]]
         else:
             lab = species[i]
-        l.append(plt.plot(x / xfactor, m[species[i]], label=lab))
+        l.append(plt.plot(x / xfactor, m[species[i]] / yfactor[i], label=lab))
 
     if(len(species) != 1):
         plt.legend()
