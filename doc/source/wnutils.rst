@@ -6,29 +6,29 @@ wnutils package
     :undoc-members:
     :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-    wnutils.plot
-    wnutils.read
-
 Submodules
 ----------
 
-wnutils.params module
----------------------
+wnutils.h5 module
+-----------------
 
-.. automodule:: wnutils.params
+.. automodule:: wnutils.h5
     :members:
     :undoc-members:
     :show-inheritance:
 
-wnutils.utils module
---------------------
+wnutils.wnbase module
+---------------------
 
-.. automodule:: wnutils.utils
+.. automodule:: wnutils.wnbase
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+wnutils.xml module
+------------------
+
+.. automodule:: wnutils.xml
     :members:
     :undoc-members:
     :show-inheritance:

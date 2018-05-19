@@ -1,7 +1,6 @@
 """
 A package of python routines to read and plot webnucleo xml and hdf5 files.
 """
-from wnutils.params import *
-from wnutils.plot import *
-from wnutils.read import *
-from wnutils.utils import *
+from wnutils.h5 import *
+from wnutils.xml import *
+from wnutils.wnbase import *

@@ -13,25 +13,25 @@ XML
 The format of `webnucleo` XML files is described in the libnucnet technical
 report `XML Input to libnucnet`, available at the
 `libnucnet Home page <https://sourceforge.net/p/libnucnet/home/Home/>`_.
-Routines that read these XML files are in the namespace
-`wnutils.read.xml`.  In python, you can import these routines by typing,
-for example::
+The class :obj:`wnutils.xml.Xml` has methods that read these XML files.
+To begin, import the namespace by typing::
 
-    >>> import wnutils.read.xml as wrx
+    >>> import wnutils.xml as wx
 
-Then use the `wrx` namespace in subsequent calls.
-
-To illustrate the use of `wnutils.read.xml` routines, we use the files
+To illustrate the use of `wnutils.xml` routines, we use the files
 `my_output1.xml` and `my_output2.xml`,
 which you should have downloaded according to the
-:ref:`data` tutorial.
+:ref:`data` tutorial.  For each file, create an Xml object.  For example,
+type::
+
+    >>> xml1 = wx.Xml('my_output1.xml')
 
 Read zone properties as floats.
 ...............................
 
 Type::
 
-    >>> props = wrx.get_properties_in_zones_as_floats( 'my_output1.xml', ['time','t9','rho'] )
+    >>> props = xml1.get_properties_as_floats( ['time','t9','rho'] )
     >>> for i in range(len(props['time'])):
     ...     print(
     ...         'Zone = {0:d} time(s) = {1:.2e} t9 = {2:.2f} rho(g/cc) = {3:.2e}'.format(
@@ -48,20 +48,22 @@ This will output the time, temperature (in billions of K), and mass density
 HDF5
 ----
 
-Routines that read these HDF5 files are in the namespace
-`wnutils.read.h5`.  In python, you can import these routines by typing,
-for example::
+Methods that read these HDF5 files are in the namespace
+`wnutils.h5`.  The class that contains these methods is
+:obj:`wnutils.h5.H5`.  Begin by importing the namespace by typing::
 
-    >>> import wnutils.read.h5 as wr5
+    >>> import wnutils.h5 as w5
 
-Then use the `wr5` namespace in subsequent calls.
+Then create an object for your file `my_output.h5` by typing::
+
+    >>> my_h5 = w5.H5('my_output.h5')
 
 Read the names of the iterable groups.
 .......................................
 
 Type::
 
-     >>> groups = wr5.get_iterable_groups('my_output.h5')
+     >>> groups = my_h5.get_iterable_groups()
      >>> for group in groups:
      ...     print(group)
      ...
@@ -73,8 +75,8 @@ Zones are retrieved by specifying the three labels as a tuple.  For example,
 type::
 
      >>> zone = ('1','0','0')
-     >>> props = wr5.get_zone_properties_in_groups_as_floats('my_output.h5', zone, ['time','t9','rho'])
-     >>> groups = wr5.get_iterable_groups('my_output.h5')
+     >>> props = my_h5.get_zone_properties_in_groups_as_floats(zone, ['time','t9','rho'])
+     >>> groups = my_h5.get_iterable_groups()
      >>> for in in range(len(groups)):
      ...     print(
      ...         '{0:s}: time(s) = {1:.2e} t9 = {2:.2f} rho(g/cc) = {3:.2e}'.format(
