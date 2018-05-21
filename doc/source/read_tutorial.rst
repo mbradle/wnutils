@@ -24,14 +24,14 @@ which you should have downloaded according to the
 :ref:`data` tutorial.  For each file, create an Xml object.  For example,
 type::
 
-    >>> xml1 = wx.Xml('my_output1.xml')
+    >>> my_xml_1 = wx.Xml('my_output1.xml')
 
 Read zone properties as floats.
 ...............................
 
 Type::
 
-    >>> props = xml1.get_properties_as_floats( ['time','t9','rho'] )
+    >>> props = my_xml_1.get_properties_as_floats( ['time','t9','rho'] )
     >>> for i in range(len(props['time'])):
     ...     print(
     ...         'Zone = {0:d} time(s) = {1:.2e} t9 = {2:.2f} rho(g/cc) = {3:.2e}'.format(

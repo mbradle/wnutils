@@ -10,21 +10,21 @@ Import the namespace::
 
 The create an object for each file.  For example, type::
 
-    >>> xml1 = wx.Xml('my_output.xml')
+    >>> my_xml = wx.Xml('my_output1.xml')
 
 Plot properties against each other for the zones.
 .................................................
 
 Type::
 
-    >>> xml1.plot_property_vs_property( 'time', 't9' )
+    >>> my_xml.plot_property_vs_property( 'time', 't9' )
 
 Plot mass fractions against a property.
 .........................................
 
 Type::
 
-    >>> xml1.plot_mass_fractions_vs_property( 'time', ['he4','fe58'] )
+    >>> my_xml.plot_mass_fractions_vs_property( 'time', ['he4','fe58'] )
 
 
 HDF5
