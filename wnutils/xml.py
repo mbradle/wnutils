@@ -166,7 +166,6 @@ class Xml(wb.WnBase):
 
         """
 
-
         props = self.get_properties(properties)
 
         for prop in props:
@@ -174,7 +173,7 @@ class Xml(wb.WnBase):
 
         return props
 
-    def get_abundances_vs_nucleon_number( self, nucleon='a', zone_xpath=' ' ):
+    def get_abundances_vs_nucleon_number(self, nucleon='a', zone_xpath=' '):
         """Method to retrieve abundances summed over nucleon number in zones.
 
         Args:
@@ -266,7 +265,9 @@ class Xml(wb.WnBase):
 
         plt.show()
 
-    def plot_mass_fractions_vs_property(self, prop, species, xfactor=1):
+    def plot_mass_fractions_vs_property(self, prop, species, xfactor=1,
+                                        use_latex_names=False, rcParams=None, **kwargs
+                                        ):
         """Method to plot the mass fractions versus a property.
 
         Args:
@@ -309,6 +310,8 @@ class Xml(wb.WnBase):
             lab = species[i]
             l.append(plt.plot(x, y[species[i]], label=lab))
 
+        self.apply_class_methods(plt, kwargs)
+
         plt.legend()
 
         plt.show()
@@ -337,7 +340,6 @@ class Xml(wb.WnBase):
             A matplotlib plot.
 
         """
-
 
         self.set_plot_params(mpl, rcParams)
 

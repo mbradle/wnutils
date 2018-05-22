@@ -19,6 +19,10 @@ Type::
 
     >>> my_xml.plot_property_vs_property( 'time', 't9' )
 
+Now apply class methods to the plot.  For example, type::
+
+    >>> my_xml.plot_property_vs_property( 'time', 't9', xlabel = 'time (s)', ylabel = '$T_9$' )
+
 Plot mass fractions against a property.
 .........................................
 
