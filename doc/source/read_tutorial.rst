@@ -14,12 +14,15 @@ depending on your version).  You will see something like::
     Python 3.6.5 (default, Mar 29 2018, 15:38:28) 
     [GCC 4.2.1 Compatible Apple LLVM 7.3.0 (clang-703.0.31)] on darwin
     Type "help", "copyright", "credits" or "license" for more information.
-    >>> 
+    >>>
 
-The >>> is the interactive python prompt.  You type your commands at this
+The >>> is the interactive python prompt (it will typically show up in the
+tutorials in red).  You type your commands at this
 prompt.  To exit python, type::
 
     >>> exit()
+
+and hit enter.
 
 XML
 ---
