@@ -1,6 +1,18 @@
 class WnBase:
     """Class for setting wnutils parameters and utilities."""
 
+    def _get_property_name(self, tup):
+        if(len(tup) == 1):
+            s = tup[0]
+        elif(len(tup) == 2):
+            s = tup[0] + ',' + tup[1]
+        elif(len(tup) == 3):
+            s = tup[0] + ',' + tup[1] + ',' + tup[2]
+        else:
+            s = 'Invalid property name'
+
+        return s
+
     def set_plot_params(self, my_mpl, my_params):
         """Method to set plot parameters.
 
@@ -8,7 +20,7 @@ class WnBase:
             ``my_mpl`` (matplotlib): A matplotlib instance.
             ``my_params`` (:obj:`dict`): A dictionary with rcParams to be
             applied.
- 
+
         Returns:
             On successful return, the :obj:`matplotlib.rcParams` have first
             been set to their defaults and then updated with the values in
@@ -81,7 +93,7 @@ class WnBase:
 
     def get_latex_names(self, nuclides):
         """Method to get latex strings of nuclides' names.
-  
+
         Args:
             ``nuclides`` (:obj:`list`): A list of strings giving the nuclides.
 

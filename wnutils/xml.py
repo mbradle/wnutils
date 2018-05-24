@@ -26,8 +26,9 @@ class Xml(wb.WnBase):
 
         for sp in species:
             data = {}
-            data['z'] = (sp.xpath('z'))[0].text
-            data['a'] = (sp.xpath('a'))[0].text
+            data['z'] = int((sp.xpath('z'))[0].text)
+            data['a'] = int((sp.xpath('a'))[0].text)
+            data['n'] = data['a'] - data['z']
             result.append(data)
 
         return result
@@ -142,7 +143,7 @@ class Xml(wb.WnBase):
             props = self._root.xpath(path)
 
             if len(props) == 0:
-                print("Property not found.")
+                print("Property", self._get_property_name(tup), "not found.")
                 return
 
             for elem in props:
@@ -166,7 +167,7 @@ class Xml(wb.WnBase):
 
         """
 
-        props = self.get_properties(properties)
+        props = self.get_properties(properties, zone_xpath)
 
         for prop in props:
             props[prop] = np.array(props[prop], np.float_)
@@ -196,25 +197,23 @@ class Xml(wb.WnBase):
 
         zones = self._get_zones(zone_xpath)
 
-        result = np.array([])
+        nd = self._get_species_data()
 
-        for zone in zones:
-            sp = self._get_species_data_for_zone(zone)
+        maxn = 0
 
-            n = []
+        for i in range(len(nd)):
+            if nd[i][nucleon] > maxn:
+                maxn = nd[i][nucleon]
+
+        maxn += 1
+
+        result = np.zeros((len(zones), maxn))
+
+        for i in range(len(zones)):
+            sp = self._get_species_data_for_zone(zones[i])
 
             for s in sp:
-                n.append(sp[s][nucleon])
-
-            y = [0.] * (max(n) + 1)
-
-            for s in sp:
-                y[sp[s][nucleon]] += sp[s]['x'] / sp[s]['a']
-
-            if(result.size == 0):
-                result = np.append(result, y)
-            else:
-                result = np.vstack([result, y])
+                result[i, sp[s][nucleon]] += sp[s]['x'] / sp[s]['a']
 
         return result
 
@@ -266,7 +265,8 @@ class Xml(wb.WnBase):
         plt.show()
 
     def plot_mass_fractions_vs_property(self, prop, species, xfactor=1,
-                                        use_latex_names=False, rcParams=None, **kwargs
+                                        use_latex_names=False, rcParams=None,
+                                        **kwargs
                                         ):
         """Method to plot the mass fractions versus a property.
 
@@ -317,17 +317,18 @@ class Xml(wb.WnBase):
         plt.show()
 
     def plot_abundances_vs_nucleon_number(
-        self, nucleon, zone_xpath, rcParams=None, **kwargs
+        self, nucleon='a', zone_xpath='[last()]', rcParams=None, **kwargs
     ):
         """Method to plot abundances summed by nucleon number.
 
         Args:
 
-            ``nucleon`` (:obj:`str`): A string giving the nucleon (must be
-            'z', 'n', or 'a').
+            ``nucleon`` (:obj:`str`, optional): A string giving the nucleon
+            (must be 'z', 'n', or 'a').  Defaults to 'a'.
 
-            ``zone_xpath`` (:obj:`str`): A string giving the XPath expression
-            to select the (single) zone.
+            ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
+            expression to select the (single) zone. Defaults to the last
+            zone.
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
@@ -349,10 +350,17 @@ class Xml(wb.WnBase):
 
         self.apply_class_methods(plt, kwargs)
 
-        if len(y.shape) != 1:
+        if y.shape[0] != 1:
             print("Include only one zone in XPath.")
             return
 
-        plt.plot(y)
+        plt.plot(y[0, :])
+
+        if('xlabel' not in kwargs):
+            plt.xlabel(nucleon)
+
+        if('ylabel' not in kwargs):
+            s = 'Y(' + nucleon + ')'
+            plt.ylabel(s)
 
         plt.show()

@@ -7,6 +7,7 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=FutureWarning)
     import h5py
 
+
 class H5(wnb.WnBase):
     """A class for reading and plotting webnucleo HDF5 files.
 
@@ -24,7 +25,7 @@ class H5(wnb.WnBase):
     def _get_group_zone_property_hash(self, group, zone_index):
 
         properties = (
-           self._h5file['/' + group + '/Zone Properties/' + str(zone_index)]
+            self._h5file['/' + group + '/Zone Properties/' + str(zone_index)]
         )
 
         result = {}
@@ -61,7 +62,6 @@ class H5(wnb.WnBase):
 
         return result
 
-
     def _get_group_zone_labels_hash(self, group):
 
         zone_labels_array = self._get_group_zone_labels_array(group)
@@ -72,7 +72,6 @@ class H5(wnb.WnBase):
             result[zone_labels_array[i]] = i
 
         return result
-
 
     def get_iterable_groups(self):
         """Method to return the non-nuclide data groups in an hdf5 file.
@@ -89,7 +88,6 @@ class H5(wnb.WnBase):
                 result.append(group_name)
 
         return result
-
 
     def _get_nuclide_data_array(self):
 
@@ -109,7 +107,6 @@ class H5(wnb.WnBase):
             result.append(data)
 
         return result
-
 
     def get_nuclide_data_hash(self):
         """Method to return a nuclide data dictionary from an hdf5 file.
@@ -139,7 +136,6 @@ class H5(wnb.WnBase):
 
         return result
 
-
     def get_group_mass_fractions(self, group):
         """Method to return mass fractions from a group in an hdf5 file.
 
@@ -155,13 +151,12 @@ class H5(wnb.WnBase):
 
         return self._h5file['/' + group + '/Mass Fractions']
 
-
     def get_zone_mass_fractions_in_groups(self, zone, nuclides):
         """Method to return zone mass fractions in all groups.
 
         Args:
 
-            ``zone`` (:obj:`tuple`): A three element tuple giving the three 
+            ``zone`` (:obj:`tuple`): A three element tuple giving the three
             labels for the zone.
 
             ``nuclides`` (:obj:`list`): A list of strings giving the nuclides
@@ -191,15 +186,16 @@ class H5(wnb.WnBase):
 
         return result
 
-
     def get_zone_properties_in_groups(self, zone, properties):
         """Method to return zone properties in all groups.
 
         Args:
 
-            ``zone`` (:obj:`tuple`): A three element tuple giving the three                 labels for the zone.
+            ``zone`` (:obj:`tuple`): A three element tuple giving the three
+            labels for the zone.
 
-            ``properties`` (:obj:`list`): A list of strings giving the]                     properties to be retrieved.
+            ``properties`` (:obj:`list`): A list of strings giving the
+            properties to be retrieved.
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`list` giving the properties
@@ -220,13 +216,13 @@ class H5(wnb.WnBase):
 
         return result
 
-
     def get_zone_properties_in_groups_as_floats(self, zone, properties):
         """Method to return zone properties in all groups as floats.
 
         Args:
 
-            ``zone`` (:obj:`tuple`): A three element tuple giving the three                 labels for the zone.
+            ``zone`` (:obj:`tuple`): A three element tuple giving the three
+            labels for the zone.
 
             ``properties`` (:obj:`list`): A list of strings giving the
             properties to be retrieved.
@@ -245,7 +241,6 @@ class H5(wnb.WnBase):
             result[prop] = np.array(props[prop], np.float_)
 
         return result
-
 
     def get_group_properties_in_zones(self, group, properties):
         """Method to return properties in all zones for a group.
@@ -283,7 +278,6 @@ class H5(wnb.WnBase):
 
         return result
 
-
     def get_group_properties_in_zones_as_floats(self, group, properties):
         """Method to return properties in all zones for a group as floats.
 
@@ -308,7 +302,6 @@ class H5(wnb.WnBase):
             result[prop] = np.array(props[prop], np.float_)
 
         return result
-
 
     def plot_zone_property_vs_property(
         self, zone, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
@@ -355,7 +348,6 @@ class H5(wnb.WnBase):
 
         plt.plot(result[prop1] / xfactor, result[prop2] / yfactor)
         plt.show()
-
 
     def plot_group_mass_fractions(
         self, group, species, use_latex_names=False, rcParams=None, **kwargs
@@ -422,7 +414,6 @@ class H5(wnb.WnBase):
 
         plt.show()
 
-
     def plot_group_mass_fractions_vs_property(
         self, group, prop, species, xfactor=1, use_latex_names=False,
         rcParams=None, **kwargs
@@ -465,8 +456,8 @@ class H5(wnb.WnBase):
         latex_names = []
 
         x = self.get_group_properties_in_zones_as_floats(
-               group, [prop]
-            )[prop]
+            group, [prop]
+        )[prop]
         m = self.get_group_mass_fractions(group)
 
         nuclide_data = self.get_nuclide_data_hash()
@@ -501,7 +492,6 @@ class H5(wnb.WnBase):
         self.apply_class_methods(plt, kwargs)
 
         plt.show()
-
 
     def plot_zone_mass_fractions_vs_property(
         self, zone, prop, species, xfactor=1, yfactor=None,
