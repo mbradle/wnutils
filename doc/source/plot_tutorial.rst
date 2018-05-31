@@ -8,7 +8,7 @@ Import the namespace::
 
      >>> import wnutils.xml as wx
 
-The create an object for each file.  For example, type::
+Then create an object for each file.  For example, type::
 
     >>> my_xml = wx.Xml('my_output1.xml')
 

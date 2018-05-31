@@ -45,7 +45,18 @@ class H5(wnb.WnBase):
 
         return result
 
-    def _get_group_zone_labels_array(self, group):
+    def get_zone_labels_for_group(self, group):
+        """Method to return the zone labels for a group in a webnucleo hdf5 file.
+
+        Args:
+            ``group`` (:obj:`str`): The name of the group.
+
+        Returns:
+            :obj:`list`: A list of :obj:`tuple` giving the labels for the
+            zones in a group.
+
+        """
+
 
         zone_labels = self._h5file['/' + group + '/Zone Labels']
 
@@ -64,7 +75,7 @@ class H5(wnb.WnBase):
 
     def _get_group_zone_labels_hash(self, group):
 
-        zone_labels_array = self._get_group_zone_labels_array(group)
+        zone_labels_array = self.get_zone_labels_for_group(group)
 
         result = {}
 
@@ -108,8 +119,8 @@ class H5(wnb.WnBase):
 
         return result
 
-    def get_nuclide_data_hash(self):
-        """Method to return a nuclide data dictionary from an hdf5 file.
+    def get_nuclide_data(self):
+        """Method to return nuclide data from an hdf5 file.
 
         Returns:
 
@@ -140,7 +151,6 @@ class H5(wnb.WnBase):
         """Method to return mass fractions from a group in an hdf5 file.
 
             Args:
-
                 ``group`` (:obj:`str`): The name of the group.
 
             Returns:
@@ -168,7 +178,7 @@ class H5(wnb.WnBase):
 
         """
 
-        nuclide_hash = self.get_nuclide_data_hash()
+        nuclide_hash = self.get_nuclide_data()
 
         result = {}
 
@@ -265,7 +275,7 @@ class H5(wnb.WnBase):
 
         zone_labels_hash = self._get_group_zone_labels_hash(group)
 
-        for zone_labels in self._get_group_zone_labels_array(group):
+        for zone_labels in self.get_zone_labels_for_group(group):
             p = (
                 self._get_group_zone_property_hash(
                     group, zone_labels_hash[
@@ -296,7 +306,7 @@ class H5(wnb.WnBase):
 
         result = {}
 
-        props = get_group_properties_in_zones(group, properties)
+        props = self.get_group_properties_in_zones(group, properties)
 
         for prop in props:
             result[prop] = np.array(props[prop], np.float_)
@@ -385,7 +395,7 @@ class H5(wnb.WnBase):
 
         m = self.get_group_mass_fractions(group)
 
-        nuclide_data = self.get_nuclide_data_hash()
+        nuclide_data = self.get_nuclide_data()
 
         if use_latex_names:
             laxtex_names = self.get_latex_names(species)
@@ -460,7 +470,7 @@ class H5(wnb.WnBase):
         )[prop]
         m = self.get_group_mass_fractions(group)
 
-        nuclide_data = self.get_nuclide_data_hash()
+        nuclide_data = self.get_nuclide_data()
 
         if use_latex_names:
             laxtex_names = self.get_latex_names(species)

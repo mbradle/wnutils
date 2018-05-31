@@ -4,8 +4,7 @@ Reading in the Data
 `webnucleo <http://sourceforge.net/u/mbradle/blog/>`_ data files are
 in either in `XML <https://www.w3.org/TR/REC-xml/>`_ or
 `hdf5 <https://support.hdfgroup.org/HDF5/>`_ format.  `wnutils` routines
-can read either format.  The namespace containing these routines is
-`wnutils.read`.
+can read either format.
 
 In the following tutorials, you will enter Python commands.  In your
 terminal, type python (or python3, or, perhaps, python2.x or python3.x,
@@ -193,11 +192,31 @@ downloaded) by typing::
 
     >>> my_h5 = w5.H5('my_output.h5')
 
+Read the nuclide data.
+......................
+
+The nuclide data are in a group of their own in the file.  To retrieve the
+data (as a :obj:`dict` of :obj:`dict` with the nuclide names as the top-level
+dictionary keys), type::
+
+    >>> nuclides = my_h5.get_nuclide_data()
+
+Print out the data for, say, o16, by typing::
+
+    >>> print(nuclides['o16'])
+
+Print out the mass excess and spin for all species by typing::
+
+    >>> for nuclide in nuclides:
+    ...     print(nuclide, nuclides[nuclide]['mass excess'], nuclides[nuclide]['spin'])
+    ...
+
 Read the names of the iterable groups.
 .......................................
 
 Iterable groups are the groups in the HDF5 file that typically represent
-timesteps.  To retrieve their names (as a :obj:`list` of :obj:`str`), type::
+timesteps (that is, the groups that are not the nuclide data group).
+To retrieve their names (as a :obj:`list` of :obj:`str`), type::
 
      >>> groups = my_h5.get_iterable_groups()
 
@@ -207,12 +226,69 @@ Print them out by typing::
      ...     print(group)
      ...
 
-Read properties of a zone in the groups.
-........................................
+Read the zone labels for a group.
+.................................
 
 In a webnucleo HDF5 file, a zone is contained in a group and typically
 represents a spatial region.  Zones are specified by three labels, which
-we denote by a :obj:`tuple`.  To retrieve the properties `time`, `t9`, and
+we denote by a :obj:`tuple`.  To retrieve and print out the labels for a given
+group, say, `Step 00010`, type::
+
+    >>> labels = my_h5.get_zone_labels_for_group('Step 00010')
+    >>> for i in range(len(labels)):
+    ...     print('Zone',i,'has label',labels[i])
+    ...
+
+Read properties in all zones for a group.
+.........................................
+
+It is possible to retrieve the properties in all zones for a group as
+as :obj:`dict` of :obj:`list`.  Each list entry is a :obj:`str`.  For example,
+to retrieve and print the properties `time`, `t9`, and `rho` 
+in all zones for a given group, say, `Step 00024`, type::
+
+    >>> p = ['time','t9','rho']
+    >>> props = my_h5.get_group_properties_in_zones('Step 00024',p)
+    >>> labels = my_h5.get_zone_labels_for_group('Step 00024')
+    >>> for i in range(len(labels)):
+    ...     print('In',labels[i],'time=',props['time'][i],'t9=',props['t9'][i],'rho=',props['rho'][i])
+    ...
+
+Read properties in all zones for a group as floats.
+...................................................
+
+It is often desirable to retrieve the properties in zones for a group as floats.
+For example, one may again retrieve `time`, `t9`, and `rho` from `Step 00024` but,
+this time, as floats by typing::
+
+    >>> p = ['time','t9','rho']
+    >>> props = my_h5.get_group_properties_in_zones_as_floats('Step 00024',p)
+    >>> type(props['time'])
+    >>> type(props['time'][0])
+
+Read mass fractions in all zones for a group.
+.............................................
+
+You can read all the mass fractions in all the zones for a given group.  For
+a group `Step 00021`, type::
+
+    >>> x = my_h5.get_group_mass_fractions('Step 00021')
+
+The array x is a 2d HDF5 :obj:`h5py:Dataset`.  The first index gives the zone
+and the second the species.  To print out the mass fraction of ne20 in all
+the zones, type::
+
+    >>> i_ne20 = (my_h5.get_nuclide_data())['ne20']['index']
+    >>> labels = my_h5.get_zone_labels_for_group('Step 00021')
+    >>> for i in range(x.shape[0]):
+    ...     print('Zone',labels[i],'has X(ne20) =',x[i,i_ne20])
+    ...
+
+Read properties of a zone in the groups.
+........................................
+
+It is possible to retrieve properties from a given zone in all groups.
+To retrieve the properties `time`, `t9`, and
 `rho` in all group for the zone with labels `1`, `0`, `0`, type::
 
      >>> zone = ('1','0','0')
@@ -231,9 +307,8 @@ To print the properties out in the groups, type::
 Read properties of a zone in the groups as floats.
 ..................................................
 
-In a webnucleo HDF5 file, a zone is contained in a group and typically
-represents a spatial region.  Zones are specified by three labels, which
-we denote by a :obj:`tuple`.  To retrieve the properties `time`, `t9`, and
+One often wants the properties of a zone in the groups as floats.
+To retrieve the properties `time`, `t9`, and
 `rho` in all group for the zone with labels `1`, `0`, `0`, type::
 
      >>> zone = ('1','0','0')
@@ -250,3 +325,21 @@ float.  To print the properties out in the groups, type::
      ...         )
      ...     )
      ...
+
+Read mass fractions in a zone in the groups.
+............................................
+
+We can retrieve the mass fractions of specific species for a given zone in all
+the iterable groups.  For example, to retrieve `o16`, `o17`, and `o18` in the
+zone with labels `1`, `0`, `0`, type::
+
+    >>> species = ['o16','o17','o18']
+    >>> zone = ('1','0','0')
+    >>> x = my_h5.get_zone_mass_fractions_in_groups( zone, species )
+
+To print them out, you can now type::
+
+    >>> groups = my_h5.get_iterable_groups()
+    >>> for i in range(len(groups)):
+    ...     print(groups[i],':','X(o16)=',x['o16'][i],'X(o17)=',x['o17'][i],'X(o18)=',x['o18'][i])
+    ... 
