@@ -60,7 +60,7 @@ These can be entered directly or as a dictionary.
 XML
 ---
 
-To make graphs from Xml files, first import the namespace::
+To make graphs from XML files, first import the namespace::
 
     >>> import wnutils.xml as wx
 
@@ -71,7 +71,7 @@ Then create an object for each file.  For example, type::
 Plot properties against each other for the zones.
 .................................................
 
-We can plot properties in the zones in an Xml file against each other.  For
+We can plot properties in the zones in an XML file against each other.  For
 example, to plot `t9` vs. `time`, type::
 
     >>> my_xml.plot_property_vs_property( 'time', 't9' )
@@ -145,30 +145,43 @@ To add a title giving the conditions at that step, type::
     ...             )
     >>> my_xml.plot_abundances_vs_nucleon_number(nucleon='z', zone_xpath='[position() = 20]', xlim = [0,50], ylim = [1.e-10,1], yscale='log', xlabel = 'Atomic Number, Z', ylabel = 'Y(Z)', title=title_str)
 
-Recall that the property arrays are zero-indexed
+Recall that the property arrays are `zero-indexed <https://en.wikipedia.org/wiki/Zero-based_numbering>`_.
 
 HDF5
 ----
 
-Import the namespace::
+To make plots from webnucleo HDF5 file, first import the namespace::
 
     >>> import wnutils.h5 as w5
 
-Create an object for each file by typing::
+Next, create an object for each file by typing::
 
     >>> my_h5 = w5.H5( 'my_output.h5' )
 
 Plot mass fractions versus a property for a given zone.
 .......................................................
 
-Type::
+You can plot mass fractions against a property for a given zone.  For example,
+type::
 
-     >>> w5.plot_zone_mass_fractions_vs_property(
+     >>> my_h5.plot_zone_mass_fractions_vs_property(
      ...     ('1','0','0'), 'time', ['he4', 'c12','o16'], yscale = 'log',
      ...      ylim = [1.e-5,1], xscale = 'log', xlim = [1,1.e5], xfactor = 3.15e7,
      ...      xlabel = 'time (yr), use_latex_names=True
      ... )
-     ...
+
+Note, this is equivalent to typing::
+
+     >>> zone = ('1','0','0')
+     >>> species = ['he4','c12','o16']
+     >>> kwa = {'yscale': 'log', 'ylim': [1.e-5,1], 'yscale': 'log'}
+     >>> kwb = {'xscale': 'log', 'xlim': [1,1.e5], 'xfactor': 3.15e7}
+     >>> kwc = {'xlabel': 'time (yr)', 'use_latex_names': True}
+     >>> my_h5.plot_zone_mass_fractions_vs_property( zone, 'time', species, **kwa, **kwb, **kwc)
+
+Or, in Python 3.5 or greater, you can type::
+     >>> kws = {**kwa,**kwb,**kwc}
+     >>> my_h5.plot_zone_mass_fractions_vs_property( zone, 'time', species, **kws)
 
 Plot mass fractions for a given group.
 ......................................
