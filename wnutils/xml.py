@@ -296,23 +296,42 @@ class Xml(wb.WnBase):
 
         """
 
-        fig = plt.figure()
+        self.set_plot_params(mpl, rcParams)
 
         y = []
         l = []
-        latex_names = []
 
         x = self.get_properties_as_floats([prop])[prop] / xfactor
 
         y = self.get_mass_fractions(species)
 
-        for i in range(len(species)):
-            lab = species[i]
-            l.append(plt.plot(x, y[species[i]], label=lab))
+        if use_latex_names:
+            latex_names = self.get_latex_names(species)
+
+        for sp in species:
+            if use_latex_names:
+                lab = latex_names[sp]
+            else:
+                lab = sp
+            l.append(plt.plot(x, y[sp], label=lab))
 
         self.apply_class_methods(plt, kwargs)
 
-        plt.legend()
+        if len(species) > 1:
+            plt.legend()
+
+        if('xlabel' not in kwargs):
+            plt.xlabel(prop)
+
+        if('ylabel' not in kwargs):
+            if len(species) > 1:
+                plt.ylabel('Mass Fraction')
+            else:
+                if use_latex_names:
+                    s = '$X(' + latex_names[species[0]][1:-1] + ')$'
+                else:
+                    s = species[0]
+                plt.ylabel(s)
 
         plt.show()
 

@@ -28,8 +28,8 @@ class WnBase:
 
         """
 
+        my_mpl.rcParams.update(my_mpl.rcParamsDefault)
         if my_params:
-            my_mpl.rcParams.update(my_mpl.rcParamsDefault)
             for key in my_params:
                 my_mpl.rcParams[key] = my_params[key]
 
@@ -78,17 +78,15 @@ class WnBase:
                 for key2 in keyword_params[key]:
                     method(**{key2: keyword_params[key][key2]})
 
-    def list_rcParams(self, my_mpl):
-        """Method to list current rcParams.
-
-        Args:
-            ``my_mpl`` (matplotlib): A matplotlib instance.
+    def list_rcParams(self):
+        """Method to list default rcParams.
 
         Returns:
-            Prints the current :obj:`matplotlib.rcParams`.
+            Prints the default :obj:`matplotlib.rcParams`.
 
         """
 
+        import matplotlib as my_mpl
         print(my_mpl.rcParams.keys())
 
     def get_latex_names(self, nuclides):

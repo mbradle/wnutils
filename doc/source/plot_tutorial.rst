@@ -1,12 +1,68 @@
 Plotting the Data
 ==================
 
+If you have read in the various data from a webnucleo file, you can
+plot them using `matplotlib <https://matplotlib.org>`_.  For example, to
+plot the abundance of Z=28 nuclei in `my_output1.xml` as a function of time,
+you can type in Python::
+
+    >>> import matplotlib.pyplot as plt
+    >>> import wnutils.xml as wx
+    >>> my_xml = wx.Xml('my_output1.xml')
+    >>> props = my_xml.get_properties_as_floats(['time'])
+    >>> yz = my_xml.get_abundances_vs_nucleon_number(nucleon='z')
+    >>> plt.plot(props['time'],yz[:,28])
+    >>> plt.xscale('log')
+    >>> plt.xlim([1.e-14,1.])
+    >>> plt.ylim([0.,0.0014])
+    >>> plt.xlabel('time (s)')
+    >>> plt.ylabel('Y(28)')
+    >>> plt.show()
+
+Of course you can also write a Python file (called, say, my_plot.py)
+with the above lines and execute it by typing `python my_plot.py`.
+
+While it is always possible to make such plots with data read in with `wnutils`
+routines, we have written several plotting methods for commonly made plots.  The
+rest of this tutorial demonstrates how to use these methods.
+
+Setting RcParams
+----------------
+
+All the plotting methods accept RcParams as keywords.  These can be entered as
+a key and value pair or as a dictionary of :obj:`matplotlib.RcParams`.  You can
+print the list of parameters (and their default values) that can be set by typing::
+
+    >>> import wnutils.wnbase as wnb
+    >>> wb = wnb.WnBase()
+    >>> wb.list_rcParams()
+
+Since the WnBase class is inherited by the other wnutils classes, the
+`list_rcParams()` method is available from any class instance.
+
+We will define a dictionary for this tutorial by typing::
+
+    >>> my_params = {'lines.linewidth': 2, 'font.size': 14}
+
+Setting plot methods
+--------------------
+
+The plotting routines also accept keywords giving :obj:`matplotlib.pyplot` methods
+and their arguments.  In such a case, the keyword is the method, and the value is
+the argument to the method.  For example, calling a plotting routine with the
+keywork `xlabel = 'time (s)` is equivalent to typing::
+
+    >>> import matplotlib.pyplot as plt
+    >>> plt.xlabel('time (s)')
+
+These can be entered directly or as a dictionary.
+
 XML
 ---
 
-Import the namespace::
+To make graphs from Xml files, first import the namespace::
 
-     >>> import wnutils.xml as wx
+    >>> import wnutils.xml as wx
 
 Then create an object for each file.  For example, type::
 
@@ -15,7 +71,8 @@ Then create an object for each file.  For example, type::
 Plot properties against each other for the zones.
 .................................................
 
-Type::
+We can plot properties in the zones in an Xml file against each other.  For
+example, to plot `t9` vs. `time`, type::
 
     >>> my_xml.plot_property_vs_property( 'time', 't9' )
 
@@ -23,13 +80,72 @@ Now apply class methods to the plot.  For example, type::
 
     >>> my_xml.plot_property_vs_property( 'time', 't9', xlabel = 'time (s)', ylabel = '$T_9$' )
 
+You can equivalently do this by defining the method keywords in a dictionary and
+calling that.  To do so, type::
+
+    >>> kw = {'xlabel':'time (s)', 'ylabel':'$T_9$'}
+    >>> my_xml.plot_property_vs_property('time', 't9', **kw)
+
+You can also do this with both procedures.  For example, type::
+
+    >>> kw2 = {'xlabel':'time (s)'}
+    >>> my_xml.plot_property_vs_property('time', 't9', ylabel = '$T_9$', **kw2)
+
+Finally, note that we can call with the RcParams we defined by typing::
+
+    >>> my_xml.plot_property_vs_property('time', 't9', rcParams=my_params, **kw)
+
 Plot mass fractions against a property.
 .........................................
 
-Type::
+We can plot mass fractions of species against a property (typically the time
+or temperature).  For example, to plot the mass fractions of he4 and fe58 
+versus time, type::
 
     >>> my_xml.plot_mass_fractions_vs_property( 'time', ['he4','fe58'] )
 
+You can add appropriate keywords.  For example, you can type::
+
+    >>> my_xml.plot_mass_fractions_vs_property( 'time', ['he4','fe58'], use_latex_names=True, xlabel = 'time (s)', xlim=[1.e-6,1], xscale = 'log', ylim=[0,1])
+
+By setting the `use_latex_names` keyword to true, species names appear as
+a superscript mass number in front of the element name.  We can of course also
+use the RcParams::
+
+    >>> my_xml.plot_mass_fractions_vs_property( 'time', ['he4','fe58'], use_latex_names=True, xlabel = 'time (s)', xlim=[1.e-6,1], xscale = 'log', ylim=[0,1], rcParams=my_params)
+
+If you want to plot the mass fraction for a single species, be sure to enter that
+species as a list of one element::
+
+    >>> kw3 = {'use_latex_names': True, 'xlabel': '$T_9$', 'xlim': [10,0]}
+    >>> my_xml.plot_mass_fractions_vs_property( 't9', ['si28'], **kw3, ylim=[1.e-12,1.e-4], yscale = 'log')
+
+Plot abundances versus nucleon number.
+......................................
+
+To plot the summed abundances over mass number A in the last zone, type::
+
+    >>> my_xml.plot_abundances_vs_nucleon_number()
+
+To dress that up, try typing::
+
+    >>> my_xml.plot_abundances_vs_nucleon_number(xlim = [0,100], ylim = [1.e-10,1], yscale='log', xlabel = 'Mass Number, A', ylabel = 'Y(A)')
+
+Use keywords to plot against atomic number (Z) or neutron number (N) or to plot
+against a different time step (zone), using an XPath expression.  For example,
+to plot elemental abundances in the 20th step, type::
+
+    >>> my_xml.plot_abundances_vs_nucleon_number(nucleon='z', zone_xpath='[position() = 20]', xlim = [0,50], ylim = [1.e-10,1], yscale='log', xlabel = 'Atomic Number, Z', ylabel = 'Y(Z)')
+
+To add a title giving the conditions at that step, type::
+
+    >>> props = my_xml.get_properties_as_floats( ['time','t9','rho'] )
+    >>> title_str = 'time(s) = {0:.2e}, t9 = {1:.2f}, rho(g/cc) = {2:.2e}'.format(
+    ...                 props['time'][19], props['t9'][19], props['rho'][19]
+    ...             )
+    >>> my_xml.plot_abundances_vs_nucleon_number(nucleon='z', zone_xpath='[position() = 20]', xlim = [0,50], ylim = [1.e-10,1], yscale='log', xlabel = 'Atomic Number, Z', ylabel = 'Y(Z)', title=title_str)
+
+Recall that the property arrays are zero-indexed
 
 HDF5
 ----
