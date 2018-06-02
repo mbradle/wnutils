@@ -1,4 +1,4 @@
-class WnBase:
+class Base:
     """Class for setting wnutils parameters and utilities."""
 
     def _get_property_name(self, tup):

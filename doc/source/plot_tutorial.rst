@@ -33,7 +33,7 @@ All the plotting methods accept RcParams as keywords.  These can be entered as
 a key and value pair or as a dictionary of :obj:`matplotlib.RcParams`.  You can
 print the list of parameters (and their default values) that can be set by typing::
 
-    >>> import wnutils.wnbase as wnb
+    >>> import wnutils.base as wnb
     >>> wb = wnb.WnBase()
     >>> wb.list_rcParams()
 

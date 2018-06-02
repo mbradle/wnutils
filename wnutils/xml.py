@@ -1,11 +1,11 @@
-import wnutils.wnbase as wb
+import wnutils.base as wb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from lxml import etree
 
 
-class Xml(wb.WnBase):
+class Xml(wb.Base):
     """A class for reading and plotting webnucleo xml files.
 
        Each instance corresponds to an xml file.  Methods extract

@@ -1,4 +1,4 @@
-import wnutils.wnbase as wnb
+import wnutils.base as wnb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +8,7 @@ with warnings.catch_warnings():
     import h5py
 
 
-class H5(wnb.WnBase):
+class H5(wnb.Base):
     """A class for reading and plotting webnucleo HDF5 files.
 
        Each instance corresponds to an hdf5 file.  Methods extract
