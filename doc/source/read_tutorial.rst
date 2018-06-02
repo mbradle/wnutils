@@ -34,7 +34,7 @@ To begin, import the namespace by typing::
 
     >>> import wnutils.xml as wx
 
-To illustrate the use of `wnutils.xml` routines, we use the files
+To illustrate the use of `wnutils.xml` routines, use the files
 `my_output1.xml` and `my_output2.xml`,
 which you should have downloaded according to the
 :ref:`data` tutorial.  For each file, create an Xml object.  For example,
@@ -42,17 +42,45 @@ type::
 
     >>> my_xml_1 = wx.Xml('my_output1.xml')
 
+Read the nuclide data.
+......................
+
+You can retrieve the nuclide data in the webnucleo XML file by typing::
+
+    >>> nuclides = my_xml_1.get_nuclide_data()
+
+This returns a dictionary of data with the key being the nuclide name.
+You may print out all the data for a specific nuclide, say o16, by typing::
+
+    >>> print(nuclides['o16'])
+
+Or, to get specific data, try typing::
+
+    >>> print('The mass excess in MeV of o16 is', nuclides['o16']['mass excess'])
+
+It is possible to use an XPath expression to select out only certain
+nuclides.  For example, to get the data for nitrogen isotopes only, type::
+
+    >>> n = my_xml_1.get_nuclide_data(nuc_xpath='[z = 7]')
+
+To confirm that you only retrieved nitrogen data, type::
+
+    >>> for isotope in n:
+    ...     print(isotope, ':', 'Z =', n[isotope]['z'], 'A =', n[isotope]['a'])
+    ...
+
 Read zone properties.
 .....................
 
-We can retrieve properties in zones.  For our example, we retrieve the
-`time`, `t9` (temperature in billions of Kelvins), and `rho` (mass density
-in g/cc) by typing::
+You can retrieve properties in zones.  For the present example,
+you retrieve the `time`, `t9` (temperature in billions of Kelvins),
+and `rho` (mass density in g/cc) by typing::
 
     >>> props = my_xml_1.get_properties( ['time','t9','rho'] )
 
-The properties are returned in the hash `props`.  Each hash element is
-a list of strings giving the properties in the zones.  To see this, type::
+The properties are returned in the dictionary `props`.  Each dictionary
+element is a list of strings giving the properties in the zones.
+To see this, type::
 
     >>> print(props['time'])
 
@@ -77,43 +105,43 @@ which shows each list entry is a :obj:`str`.
 Read properties of selected zones.
 ..................................
 
-We can select out the zones whose properties we wish to read by using
+You can select out the zones whose properties you wish to read by using
 an `XPath <https://www.w3.org/TR/1999/REC-xpath-19991116/>`_ expression.
-For example, we can retrieve the `time`, `t9`, and `rho` properties, as
-in the above example, but only for the last 10 zones.  We type::
+For example, you can retrieve the `time`, `t9`, and `rho` properties, as
+in the above example, but only for the last 10 zones.  Type::
 
     >>> props = my_xml_1.get_properties(
     ...     ['time','t9','rho'], zone_xpath='[position() > last() - 10]'
     ... )
     ...
 
-We print the zone properties, for example, by typing::
+You can print the zone properties, for example, by typing::
 
     >>> print(props['t9'])
 
-We confirm that we only have the properties for 10 zones by typing::
+Confirm that there are only the properties for 10 zones by typing::
 
     >>> print(len(props['t9'])
 
 Read zone properties as floats.
 ...............................
 
-Properties are by default strings.  When we wish to manipulate them
-(for example, to plot them), we want
-them to be :obj:`floats`.  We can retrieve them as floats by typing::
+Properties are by default strings.  When you wish to manipulate them
+(for example, to plot them), you want
+them to be :obj:`floats`.  You can retrieve them as floats by typing::
 
     >>> props = my_xml_1.get_properties_as_floats( ['time','t9','rho'] )
 
-The returned hash has entries that are :obj:`numpy.array`, which we confirm
+The returned hash has entries that are :obj:`numpy.array`, which you confirm
 with::
 
     >>> type(props['rho'])
 
-We can confirm that the array entries are floats by typing::
+You can confirm that the array entries are floats by typing::
 
     >>> type(props['rho'][0])
 
-We can print out the entries by typing::
+You can print out the entries by typing::
 
     >>> for i in range(len(props['time'])):
     ...     print(
@@ -129,13 +157,13 @@ This will output the time, temperature (in billions of K), and mass density
 Read mass fractions in zones.
 .............................
 
-We can retrieve the mass fractions in zones.  For example, to get the
-mass fractions of o16, si28, and s36, we type::
+You can retrieve the mass fractions in zones.  For example, to get the
+mass fractions of o16, si28, and s36, type::
 
     >>> x = my_xml_1.get_mass_fractions(['o16','si28','s36']) 
 
 The method returns a :obj:`dict` of :obj:`numpy.array`.  Each array element
-is a :obj:`float`.  We can print the mass fraction of silicon-28 in all
+is a :obj:`float`.  You can print the mass fraction of silicon-28 in all
 zones by typing::
 
     >>> print(x['si28'])
@@ -153,7 +181,7 @@ Retrieve abundances summed over nucleon number in zones.
 
 It is often convenient to retrieve the abundances of the nuclei in
 a network file summed over proton number (`z`), neutron number (`n`),
-or mass number (`a`).  To do so, we can type::
+or mass number (`a`).  To do so, type::
 
     >>> y = my_xml_1.get_abundances_vs_nucleon_number()
 
@@ -329,7 +357,7 @@ float.  To print the properties out in the groups, type::
 Read mass fractions in a zone in the groups.
 ............................................
 
-We can retrieve the mass fractions of specific species for a given zone in all
+You can retrieve the mass fractions of specific species for a given zone in all
 the iterable groups.  For example, to retrieve `o16`, `o17`, and `o18` in the
 zone with labels `1`, `0`, `0`, type::
 

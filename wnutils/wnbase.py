@@ -116,3 +116,37 @@ class WnBase:
             latex_names[nuclide] = name
 
         return latex_names
+
+    def create_nuclide_name(self, z, a, state):
+
+        s_zname = ['n'  ,
+                   'h'  , 'he' , 'li' , 'be' , 'b'  ,
+                   'c'  , 'n'  , 'o'  , 'f'  , 'ne' ,
+                   'na' , 'mg' , 'al' , 'si' , 'p'  ,
+                   's'  , 'cl' , 'ar' , 'k'  , 'ca' ,
+                   'sc' , 'ti' , 'v'  , 'cr' , 'mn' ,
+                   'fe' , 'co' , 'ni' , 'cu' , 'zn' ,
+                   'ga' , 'ge' , 'as' , 'se' , 'br' ,
+                   'kr' , 'rb' , 'sr' , 'y'  , 'zr' ,
+                   'nb' , 'mo' , 'tc' , 'ru' , 'rh' ,
+                   'pd' , 'ag' , 'cd' , 'in' , 'sn' ,
+                   'sb' , 'te' , 'i'  , 'xe' , 'cs' ,
+                   'ba' , 'la' , 'ce' , 'pr' , 'nd' ,
+                   'pm' , 'sm' , 'eu' , 'gd' , 'tb' ,
+                   'dy' , 'ho' , 'er' , 'tm' , 'yb' ,
+                   'lu' , 'hf' , 'ta' , 'w'  , 're' ,
+                   'os' , 'ir' , 'pt' , 'au' , 'hg' ,
+                   'tl' , 'pb' , 'bi' , 'po' , 'at' ,
+                   'rn' , 'fr' , 'ra' , 'ac' , 'th' ,
+                   'pa' , 'u'  , 'np' , 'pu' , 'am' ,
+                   'cm' , 'bk' , 'cf' , 'es' , 'fm' ,
+                   'md' , 'no' , 'lr' , 'rf' , 'db' ,
+                   'sg' , 'bh' , 'hs' , 'mt' , 'ds' ,
+                   'rg' , 'cn' , 'nh' , 'fl' , 'mc' ,
+                   'lv' , 'ts' , 'og'
+                  ]
+
+        name = s_zname[z] + str(a) + state
+
+        return name
+

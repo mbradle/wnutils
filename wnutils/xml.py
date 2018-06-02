@@ -19,26 +19,54 @@ class Xml(wb.WnBase):
     def __init__(self, file):
         self._root = etree.parse(file).getroot()
 
-    def _get_species_data(self):
+    def _get_nuclide_data_array(self, nuc_xpath):
         result = []
 
-        species = self._root.xpath('//nuclear_data/nuclide')
+        nuclides = self._root.xpath('//nuclear_data/nuclide' + nuc_xpath)
 
-        for sp in species:
+        for nuc in nuclides:
             data = {}
-            data['z'] = int((sp.xpath('z'))[0].text)
-            data['a'] = int((sp.xpath('a'))[0].text)
-            data['n'] = data['a'] - data['z']
+            data['z'] = int((nuc.xpath('z'))[0].text)
+            data['a'] = int((nuc.xpath('a'))[0].text)
+            data['source'] = (nuc.xpath('source'))[0].text
+            data['spin'] = float((nuc.xpath('spin'))[0].text)
+            if nuc.xpath('state'):
+                data['state'] = (nuc.xpath('state'))[0].text
+            else:
+                data['state'] = ''
+            data['mass excess'] = float((nuc.xpath('mass_excess'))[0].text)
             result.append(data)
 
         return result
 
-    def _get_species_data_for_zone(self, zone):
+    def get_nuclide_data(self, nuc_xpath=' '):
+        """Method to retrieve nuclear data from webnucleo XML.
+
+        Args:
+            ``nuc_xpath`` (:obj:`str`, optional): XPath expression to select
+            nuclides.  Defaults to all nuclides.
+
+        Returns:
+            :obj:`dict`: A dictionary of nuclide data.  The data for each
+            nuclide are themselves contained in a :obj:`dict`.
+
+        """
+        result = {}
+        nuclides = self._get_nuclide_data_array(nuc_xpath)
+        for i in range(len(nuclides)):
+            s = self.create_nuclide_name(
+                nuclides[i]['z'], nuclides[i]['a'], nuclides[i]['state']
+            )
+            result[s] = nuclides[i]
+
+        return result
+
+    def _get_nuclide_data_for_zone(self, zone):
         result = {}
 
-        species = zone.xpath('mass_fractions/nuclide')
+        nuclides = zone.xpath('mass_fractions/nuclide')
 
-        for sp in species:
+        for sp in nuclides:
             data = {}
             data['z'] = int((sp.xpath('z'))[0].text)
             data['a'] = int((sp.xpath('a'))[0].text)
@@ -51,45 +79,47 @@ class Xml(wb.WnBase):
     def _get_zones(self, zone_xpath):
         return self._root.xpath('//zone' + zone_xpath)
 
-    def get_mass_fractions(self, species, zone_xpath=' '):
-        """Method to retrieve mass fractions of species in specified zones.
+    def get_mass_fractions(self, nuc_xpath=' ', zone_xpath=' '):
+        """Method to retrieve mass fractions of nuclides in specified zones.
 
         Args:
-            ``species`` (:obj:`list`): List of strings giving requested
-            species.
+            ``nuc_xpath`` (:obj:`str`, optional): XPath expression to select
+            nuclides.  Defaults to all nuclides.
 
             ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
             zones.  Defaults to all zones.
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`numpy.array` containing the
-            mass fractions of the requested species in the zones as floats.
+            mass fractions of the requested nuclides in the zones as floats.
 
         """
 
         dict = {}
 
-        for my_species in species:
-            dict[my_species] = []
+        nuclides = self.get_nuclide_data(nuc_xpath=nuc_xpath)
+
+        for nuclide in nuclides:
+            dict[nuclide] = []
 
         zones = self._get_zones(zone_xpath)
 
         for zone in zones:
 
-            for my_species in species:
+            for nuclide in nuclides:
 
                 data = zone.find(
-                    'mass_fractions/nuclide[@name="%s"]/x' % my_species)
+                    'mass_fractions/nuclide[@name="%s"]/x' % nuclide)
 
                 if data is None:
-                    dict[my_species].append(0.)
+                    dict[nuclide].append(0.)
                 else:
-                    dict[my_species].append(data.text)
+                    dict[nuclide].append(data.text)
 
         result = {}
 
-        for my_species in species:
-            result[my_species] = np.array(dict[my_species], np.float_)
+        for nuclide in nuclides:
+            result[nuclide] = np.array(dict[nuclide], np.float_)
 
         return result
 
@@ -197,7 +227,7 @@ class Xml(wb.WnBase):
 
         zones = self._get_zones(zone_xpath)
 
-        nd = self._get_species_data()
+        nd = self._get_nuclide_data_array('')
 
         maxn = 0
 
@@ -210,7 +240,7 @@ class Xml(wb.WnBase):
         result = np.zeros((len(zones), maxn))
 
         for i in range(len(zones)):
-            sp = self._get_species_data_for_zone(zones[i])
+            sp = self._get_nuclide_data_for_zone(zones[i])
 
             for s in sp:
                 result[i, sp[s][nucleon]] += sp[s]['x'] / sp[s]['a']
@@ -303,7 +333,7 @@ class Xml(wb.WnBase):
 
         x = self.get_properties_as_floats([prop])[prop] / xfactor
 
-        y = self.get_mass_fractions(species)
+        y = self.get_mass_fractions()
 
         if use_latex_names:
             latex_names = self.get_latex_names(species)
