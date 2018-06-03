@@ -328,7 +328,6 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        y = []
         l = []
 
         x = self.get_properties_as_floats([prop])[prop] / xfactor
@@ -347,7 +346,7 @@ class Xml(wb.Base):
 
         self.apply_class_methods(plt, kwargs)
 
-        if len(species) > 1:
+        if len(species) > 1 and 'legend' not in kwargs:
             plt.legend()
 
         if('xlabel' not in kwargs):

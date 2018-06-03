@@ -7,6 +7,6 @@ __all__ = [
 
 __title__ = 'wnutils'
 __summary__ = 'Python project to read and plot webnucleo files'
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 __author__ = 'Clemson University'
 __copyright__ = 'Clemson University, 2018'
