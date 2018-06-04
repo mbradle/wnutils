@@ -47,36 +47,22 @@ class Base:
 
         """
 
-        with_kwargs = ['legend']
         for key in keyword_params:
-            if key not in with_kwargs:
-                method = None
+            method = None
 
-                try:
-                    method = getattr(plt, key)
-                except AttributeError:
-                    raise NotImplementedError(
-                        "Class `{}` does not implement `{}`".format(
-                            plt.__class__.__name__, method_name
-                        )
+            try:
+                method = getattr(plt, key)
+            except AttributeError:
+                raise NotImplementedError(
+                    "Class `{}` does not implement `{}`".format(
+                        plt.__class__.__name__, method_name
                     )
+                )
 
+            if isinstance(keyword_params[key], dict):
+                method(**keyword_params[key])
+            else:
                 method(keyword_params[key])
-
-            elif key in with_kwargs:
-                method = None
-
-                try:
-                    method = getattr(plt, key)
-                except AttributeError:
-                    raise NotImplementedError(
-                        "Class `{}` does not implement `{}`".format(
-                            plt.__class__.__name__, method_name
-                        )
-                    )
-
-                for key2 in keyword_params[key]:
-                    method(**{key2: keyword_params[key][key2]})
 
     def list_rcParams(self):
         """Method to list default rcParams.
