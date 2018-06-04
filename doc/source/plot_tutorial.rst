@@ -187,7 +187,10 @@ Now call the plot method with the labels keyword by typing::
     >>> my_multi_xml.plot_property_vs_property('time','t9', labels=labs, legend={'title':'tau'})
 
 Notice the call to the legend keyword.  The keyword values can be any
-valid keyword argument to :obj:`matplotlib.pyplot.legend`.
+valid keyword argument to :obj:`matplotlib.pyplot.legend`.  Thus, for example,
+you could type::
+
+    >>> my_multi_xml.plot_property_vs_property('time','t9', labels=labs, legend={'title':'tau', 'shadow':True})
 
 Plot a mass fraction against a property in multiple files.
 ..........................................................

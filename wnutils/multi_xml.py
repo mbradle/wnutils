@@ -35,7 +35,8 @@ class Multi_Xml(wb.Base):
         """Method to return individual Xml instances.
 
         Returns:
-            :obj:`list`:  A list of individual wnutils.xml.Xml instances.
+            :obj:`list`:  A list of individual :obj:`wnutils.xml.Xml`
+            instances.
 
         """
         return self._xml
@@ -129,6 +130,9 @@ class Multi_Xml(wb.Base):
             :obj:`matplotlib.rcParams` to be applied to the plot.
             Defaults to leaving the current rcParams unchanged.
 
+            ``labels`` (:obj:`list`, optional): A list of strings giving
+            the legend labels.
+
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
 
@@ -150,9 +154,9 @@ class Multi_Xml(wb.Base):
                 print('Number of legend labels must equal number of plots.')
                 return
 
-        for xml in xmls:
-            x = xml.get_properties_as_floats([prop])[prop] / xfactor
-            y = xml.get_mass_fractions([species])
+        for i in range(len(xmls)):
+            x = xmls[i].get_properties_as_floats([prop])[prop] / xfactor
+            y = xmls[i].get_mass_fractions([species])
             if labels:
                 plt.plot(x, y[species], label=labels[i])
             else:
@@ -165,9 +169,9 @@ class Multi_Xml(wb.Base):
 
         if('ylabel' not in kwargs):
             if use_latex_names:
-                s = '$X(' + latex_names[species[0]][1:-1] + ')$'
+                s = '$X(' + latex_names[species][1:-1] + ')$'
             else:
-                s = species[0]
+                s = species
             plt.ylabel(s)
 
         if labels and 'legend' not in kwargs:
