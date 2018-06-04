@@ -249,6 +249,7 @@ Note, this is equivalent to typing::
      >>> my_h5.plot_zone_mass_fractions_vs_property( zone, 'time', species, **kwa, **kwb, **kwc)
 
 Or, in Python 3.5 or greater, you can type::
+
      >>> kws = {**kwa,**kwb,**kwc}
      >>> my_h5.plot_zone_mass_fractions_vs_property( zone, 'time', species, **kws)
 
