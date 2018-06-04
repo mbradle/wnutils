@@ -14,7 +14,7 @@ You might create this off your home directory, so you could type::
     $ cd wnutils_tutorials
 
 Next, download the data tarball
-`wnutils_tutorials_data.tar.gz <http://nucnet-tools.sourceforge.net/data_pub/tutorials/wnutils/2018-05-16/wnutils_tutorials_data.tar.gz>`_
+`wnutils_tutorials_data.tar.gz <http://nucnet-tools.sourceforge.net/data_pub/tutorials/wnutils/2018-06-04/wnutils_tutorials_data.tar.gz>`_
 and move the file to your `wnutils_tutorials` directory.  Extract the
 data by typing::
 

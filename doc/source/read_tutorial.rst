@@ -40,14 +40,14 @@ which you should have downloaded according to the
 :ref:`data` tutorial.  For each file, create an Xml object.  For example,
 type::
 
-    >>> my_xml_1 = wx.Xml('my_output1.xml')
+    >>> my_xml = wx.Xml('my_output1.xml')
 
 Read the nuclide data.
 ......................
 
 You can retrieve the nuclide data in the webnucleo XML file by typing::
 
-    >>> nuclides = my_xml_1.get_nuclide_data()
+    >>> nuclides = my_xml.get_nuclide_data()
 
 This returns a dictionary of data with the key being the nuclide name.
 You may print out all the data for a specific nuclide, say o16, by typing::
@@ -61,7 +61,7 @@ Or, to get specific data, try typing::
 It is possible to use an XPath expression to select out only certain
 nuclides.  For example, to get the data for nitrogen isotopes only, type::
 
-    >>> n = my_xml_1.get_nuclide_data(nuc_xpath='[z = 7]')
+    >>> n = my_xml.get_nuclide_data(nuc_xpath='[z = 7]')
 
 To confirm that you only retrieved nitrogen data, type::
 
@@ -76,7 +76,7 @@ You can retrieve properties in zones.  For the present example,
 you retrieve the `time`, `t9` (temperature in billions of Kelvins),
 and `rho` (mass density in g/cc) by typing::
 
-    >>> props = my_xml_1.get_properties( ['time','t9','rho'] )
+    >>> props = my_xml.get_properties( ['time','t9','rho'] )
 
 The properties are returned in the dictionary `props`.  Each dictionary
 element is a list of strings giving the properties in the zones.
@@ -110,7 +110,7 @@ an `XPath <https://www.w3.org/TR/1999/REC-xpath-19991116/>`_ expression.
 For example, you can retrieve the `time`, `t9`, and `rho` properties, as
 in the above example, but only for the last 10 zones.  Type::
 
-    >>> props = my_xml_1.get_properties(
+    >>> props = my_xml.get_properties(
     ...     ['time','t9','rho'], zone_xpath='[position() > last() - 10]'
     ... )
     ...
@@ -130,7 +130,7 @@ Properties are by default strings.  When you wish to manipulate them
 (for example, to plot them), you want
 them to be :obj:`floats`.  You can retrieve them as floats by typing::
 
-    >>> props = my_xml_1.get_properties_as_floats( ['time','t9','rho'] )
+    >>> props = my_xml.get_properties_as_floats( ['time','t9','rho'] )
 
 The returned hash has entries that are :obj:`numpy.array`, which you confirm
 with::
@@ -160,7 +160,7 @@ Read mass fractions in zones.
 You can retrieve the mass fractions in zones.  For example, to get the
 mass fractions of o16, si28, and s36, type::
 
-    >>> x = my_xml_1.get_mass_fractions(['o16','si28','s36']) 
+    >>> x = my_xml.get_mass_fractions(['o16','si28','s36']) 
 
 The method returns a :obj:`dict` of :obj:`numpy.array`.  Each array element
 is a :obj:`float`.  You can print the mass fraction of silicon-28 in all
@@ -171,7 +171,7 @@ zones by typing::
 The method also accepts the `zone_xpath` keyword to select specific zones.
 For example, to retrieve the mass fraction in the first 10 zones, type::
 
-    >>> x = my_xml_1.get_mass_fractions(
+    >>> x = my_xml.get_mass_fractions(
     ...      ['o16','si28','s36'], zone_xpath='[position() <= 10]'
     ... ) 
     ...
@@ -183,7 +183,7 @@ It is often convenient to retrieve the abundances of the nuclei in
 a network file summed over proton number (`z`), neutron number (`n`),
 or mass number (`a`).  To do so, type::
 
-    >>> y = my_xml_1.get_abundances_vs_nucleon_number()
+    >>> y = my_xml.get_abundances_vs_nucleon_number()
 
 This returns a two-dimensional :obj:`numpy.array` in which the first
 index gives the zone and the second the mass number `a`.  To print out
@@ -197,18 +197,18 @@ To retrieve
 the abundances summed over atomic (proton) number (`z`), use the keyword
 `nucleon`::
 
-    >>> y = my_xml_1.get_abundances_vs_nucleon_number(nucleon='z')
+    >>> y = my_xml.get_abundances_vs_nucleon_number(nucleon='z')
 
 To retrieve the abundances in particular zones, for example, in the
 last 10 zones, use an XPath expression::
 
-    >>> y = my_xml_1.get_abundances_vs_nucleon_number(nucleon='n', zone_xpath='[position() > last() - 10]')
+    >>> y = my_xml.get_abundances_vs_nucleon_number(nucleon='n', zone_xpath='[position() > last() - 10]')
 
 
 Multi_XML
 ---------
 
-The `wnutils.multi_xml.Multi_Xml` class allows you to access and plot data
+The :obj:`wnutils.multi_xml.Multi_Xml` class allows you to access and plot data
 from multiple webnucleo XML files.  First import the namespace by typing::
 
     >>> import wnutils.multi_xml as mx
@@ -221,7 +221,7 @@ For this tutorial, type
 Methods allow you to access or plot data from the files.
 
 Read data from the individual XML instances.
-......................................
+............................................
 
 To retrieve the individual XML instances from a Multi_Xml instance, type::
 
