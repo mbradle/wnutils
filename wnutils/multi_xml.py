@@ -8,7 +8,7 @@ import numpy as np
 class Multi_Xml(wb.Base):
     """A class for reading and plotting webnucleo multiple xml files.
 
-       Each instance corresponds to a set of xml files.  Methods 
+       Each instance corresponds to a set of xml files.  Methods
        plot data from the files.
 
        Args:
@@ -17,11 +17,27 @@ class Multi_Xml(wb.Base):
        """
 
     def __init__(self, files):
+        self._files = files
         self._xml = []
         for file in files:
             self._xml.append(wx.Xml(file))
 
+    def get_files(self):
+        """Method to return the names of the input files.
+
+        Returns:
+            :obj:`list`:  A list of :obj:`str` giving the files
+
+        """
+        return self._files
+
     def get_xml(self):
+        """Method to return individual Xml instances.
+
+        Returns:
+            :obj:`list`:  A list of individual wnutils.xml.Xml instances.
+
+        """
         return self._xml
 
     def plot_property_vs_property(
@@ -32,10 +48,10 @@ class Multi_Xml(wb.Base):
 
         Args:
 
-            ``prop1`` (:obj:`str`): A string giving the property (which will
+            ``prop1`` (:obj:`str`): A string giving the property(which will
             be the abscissa of the plot).
 
-            ``prop2`` (:obj:`str`): A string giving the property (which will
+            ``prop2`` (:obj:`str`): A string giving the property(which will
             be the ordinate of the plot).
 
             ``xfactor`` (:obj:`float`, optional): A float giving the scaling
@@ -45,13 +61,13 @@ class Multi_Xml(wb.Base):
             for the ordinate values.  Defaults to 1.
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
-            :obj:`matplotlib.rcParams` to be applied to the plot.
+            : obj: `matplotlib.rcParams` to be applied to the plot.
             Defaults to leaving the current rcParams unchanged.
 
             ``labels`` (:obj:`list`, optional): A list of strings giving
             the legend labels.
 
-            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            ``**kwargs``:  Acceptable: obj: `matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
 
         Returns:
@@ -69,7 +85,7 @@ class Multi_Xml(wb.Base):
                 return
 
         for i in range(len(xmls)):
-            result = xmls[i].get_properties_as_floats([prop1,prop2])
+            result = xmls[i].get_properties_as_floats([prop1, prop2])
             x = result[prop1] / xfactor
             y = result[prop2] / yfactor
             if labels:
@@ -91,17 +107,17 @@ class Multi_Xml(wb.Base):
         plt.show()
 
     def plot_mass_fraction_vs_property(self, prop, species, xfactor=1,
-                                        use_latex_names=False, rcParams=None,
-                                        **kwargs
-                                        ):
-        """Method to plot the mass fractions versus a property.
+                                       use_latex_names=False, labels=None,
+                                       rcParams=None, **kwargs
+                                       ):
+        """Method to plot a mass fraction versus a property.
 
         Args:
 
-            ``prop`` (:obj:`str`): A string giving the property (which will
+            ``prop`` (:obj:`str`): A string giving the property(which will
             be the abscissa of the plot).
 
-            ``species``:obj:`str`):  A string giving the species.
+            ``species`` (:obj:`str`):  A string giving the species.
 
             ``xfactor`` (:obj:`float`, optional): A float giving the scaling
             for the abscissa values.  Defaults to 1.
@@ -127,10 +143,20 @@ class Multi_Xml(wb.Base):
         if use_latex_names:
             latex_names = self.get_latex_names([species])
 
-        for xml in self.get_xml():
+        xmls = self.get_xml()
+
+        if labels:
+            if len(xmls) != len(labels):
+                print('Number of legend labels must equal number of plots.')
+                return
+
+        for xml in xmls:
             x = xml.get_properties_as_floats([prop])[prop] / xfactor
-            y = xml.get_mass_fractions()
-            plt.plot(x, y[species])
+            y = xml.get_mass_fractions([species])
+            if labels:
+                plt.plot(x, y[species], label=labels[i])
+            else:
+                plt.plot(x, y[species])
 
         self.apply_class_methods(plt, kwargs)
 
@@ -144,5 +170,7 @@ class Multi_Xml(wb.Base):
                 s = species[0]
             plt.ylabel(s)
 
-        plt.show()
+        if labels and 'legend' not in kwargs:
+            plt.legend()
 
+        plt.show()

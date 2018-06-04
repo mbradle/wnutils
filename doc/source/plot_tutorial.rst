@@ -147,6 +147,60 @@ To add a title giving the conditions at that step, type::
 
 Recall that the property arrays are `zero-indexed <https://en.wikipedia.org/wiki/Zero-based_numbering>`_.
 
+Multi_XML
+---------
+
+To make plots from multiple webnucleo XML files, first import the namespace::
+
+    >>> import wnutils.multi_xml as mx
+
+Next, create an object for the files:
+
+    >>> my_multi_xml = mx.Multi_Xml(['my_output1.xml', 'my_output2.xml'])
+
+Plot a property against a property in multiple files.
+.....................................................
+
+You can plot a property versus another property in multiple files.  For
+example, to plot the `t9` versus `time` in our two files, type::
+
+    >>> my_multi_xml.plot_property_vs_property('time','t9')
+
+Since the calculations are for different exponential expansion timescales,
+you can label them with a legend.  First, find the timescale (`tau`) in the
+calculations by typing::
+
+    >>> xmls = my_multi_xml.get_xml()
+    >>> labs = []
+    >>> for xml in xmls:
+    ...     labs.append(((xml.get_properties(['tau']))['tau'])[0])
+    ...
+
+Next, create the label list by typing::
+
+    >>> for i in range(len(labs)):
+    ...     labs[i] += 's'
+    ...
+
+Now call the plot method with the labels keyword by typing::
+
+    >>> my_multi_xml.plot_property_vs_property('time','t9', labels=labs, legend={'title':'tau'})
+
+Notice the call to the legend keyword.  The keyword values can be any
+valid keyword argument to :obj:`matplotlib.pyplot.legend`.
+
+Plot a mass fraction against a property in multiple files.
+..........................................................
+
+You can also plot a mass fraction versus a property in multiple files.
+For example, to plot the mass fraction of fe58 as a function of time,
+type::
+
+    >>> my_multi_xml.plot_mass_fraction_vs_property('time, 'fe58', labels=labs, legend={'title':'tau'})
+
+`wnutils.multi_xml.Multi_Xml` plotting methods accept value `rcParams` and
+other keywords, as in the `wnutiles.xml.Xml` methods.
+
 HDF5
 ----
 
@@ -158,6 +212,18 @@ Next, create an object for each file by typing::
 
     >>> my_h5 = w5.H5( 'my_output.h5' )
 
+Plot a property versus a property for a given zone.
+...................................................
+
+You can plot the values of two properties in all groups
+against each other for a given zone.  For
+example, to plot `t9` versus `time` in the zone with labels `2`, `0`, `0`,
+type::
+
+    >>> zone = ('2','0','0')
+    >>> kws = {'xlabel': 'time (yr)', 'ylabel': '$T_9$'}
+    >>> my_h5.plot_zone_property_vs_property(zone, 'time', 't9', xfactor=3.15e7, **kws)
+
 Plot mass fractions versus a property for a given zone.
 .......................................................
 
@@ -167,15 +233,15 @@ type::
      >>> my_h5.plot_zone_mass_fractions_vs_property(
      ...     ('1','0','0'), 'time', ['he4', 'c12','o16'], yscale = 'log',
      ...      ylim = [1.e-5,1], xscale = 'log', xlim = [1,1.e5], xfactor = 3.15e7,
-     ...      xlabel = 'time (yr), use_latex_names=True
+     ...      xlabel = 'time (yr)', use_latex_names=True
      ... )
 
 Note, this is equivalent to typing::
 
      >>> zone = ('1','0','0')
      >>> species = ['he4','c12','o16']
-     >>> kwa = {'yscale': 'log', 'ylim': [1.e-5,1], 'yscale': 'log'}
-     >>> kwb = {'xscale': 'log', 'xlim': [1,1.e5], 'xfactor': 3.15e7}
+     >>> kwa = {'xlim': [1,1.e5], 'ylim': [1.e-5,1]}
+     >>> kwb = {'xscale': 'log', 'yscale': 'log', 'xfactor': 3.15e7}
      >>> kwc = {'xlabel': 'time (yr)', 'use_latex_names': True}
      >>> my_h5.plot_zone_mass_fractions_vs_property( zone, 'time', species, **kwa, **kwb, **kwc)
 
@@ -183,13 +249,43 @@ Or, in Python 3.5 or greater, you can type::
      >>> kws = {**kwa,**kwb,**kwc}
      >>> my_h5.plot_zone_mass_fractions_vs_property( zone, 'time', species, **kws)
 
+Plot a property in the zones of a given group.
+..............................................
+
+To plot a property in all the zones of a given group, say Step number 25,
+you can, for example, type::
+
+    >>> my_h5.plot_group_property_in_zones('Step 00025', 't9')
+
+This shows the temperature (in billions of Kelvins) in the zones.  The
+innermost (first) zone is the hottest.
+
 Plot mass fractions for a given group.
 ......................................
 
-Type::
+You can plot the mass fractions for a given group.  The abscissa of the
+plot in this case will be a zone index.  For example, type::
 
-     >>> w5.plot_group_mass_fractions(
+     >>> my_h5.plot_group_mass_fractions(
      ...     'Step 00025', ['he4', 'c12','o16'], use_latex_names=True
      ... )
-     ...
+
+Plot group mass fractions versus a property.
+............................................
+
+In the previous example, you simply plotted the mass fractions against
+their zone.  You can also plot against a zone property.  For example,
+type::
+
+     >>> my_h5.plot_group_mass_fractions_vs_property(
+     ...     'Step 00025', 't9', ['he4', 'c12','o16'], use_latex_names=True
+     ... )
+
+Notice that the plot shows the lowest temperature zone to the right part
+of the plot.  To show the graph with the innermost (hottest) zones plotted
+to the right, use the `xlim` keyword::
+
+     >>> my_h5.plot_group_mass_fractions_vs_property(
+     ...     'Step 00025', 't9', ['he4', 'c12','o16'], use_latex_names=True, xlim = [0.3,0]
+     ... )
 

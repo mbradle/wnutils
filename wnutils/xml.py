@@ -64,9 +64,9 @@ class Xml(wb.Base):
     def _get_nuclide_data_for_zone(self, zone):
         result = {}
 
-        nuclides = zone.xpath('mass_fractions/nuclide')
+        species = zone.xpath('mass_fractions/nuclide')
 
-        for sp in nuclides:
+        for sp in species:
             data = {}
             data['z'] = int((sp.xpath('z'))[0].text)
             data['a'] = int((sp.xpath('a'))[0].text)
@@ -79,12 +79,12 @@ class Xml(wb.Base):
     def _get_zones(self, zone_xpath):
         return self._root.xpath('//zone' + zone_xpath)
 
-    def get_mass_fractions(self, nuc_xpath=' ', zone_xpath=' '):
+    def get_mass_fractions(self, nuclides, zone_xpath=' '):
         """Method to retrieve mass fractions of nuclides in specified zones.
 
         Args:
-            ``nuc_xpath`` (:obj:`str`, optional): XPath expression to select
-            nuclides.  Defaults to all nuclides.
+            ``nuclides`` (:obj:`list`): List of strings giving the species
+            to retrieve.
 
             ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
             zones.  Defaults to all zones.
@@ -95,31 +95,20 @@ class Xml(wb.Base):
 
         """
 
-        dict = {}
-
-        nuclides = self.get_nuclide_data(nuc_xpath=nuc_xpath)
-
-        for nuclide in nuclides:
-            dict[nuclide] = []
+        result = {}
 
         zones = self._get_zones(zone_xpath)
 
-        for zone in zones:
-
-            for nuclide in nuclides:
-
-                data = zone.find(
-                    'mass_fractions/nuclide[@name="%s"]/x' % nuclide)
-
-                if data is None:
-                    dict[nuclide].append(0.)
-                else:
-                    dict[nuclide].append(data.text)
-
-        result = {}
-
         for nuclide in nuclides:
-            result[nuclide] = np.array(dict[nuclide], np.float_)
+            result[nuclide] = np.zeros(len(zones))
+
+        for i in range(len(zones)):
+            for nuclide in nuclides:
+                data = zones[i].find(
+                    'mass_fractions/nuclide[@name="%s"]/x' % nuclide
+                )
+                if data is not None:
+                    result[nuclide][i] = float(data.text)
 
         return result
 
@@ -332,7 +321,7 @@ class Xml(wb.Base):
 
         x = self.get_properties_as_floats([prop])[prop] / xfactor
 
-        y = self.get_mass_fractions()
+        y = self.get_mass_fractions(species)
 
         if use_latex_names:
             latex_names = self.get_latex_names(species)

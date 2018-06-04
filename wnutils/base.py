@@ -119,34 +119,45 @@ class Base:
 
     def create_nuclide_name(self, z, a, state):
 
-        s_zname = ['n'  ,
-                   'h'  , 'he' , 'li' , 'be' , 'b'  ,
-                   'c'  , 'n'  , 'o'  , 'f'  , 'ne' ,
-                   'na' , 'mg' , 'al' , 'si' , 'p'  ,
-                   's'  , 'cl' , 'ar' , 'k'  , 'ca' ,
-                   'sc' , 'ti' , 'v'  , 'cr' , 'mn' ,
-                   'fe' , 'co' , 'ni' , 'cu' , 'zn' ,
-                   'ga' , 'ge' , 'as' , 'se' , 'br' ,
-                   'kr' , 'rb' , 'sr' , 'y'  , 'zr' ,
-                   'nb' , 'mo' , 'tc' , 'ru' , 'rh' ,
-                   'pd' , 'ag' , 'cd' , 'in' , 'sn' ,
-                   'sb' , 'te' , 'i'  , 'xe' , 'cs' ,
-                   'ba' , 'la' , 'ce' , 'pr' , 'nd' ,
-                   'pm' , 'sm' , 'eu' , 'gd' , 'tb' ,
-                   'dy' , 'ho' , 'er' , 'tm' , 'yb' ,
-                   'lu' , 'hf' , 'ta' , 'w'  , 're' ,
-                   'os' , 'ir' , 'pt' , 'au' , 'hg' ,
-                   'tl' , 'pb' , 'bi' , 'po' , 'at' ,
-                   'rn' , 'fr' , 'ra' , 'ac' , 'th' ,
-                   'pa' , 'u'  , 'np' , 'pu' , 'am' ,
-                   'cm' , 'bk' , 'cf' , 'es' , 'fm' ,
-                   'md' , 'no' , 'lr' , 'rf' , 'db' ,
-                   'sg' , 'bh' , 'hs' , 'mt' , 'ds' ,
-                   'rg' , 'cn' , 'nh' , 'fl' , 'mc' ,
-                   'lv' , 'ts' , 'og'
-                  ]
+        s_zname = ['n',
+                   'h', 'he', 'li', 'be', 'b',
+                   'c', 'n', 'o', 'f', 'ne',
+                   'na', 'mg', 'al', 'si', 'p',
+                   's', 'cl', 'ar', 'k', 'ca',
+                   'sc', 'ti', 'v', 'cr', 'mn',
+                   'fe', 'co', 'ni', 'cu', 'zn',
+                   'ga', 'ge', 'as', 'se', 'br',
+                   'kr', 'rb', 'sr', 'y', 'zr',
+                   'nb', 'mo', 'tc', 'ru', 'rh',
+                   'pd', 'ag', 'cd', 'in', 'sn',
+                   'sb', 'te', 'i', 'xe', 'cs',
+                   'ba', 'la', 'ce', 'pr', 'nd',
+                   'pm', 'sm', 'eu', 'gd', 'tb',
+                   'dy', 'ho', 'er', 'tm', 'yb',
+                   'lu', 'hf', 'ta', 'w', 're',
+                   'os', 'ir', 'pt', 'au', 'hg',
+                   'tl', 'pb', 'bi', 'po', 'at',
+                   'rn', 'fr', 'ra', 'ac', 'th',
+                   'pa', 'u', 'np', 'pu', 'am',
+                   'cm', 'bk', 'cf', 'es', 'fm',
+                   'md', 'no', 'lr', 'rf', 'db',
+                   'sg', 'bh', 'hs', 'mt', 'ds',
+                   'rg', 'cn', 'nh', 'fl', 'mc',
+                   'lv', 'ts', 'og'
+                   ]
 
-        name = s_zname[z] + str(a) + state
+        ex_name = ['n', 'u', 'b', 't', 'q', 'p', 'h', 's', 'o', 'e']
+
+        elem_name = ''
+        if z <= len(s_zname):
+            elem_name = s_zname[z]
+        else:
+            z_tmp = z
+            while z_tmp:
+                i = z_tmp % 10
+                elem_name = ex_name[i] + elem_name
+                z_tmp //= 10
+
+        name = elem_name + str(a) + state
 
         return name
-

@@ -57,7 +57,6 @@ class H5(wnb.Base):
 
         """
 
-
         zone_labels = self._h5file['/' + group + '/Zone Labels']
 
         result = []
@@ -424,6 +423,42 @@ class H5(wnb.Base):
 
         plt.show()
 
+    def plot_group_property_in_zones(
+        self, group, property, rcParams=None, **kwargs
+    ):
+        """Method to plot a group property vs. zone.
+
+        Args:
+
+            ``group`` (:obj:`str`): A string giving the group.
+
+            ``property`` (:obj:`str`): A string giving the group.
+
+            ``rcParams``` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.rcParams` to be applied to the plot.
+            Defaults to leaving the current rcParams unchanged.
+
+            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            Include directly, as a :obj:`dict`, or both.
+
+        Returns:
+            A matplotlib plot.
+
+        """
+
+        self.set_plot_params(mpl, rcParams)
+
+        prop = self.get_group_properties_in_zones_as_floats(group, [property])
+
+        plt.plot(prop[property])
+
+        self.apply_class_methods(plt, kwargs)
+
+        if 'ylabel' not in kwargs:
+            plt.ylabel(property)
+
+        plt.show()
+
     def plot_group_mass_fractions_vs_property(
         self, group, prop, species, xfactor=1, use_latex_names=False,
         rcParams=None, **kwargs
@@ -458,7 +493,7 @@ class H5(wnb.Base):
 
         """
 
-        plp.set_plot_params(mpl, rcParams)
+        self.set_plot_params(mpl, rcParams)
 
         fig = plt.figure()
 

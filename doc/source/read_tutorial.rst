@@ -205,6 +205,43 @@ last 10 zones, use an XPath expression::
     >>> y = my_xml_1.get_abundances_vs_nucleon_number(nucleon='n', zone_xpath='[position() > last() - 10]')
 
 
+Multi_XML
+---------
+
+The `wnutils.multi_xml.Multi_Xml` class allows you to access and plot data
+from multiple webnucleo XML files.  First import the namespace by typing::
+
+    >>> import wnutils.multi_xml as mx
+
+Then create a class instance from a :obj:`list` of XML files.
+For this tutorial, type
+
+    >>> my_multi_xml = mx.Multi_Xml(['my_output1.xml','my_output2.xml'])
+
+Methods allow you to access or plot data from the files.
+
+Read data from the individual XML instances.
+......................................
+
+To retrieve the individual XML instances from a Multi_Xml instance, type::
+
+    >>> xmls = my_multi_xml.get_xml()
+
+To retrieve the original file names, type::
+
+    >>> files = my_multi_xml.get_files()
+
+Of course the number of XML instances must equal the number of files.  To
+confirm, type::
+
+    >>> print(len(xmls) == len(files))
+
+Use the methods on the individual instances.  For example, type::
+
+    >>> for i in range(len(xmls)):
+    ...     props = xmls[i].get_properties(['time'])
+    ...     print(files[i],'has',len(props['time']),'zones.')
+    ...
 
 HDF5
 ----
