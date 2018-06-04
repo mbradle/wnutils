@@ -34,10 +34,10 @@ a key and value pair or as a dictionary of :obj:`matplotlib.RcParams`.  You can
 print the list of parameters (and their default values) that can be set by typing::
 
     >>> import wnutils.base as wnb
-    >>> wb = wnb.WnBase()
+    >>> wb = wnb.Base()
     >>> wb.list_rcParams()
 
-Since the WnBase class is inherited by the other wnutils classes, the
+Since the Base class is inherited by the other wnutils classes, the
 `list_rcParams()` method is available from any class instance.
 
 We will define a dictionary for this tutorial by typing::

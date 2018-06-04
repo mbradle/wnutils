@@ -20,6 +20,15 @@ With pip installed, you may now use it to install wnutils by typing::
 ..
       $ pip install wnutils
 
+If the installation fails, you may need to install with root privileges using
+`sudo`::
+
+      $ sudo pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple wnutils
+
+Alternatively, you can just install for yourself with the ``--user`` option::
+
+      $ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple wnutils --user
+
 To test that wnutils has installed correctly, type::
 
       $ pip show wnutils
