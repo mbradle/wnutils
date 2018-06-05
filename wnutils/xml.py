@@ -28,6 +28,7 @@ class Xml(wb.Base):
             data = {}
             data['z'] = int((nuc.xpath('z'))[0].text)
             data['a'] = int((nuc.xpath('a'))[0].text)
+            data['n'] = data['a'] - data['z']
             data['source'] = (nuc.xpath('source'))[0].text
             data['spin'] = float((nuc.xpath('spin'))[0].text)
             if nuc.xpath('state'):

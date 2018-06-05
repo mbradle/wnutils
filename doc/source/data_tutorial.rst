@@ -19,7 +19,7 @@ and move the file to your `wnutils_tutorials` directory.  Extract the
 data by typing::
 
     $ gunzip wnutils_tutorials_data.tar.gz
-    $ tar xvf wnutils_tutorials_data.tar.gz
+    $ tar xvf wnutils_tutorials_data.tar
 
 You can now check that you have the expected files by typing::
 

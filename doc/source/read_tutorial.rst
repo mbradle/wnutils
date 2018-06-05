@@ -113,7 +113,6 @@ in the above example, but only for the last 10 zones.  Type::
     >>> props = my_xml.get_properties(
     ...     ['time','t9','rho'], zone_xpath='[position() > last() - 10]'
     ... )
-    ...
 
 You can print the zone properties, for example, by typing::
 
@@ -121,7 +120,7 @@ You can print the zone properties, for example, by typing::
 
 Confirm that there are only the properties for 10 zones by typing::
 
-    >>> print(len(props['t9'])
+    >>> print(len(props['t9']))
 
 Read zone properties as floats.
 ...............................
@@ -174,7 +173,6 @@ For example, to retrieve the mass fraction in the first 10 zones, type::
     >>> x = my_xml.get_mass_fractions(
     ...      ['o16','si28','s36'], zone_xpath='[position() <= 10]'
     ... ) 
-    ...
 
 Retrieve abundances summed over nucleon number in zones.
 ........................................................

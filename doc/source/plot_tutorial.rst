@@ -199,7 +199,7 @@ You can also plot a mass fraction versus a property in multiple files.
 For example, to plot the mass fraction of fe58 as a function of time,
 type::
 
-    >>> my_multi_xml.plot_mass_fraction_vs_property('time, 'fe58', labels=labs, legend={'title':'tau'})
+    >>> my_multi_xml.plot_mass_fraction_vs_property('time', 'fe58', labels=labs, legend={'title':'tau'})
 
 `wnutils.multi_xml.Multi_Xml` plotting methods accept value `rcParams` and
 other keywords, as in the `wnutiles.xml.Xml` methods.
@@ -226,6 +226,9 @@ type::
     >>> zone = ('2','0','0')
     >>> kws = {'xlabel': 'time (yr)', 'ylabel': '$T_9$'}
     >>> my_h5.plot_zone_property_vs_property(zone, 'time', 't9', xfactor=3.15e7, **kws)
+
+In the calculation that gave the output in `my_output.h5`,
+the temperature and density in zones were constant in time.
 
 Plot mass fractions versus a property for a given zone.
 .......................................................
