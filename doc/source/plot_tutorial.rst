@@ -120,6 +120,23 @@ species as a list of one element::
     >>> kw3 = {'use_latex_names': True, 'xlabel': '$T_9$', 'xlim': [10,0]}
     >>> my_xml.plot_mass_fractions_vs_property( 't9', ['si28'], **kw3, ylim=[1.e-12,1.e-4], yscale = 'log')
 
+Finally, note that you can define the species to plot as a list that you then
+enter into the plot command.  For example, type::
+
+    >>> nuclides_list = ['fe56','fe57','fe58']
+    >>> my_xml.plot_mass_fractions_vs_property( 'time', nuclides_list, use_latex_names=True, xlabel = 'time (s)', xlim=[1.e-6,1], xscale = 'log', ylim=[0,0.5], rcParams=my_params)
+
+You can generate the list from an XPath expression.  For example, try typing::
+
+    >>> nuclides = my_xml.get_nuclide_data(nuc_xpath='[z = 26 and (a - z >= 30 and a - z <= 32)]')
+    >>> nuclides_list = []
+    >>> for nuclide in nuclides:
+    ...     nuclides_list.append(nuclide)
+    ...
+    >>> print(nuclides_list)
+
+Now you can use that list in the plotting routine.
+
 Plot abundances versus nucleon number.
 ......................................
 
@@ -201,8 +218,8 @@ type::
 
     >>> my_multi_xml.plot_mass_fraction_vs_property('time', 'fe58', labels=labs, legend={'title':'tau'})
 
-`wnutils.multi_xml.Multi_Xml` plotting methods accept value `rcParams` and
-other keywords, as in the `wnutiles.xml.Xml` methods.
+:obj:`wnutils.multi_xml.Multi_Xml` plotting methods accept value `rcParams` and
+other keywords, as in the :obj:`wnutils.xml.Xml` methods.
 
 HDF5
 ----
