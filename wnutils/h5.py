@@ -219,7 +219,7 @@ class H5(wnb.Base):
 
         for group_name in self.get_iterable_groups():
             zone_index = self._get_group_zone_labels_hash(group_name)[zone]
-            p = self. _get_group_zone_property_hash(group_name, zone_index)
+            p = self._get_group_zone_property_hash(group_name, zone_index)
             for property in properties:
                 result[property].append(p[property])
 
