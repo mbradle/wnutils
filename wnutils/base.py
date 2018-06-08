@@ -18,6 +18,7 @@ class Base:
 
         Args:
             ``my_mpl`` (matplotlib): A matplotlib instance.
+
             ``my_params`` (:obj:`dict`): A dictionary with rcParams to be
             applied.
 
@@ -38,6 +39,7 @@ class Base:
 
         Args:
             ``plt`` (:obj:`matplotlib.pyplot`): A pyplot plot instance.
+
             ``keyword_params`` (:obj:`dict`): A dictionary of functions that
             will be applied to the plot.  The key is the function and the
             value is the argument of the function.
@@ -104,6 +106,22 @@ class Base:
         return latex_names
 
     def create_nuclide_name(self, z, a, state):
+        """Method to create the name of a nuclide.
+
+        Args:
+            ``z`` (:obj:`int`): An integer giving the nuclide's atomic
+            number.
+
+            ``a`` (:obj:`int`): An integer giving the nuclide's mass
+            number.
+
+            ``state`` (:obj:`str`): A string giving the nuclide's state
+            suffix.
+
+        Returns:
+            :obj:`str`: The nuclide's name.
+
+        """
 
         s_zname = ['n',
                    'h', 'he', 'li', 'be', 'b',

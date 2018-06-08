@@ -25,6 +25,14 @@ wnutils.h5 module
     :undoc-members:
     :show-inheritance:
 
+wnutils.multi\_h5 module
+------------------------
+
+.. automodule:: wnutils.multi_h5
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 wnutils.multi\_xml module
 -------------------------
 

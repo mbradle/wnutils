@@ -40,7 +40,7 @@ print the list of parameters (and their default values) that can be set by typin
 Since the Base class is inherited by the other wnutils classes, the
 `list_rcParams()` method is available from any class instance.
 
-We will define a dictionary for this tutorial by typing::
+For the purposes of this tutorial, efine a dictionary of parameters by typing::
 
     >>> my_params = {'lines.linewidth': 2, 'font.size': 14}
 
@@ -71,7 +71,7 @@ Then create an object for each file.  For example, type::
 Plot properties against each other for the zones.
 .................................................
 
-We can plot properties in the zones in an XML file against each other.  For
+You can plot properties in the zones in an XML file against each other.  For
 example, to plot `t9` vs. `time`, type::
 
     >>> my_xml.plot_property_vs_property( 'time', 't9' )
@@ -91,14 +91,14 @@ You can also do this with both procedures.  For example, type::
     >>> kw2 = {'xlabel':'time (s)'}
     >>> my_xml.plot_property_vs_property('time', 't9', ylabel = '$T_9$', **kw2)
 
-Finally, note that we can call with the RcParams we defined by typing::
+Finally, note that you can call with the RcParams previously defined by typing::
 
     >>> my_xml.plot_property_vs_property('time', 't9', rcParams=my_params, **kw)
 
 Plot mass fractions against a property.
 .........................................
 
-We can plot mass fractions of species against a property (typically the time
+You can plot mass fractions of species against a property (typically the time
 or temperature).  For example, to plot the mass fractions of he4 and fe58 
 versus time, type::
 
@@ -109,13 +109,13 @@ You can add appropriate keywords.  For example, you can type::
     >>> my_xml.plot_mass_fractions_vs_property( 'time', ['he4','fe58'], use_latex_names=True, xlabel = 'time (s)', xlim=[1.e-6,1], xscale = 'log', ylim=[0,1])
 
 By setting the `use_latex_names` keyword to true, species names appear as
-a superscript mass number in front of the element name.  We can of course also
+a superscript mass number in front of the element name.  You can of course also
 use the RcParams::
 
     >>> my_xml.plot_mass_fractions_vs_property( 'time', ['he4','fe58'], use_latex_names=True, xlabel = 'time (s)', xlim=[1.e-6,1], xscale = 'log', ylim=[0,1], rcParams=my_params)
 
-If you want to plot the mass fraction for a single species, be sure to enter that
-species as a list of one element::
+If you want to plot the mass fraction for a single species,
+be sure to enter that species as a list of one element::
 
     >>> kw3 = {'use_latex_names': True, 'xlabel': '$T_9$', 'xlim': [10,0]}
     >>> my_xml.plot_mass_fractions_vs_property( 't9', ['si28'], **kw3, ylim=[1.e-12,1.e-4], yscale = 'log')
@@ -218,10 +218,10 @@ type::
 
     >>> my_multi_xml.plot_mass_fraction_vs_property('time', 'fe58', labels=labs, legend={'title':'tau'})
 
-:obj:`wnutils.multi_xml.Multi_Xml` plotting methods accept value `rcParams` and
+:obj:`wnutils.multi_xml.Multi_Xml` plotting methods accept valid `rcParams` and
 other keywords, as in the :obj:`wnutils.xml.Xml` methods.
 
-HDF5
+H5
 ----
 
 To make plots from webnucleo HDF5 file, first import the namespace::
@@ -312,4 +312,65 @@ to the right, use the `xlim` keyword::
      >>> my_h5.plot_group_mass_fractions_vs_property(
      ...     'Step 00025', 't9', ['he4', 'c12','o16'], use_latex_names=True, xlim = [0.3,0]
      ... )
+
+Multi_H5
+---------
+
+To make plots from multiple webnucleo HDF5 files, first import the namespace::
+
+    >>> import wnutils.multi_h5 as m5
+
+Next, create an object for the files:
+
+    >>> my_multi_h5 = m5.Multi_H5(['my_output1.h5', 'my_output2.h5'])
+
+Plot a zone property against a property in multiple files.
+..........................................................
+
+You can plot a property versus another property in multiple files.  For
+example, to plot the `neutron exposure` versus `time` in our two files, type::
+
+    >>> zone = ('0','0','0')
+    >>> my_multi_h5.plot_zone_property_vs_property(zone, 'time','exposure, n')
+
+Notice that the `neutron exposure` property is input as a comma-delimited
+string; thus, this property has two names: `exposure` and `n`.  Typically
+properties can have up to three `names`.  The neutron exposure is usually
+labeled :math:`\tau_n` and has units of :math:`mb^{-1}`, that is,
+inverse `millibarns <https://en.wikipedia.org/wiki/Barn_(unit)>`_.
+The difference in the two calculations
+is that the first was for a mixing timescale of 10\ :sup:`7` seconds while the
+second was for a mixing timescale of 10\ :sup:`9` seconds.  We can thus add
+a legend by typing::
+
+    >>> labs = ['$10^7\ s$', '$10^9\ s$']
+
+Now call the plot method with the labels keyword by typing::
+
+    >>> my_multi_h5.plot_zone_property_vs_property(
+    ...     zone, 'time','exposure, n', labels=labs, legend={'title':'$\tau_{mix}$'},
+    ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\tau_n(mb^{-1})$'
+    ... )
+
+As with :obj:`wnutils.multi_xml`, the legend keyword values can be any
+valid keyword argument to :obj:`matplotlib.pyplot.legend`.  Thus, for example,
+you could type::
+
+    >>> my_multi_h5.plot_zone_property_vs_property(
+    ...     zone, 'time','exposure, n', labels=labs,
+    ...     legend={'title':'$\tau_{mix}$', 'shadow':True},
+    ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\tau_n(mb^{-1})$'
+    ... )
+
+Plot a zone mass fraction against a property in multiple files.
+...............................................................
+
+You can also plot a mass fraction versus a property in multiple files.
+For example, to plot the mass fraction of fe56 as a function of time,
+type::
+
+    >>> my_multi_h5.plot_zone_mass_fraction_vs_property(zone, 'time', 'fe56', labels=labs, legend={'title':'$\tau_{mix}$'})
+
+:obj:`wnutils.multi_h5.Multi_H5` plotting methods accept valid `rcParams` and
+other keywords, as in the :obj:`wnutils.h5.H5` methods.
 

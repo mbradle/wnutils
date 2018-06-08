@@ -241,7 +241,7 @@ Use the methods on the individual instances.  For example, type::
     ...     print(files[i],'has',len(props['time']),'zones.')
     ...
 
-HDF5
+H5
 ----
 
 Methods that read webnucleo HDF5 files are in the namespace
