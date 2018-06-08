@@ -117,8 +117,8 @@ class Xml(wb.Base):
         """Method to retrieve properties in specified zones in an xml file
 
         Args:
-            ``properties`` (:obj:`list`): List of strings giving requested
-            properites.
+            ``properties`` (:obj:`list`): List of strings or tuples
+            (each of up to three strings) giving requested properites.
 
             ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
             zones.  Defaults to all zones.
@@ -132,13 +132,13 @@ class Xml(wb.Base):
         properties_t = {}
 
         for property in properties:
-            if property.isalnum():
+            if type(property) is str:
                 properties_t[property] = (property,)
             else:
-                properties_t[property] = (property.split(","))
+                properties_t[property] = property
                 if len(properties_t[property]) > 3:
-                    print("\nToo many property tags (at most 2)!\n")
-                    exit()
+                    print("\nToo many property names (at most 3)!\n")
+                    return
 
         dict = {}
 
@@ -175,8 +175,8 @@ class Xml(wb.Base):
         """Method to retrieve properties in zones in an xml file as floats.
 
         Args:
-            ``properties`` (:obj:`list`): List of strings giving requested
-            properites.
+            ``properties`` (:obj:`list`): List of strings or tuples
+            (each of up to three strings) giving requested properites.
 
             ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
             zones.  Defaults to all zones.
@@ -244,11 +244,13 @@ class Xml(wb.Base):
 
         Args:
 
-            ``prop1`` (:obj:`str`): A string giving the property (which will
-            be the abscissa of the plot).
+            ``prop1`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will be the
+            abscissa of the plot).
 
-            ``prop2`` (:obj:`str`): A string giving the property (which will
-            be the ordinate of the plot).
+            ``prop2`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will be the
+            ordinate of the plot).
 
             ``xfactor`` (:obj:`float`, optional): A float giving the scaling
             for the abscissa values.  Defaults to 1.
@@ -292,8 +294,9 @@ class Xml(wb.Base):
 
         Args:
 
-            ``prop`` (:obj:`str`): A string giving the property (which will
-            be the abscissa of the plot).
+            ``prop`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will be the
+            abscissa of the plot).
 
             ``species``:obj:`list`):  A list of strings giving the species.
 

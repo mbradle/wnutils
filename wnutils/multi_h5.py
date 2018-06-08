@@ -52,13 +52,13 @@ class Multi_H5(wb.Base):
             ``zone`` (:obj:`tuple`): A three-element :obj:`tuple` giving
             the three :obj:`str` labels of the zone.
 
-            ``prop1`` (:obj:`str`): A string giving the property(which will
-            be the abscissa of the plot).  The string can be a
-            comma-delimited set of up to three names.
+            ``prop1`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will
+            be the abscissa of the plot).
 
-            ``prop2`` (:obj:`str`): A string giving the property(which will
-            be the ordinate of the plot).  The string can be a
-            comma-delimited set of up to three names.
+            ``prop2`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will
+            be the ordinate of the plot).
 
             ``xfactor`` (:obj:`float`, optional): A float giving the scaling
             for the abscissa values.  Defaults to 1.
@@ -126,9 +126,9 @@ class Multi_H5(wb.Base):
             ``zone`` (:obj:`tuple`): A three-element :obj:`tuple` giving
             the three :obj:`str` labels of the zone.
 
-            ``prop`` (:obj:`str`): A string giving the property(which will
-            be the abscissa of the plot).  The string can be a
-            comma-delimited set of up to three names.
+            ``prop`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will
+            be the abscissa of the plot).
 
             ``species`` (:obj:`str`):  A string giving the species.
 

@@ -203,8 +203,8 @@ class H5(wnb.Base):
             ``zone`` (:obj:`tuple`): A three element tuple giving the three
             labels for the zone.
 
-            ``properties`` (:obj:`list`): A list of strings giving the
-            properties to be retrieved.
+            ``properties`` (:obj:`list`): A list of strings or tuples
+            of up to three strings giving the properties to be retrieved.
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`list` giving the properties
@@ -233,8 +233,8 @@ class H5(wnb.Base):
             ``zone`` (:obj:`tuple`): A three element tuple giving the three
             labels for the zone.
 
-            ``properties`` (:obj:`list`): A list of strings giving the
-            properties to be retrieved.
+            ``properties`` (:obj:`list`): A list of strings or tuples
+            of up to three strings giving the properties to be retrieved.
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`numpy.array` giving the
@@ -258,8 +258,8 @@ class H5(wnb.Base):
 
             ``group`` (:obj:`str`): A string giving the group name.
 
-            ``properties`` (:obj:`list`): A list of strings giving the
-            properties to be retrieved.
+            ``properties`` (:obj:`list`): A list of strings or tuples
+            of up to three strings giving the properties to be retrieved.
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`list` giving the
@@ -294,8 +294,8 @@ class H5(wnb.Base):
 
             ``group`` (:obj:`str`): A string giving the group name.
 
-            ``properties`` (:obj:`list`): A list of strings giving the
-            properties to be retrieved.
+            ``properties`` (:obj:`list`): A list of strings or tuples
+            of up to three strings giving the properties to be retrieved.
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`numpy.array` giving the
@@ -323,10 +323,12 @@ class H5(wnb.Base):
             ``zone`` (:obj:`tuple`): A three element tuple giving the zone
             labels.
 
-            ``prop1`` (:obj:`str`): A string giving the property (which will
+            ``prop1`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will
             be the abscissa of the plot).
 
-            ``prop2`` (:obj:`str`): A string giving the property (which will
+            ``prop2`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the property (which will
             be the ordinate of the plot).
 
             ``xfactor`` (:obj:`float`, optional): A float giving the scaling
@@ -432,7 +434,8 @@ class H5(wnb.Base):
 
             ``group`` (:obj:`str`): A string giving the group.
 
-            ``property`` (:obj:`str`): A string giving the group.
+            ``property`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the group.
 
             ``rcParams``` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
@@ -469,7 +472,8 @@ class H5(wnb.Base):
 
             ``group`` (:obj:`str`): A string giving the group.
 
-            ``prop`` (:obj:`str`): A string giving the property (which will
+            ``prop`` (:obj:`str` or :obj:`tuple`): A string or tuple of
+            up to three strings giving the property (which will
             serve as the plot abscissa).
 
             ``species`` (:obj:`list`): A list of strings giving the species
@@ -548,7 +552,8 @@ class H5(wnb.Base):
 
             ``zone`` (:obj:`tuple`): A three element tuple giving the zone.
 
-            ``prop`` (:obj:`str`): A string giving the property (which will
+            ``prop`` (:obj:`str` or :obj:`tuple`): A string or tuple of
+            up to three strings giving the property (which will
             serve as the plot abscissa).
 
             ``species`` (:obj:`list`): A list of strings giving the species

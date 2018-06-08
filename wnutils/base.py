@@ -5,9 +5,9 @@ class Base:
         if(len(tup) == 1):
             s = tup[0]
         elif(len(tup) == 2):
-            s = tup[0] + ',' + tup[1]
+            s = tup[0] + ', ' + tup[1]
         elif(len(tup) == 3):
-            s = tup[0] + ',' + tup[1] + ',' + tup[2]
+            s = tup[0] + ', ' + tup[1] + ', ' + tup[2]
         else:
             s = 'Invalid property name'
 
