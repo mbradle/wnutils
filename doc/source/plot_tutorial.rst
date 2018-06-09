@@ -184,20 +184,19 @@ example, to plot the `t9` versus `time` in our two files, type::
     >>> my_multi_xml.plot_property_vs_property('time','t9')
 
 Since the calculations are for different exponential expansion timescales,
-you can label them with a legend.  First, find the timescale (`tau`) in the
-calculations by typing::
+you can label them with a legend.  First, find the timescale by noting
+that :math:`\rho(t) = \rho_0 \exp(-t/\tau)`.  This means that
+:math:`\tau = -t \ln\left(\rho(t)/\rho(0)\right)`.  Choose, say, step 150 to
+compute the `tau` for the two calcluations.  You can type::
 
+    >>> import math
     >>> xmls = my_multi_xml.get_xml()
     >>> labs = []
     >>> for xml in xmls:
-    ...     labs.append(((xml.get_properties(['tau']))['tau'])[0])
-    ...
-
-Next, create the label list by typing::
-
-    >>> for i in range(len(labs)):
-    ...     labs[i] += 's'
-    ...
+    ...     props = xml.get_properties_as_floats(['time','rho'])
+    ...     tau = -props['time'][150] / math.log(props['rho'][150]/props['rho'][0])
+    ...     labs.append(('{:8.2f}'.format(tau)).strip() + 's')
+    ... 
 
 Now call the plot method with the labels keyword by typing::
 
@@ -213,8 +212,8 @@ Plot a mass fraction against a property in multiple files.
 ..........................................................
 
 You can also plot a mass fraction versus a property in multiple files.
-For example, to plot the mass fraction of fe58 as a function of time,
-type::
+For example, to plot the mass fraction of fe58 as a function of time
+(and using the labels you defined above), type::
 
     >>> my_multi_xml.plot_mass_fraction_vs_property('time', 'fe58', labels=labs, legend={'title':'tau'})
 
@@ -230,7 +229,7 @@ To make plots from webnucleo HDF5 file, first import the namespace::
 
 Next, create an object for each file by typing::
 
-    >>> my_h5 = w5.H5( 'my_output.h5' )
+    >>> my_h5 = w5.H5( 'my_output1.h5' )
 
 Plot a property versus a property for a given zone.
 ...................................................
@@ -244,7 +243,7 @@ type::
     >>> kws = {'xlabel': 'time (yr)', 'ylabel': '$T_9$'}
     >>> my_h5.plot_zone_property_vs_property(zone, 'time', 't9', xfactor=3.15e7, **kws)
 
-In the calculation that gave the output in `my_output.h5`,
+In the calculation that gave the output in `my_output1.h5`,
 the temperature and density in zones were constant in time.
 
 Plot mass fractions versus a property for a given zone.
@@ -331,11 +330,15 @@ You can plot a property versus another property in multiple files.  For
 example, to plot the `neutron exposure` versus `time` in our two files, type::
 
     >>> zone = ('0','0','0')
-    >>> my_multi_h5.plot_zone_property_vs_property(zone, 'time','exposure, n')
+    >>> my_multi_h5.plot_zone_property_vs_property(zone, 'time',('exposure', 'n'))
 
-Notice that the `neutron exposure` property is input as a comma-delimited
-string; thus, this property has two names: `exposure` and `n`.  Typically
-properties can have up to three `names`.  The neutron exposure is usually
+Notice that the `neutron exposure` property is input as a tuple
+because, in this case, the property identifier has two parts: a `name` string
+('exposure') and a `tag1` string ('n').
+As discussed in the :ref:`reading` tutorial,
+a property can have a name
+and up to two tags; thus, the tuple identifying the property could have
+up to three elements.  The neutron exposure is usually
 labeled :math:`\tau_n` and has units of :math:`mb^{-1}`, that is,
 inverse `millibarns <https://en.wikipedia.org/wiki/Barn_(unit)>`_.
 The difference in the two calculations
@@ -348,7 +351,7 @@ a legend by typing::
 Now call the plot method with the labels keyword by typing::
 
     >>> my_multi_h5.plot_zone_property_vs_property(
-    ...     zone, 'time','exposure, n', labels=labs, legend={'title':'$\tau_{mix}$'},
+    ...     zone, 'time',('exposure', 'n'), labels=labs, legend={'title':'$\tau_{mix}$'},
     ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\tau_n(mb^{-1})$'
     ... )
 
@@ -357,7 +360,7 @@ valid keyword argument to :obj:`matplotlib.pyplot.legend`.  Thus, for example,
 you could type::
 
     >>> my_multi_h5.plot_zone_property_vs_property(
-    ...     zone, 'time','exposure, n', labels=labs,
+    ...     zone, 'time',('exposure', 'n'), labels=labs,
     ...     legend={'title':'$\tau_{mix}$', 'shadow':True},
     ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\tau_n(mb^{-1})$'
     ... )

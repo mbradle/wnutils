@@ -171,6 +171,44 @@ class Xml(wb.Base):
 
         return dict
 
+    def get_all_properties_for_zone(self, zone_xpath):
+        """Method to retrieve all properties in a zone in an xml file
+
+        Args:
+            ``zone_xpath`` (:obj:`str`): XPath expression to select
+            zone.  Must be evaluate to a single zone.
+
+        Returns:
+            :obj:`dict`: A dictionary containing all the properties in
+            the zone as strings.
+
+        """
+
+        result = {}
+
+        zones = self._get_zones(zone_xpath)
+
+        if len(zones) != 1:
+            print('Incorrect number of zones.')
+            return
+
+        props = zones[0].xpath('optional_properties/property')
+
+        for property in props:
+            p_name = ''
+            name = property.xpath('@name')
+            tag1 = property.xpath('@tag1')
+            tag2 = property.xpath('@tag2')
+            if len(tag2) == 0 and len(tag1) == 0:
+                p_name = name[0]
+            elif len(tag2) == 0:
+                p_name = (name[0], tag1[0])
+            else:
+                p_name = (name[0], tag1[0], tag2[0])
+            result[p_name] = property.text
+
+        return result
+
     def get_properties_as_floats(self, properties, zone_xpath=' '):
         """Method to retrieve properties in zones in an xml file as floats.
 

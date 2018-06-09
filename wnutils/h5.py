@@ -195,6 +195,25 @@ class H5(wnb.Base):
 
         return result
 
+    def get_group_zone_properties(self, group, zone):
+        """Method to return all properties in a zone in a group.
+
+        Args:
+
+            ``group`` (:obj:`str`): A string giving the group name.
+
+            ``zone`` (:obj:`tuple`): A three element tuple giving the three
+            labels for the zone.
+
+        Returns:
+            :obj:`dict`: A dictionary of strings giving all the properties
+            in the zone in the group.
+
+        """
+
+        zone_index = self._get_group_zone_labels_hash(group)[zone]
+        return self._get_group_zone_property_hash(group, zone_index)
+
     def get_zone_properties_in_groups(self, zone, properties):
         """Method to return zone properties in all groups.
 

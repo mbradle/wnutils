@@ -1,3 +1,5 @@
+.. _reading:
+
 Reading in the Data
 ===================
 
@@ -69,10 +71,40 @@ To confirm that you only retrieved nitrogen data, type::
     ...     print(isotope, ':', 'Z =', n[isotope]['z'], 'A =', n[isotope]['a'])
     ...
 
-Read zone properties.
-.....................
+Read all properties in a zone.
+..............................
 
-You can retrieve properties in zones.  For the present example,
+In a `webnucleo <http://sourceforge.net/u/mbradle/blog/>`_ XML file,
+a `zone` is a collection of the `mutable` quantities during a network
+calculation.  For a single-zone network calculation, a zone is often a
+time step in the calculation.  The zone will contain mass fractions of
+the network species at the time step to which the zone corresponds and
+properties, which can be any quantity, such as time, temperature, or
+density.  The properties themselves have a `name` and up to two `tags`,
+called `tag1` and `tag2`.  If the property only has a name, it can
+be retrieved by a :obj:`str`.  If the property has tags, the identifier
+for the property is a :obj:`tuple` of up to three strings, namely,
+the `name`, `tag1`, and `tag2`.
+
+To retrieve all the properties of a given zone, say the 10th zone,
+type::
+
+    >>> props = xml.get_all_properties_for_zone('[position() = 10]')
+
+Now you can print out the properties and their values in this zone by
+typing::
+
+    >>> for prop in props:
+    ...     print(str(prop).rjust(25), ':', props[prop])
+    ...
+
+Notice the conversion to :obj:`str` to print out the
+`('exposure', 'n')` tuple correctly.
+
+Read properties in all zones.
+.............................
+
+You can retrieve selected properties in all zones.  For the present example,
 you retrieve the `time`, `t9` (temperature in billions of Kelvins),
 and `rho` (mass density in g/cc) by typing::
 
@@ -101,6 +133,17 @@ which shows that each dictionary entry is a :obj:`list`.  Next, type::
     >>> print(props['time'][0])
 
 which shows each list entry is a :obj:`str`.
+
+To retrieve properties with tags, you need to enter the appropriate
+tuple.  For example, type::
+
+    >>> props = xml.get_properties(['time', ('exposure', 'n')])
+
+To print out the exposures, type::
+
+    >>> for i in range(len(props[('exposure', 'n')])):
+    ...     print('time:', props['time'][i], 'exposure:', props[('exposure', 'n')][i])
+    ...
 
 Read properties of selected zones.
 ..................................
@@ -250,10 +293,11 @@ Methods that read webnucleo HDF5 files are in the namespace
 
     >>> import wnutils.h5 as w5
 
-Then create an object for your file `my_output.h5` (which you already
-downloaded) by typing::
+Then create an object for your file `my_output1.h5` (which you already
+downloaded according to the instructions in the :ref:`data` tutorial)
+by typing::
 
-    >>> my_h5 = w5.H5('my_output.h5')
+    >>> my_h5 = w5.H5('my_output1.h5')
 
 Read the nuclide data.
 ......................
@@ -300,6 +344,20 @@ group, say, `Step 00010`, type::
     >>> labels = my_h5.get_zone_labels_for_group('Step 00010')
     >>> for i in range(len(labels)):
     ...     print('Zone',i,'has label',labels[i])
+    ...
+
+Read all properties in a zone for a group.
+..........................................
+
+To retrieve all the properties from a zone in a group, type, for example::
+
+    >>> zone = ('2','0','0')
+    >>> props = my_h5.get_group_zone_properties('Step 00010', zone)
+
+You can print those properties out by typing::
+
+    >>> for prop in props:
+    ...     print(str(prop).rjust(25), ':', props[prop])
     ...
 
 Read properties in all zones for a group.
