@@ -170,7 +170,7 @@ Read zone properties as floats.
 
 Properties are by default strings.  When you wish to manipulate them
 (for example, to plot them), you want
-them to be :obj:`floats`.  You can retrieve them as floats by typing::
+them to be :obj:`float` objects.  You can retrieve them as floats by typing::
 
     >>> props = my_xml.get_properties_as_floats( ['time','t9','rho'] )
 

@@ -3,7 +3,9 @@
 Getting the Data
 ================
 
-We have already generated some example data to use with these tutorials.
+In general, you will be using `wnutils` with data you have generated with
+`webnucleo <https://sourceforge.net/u/mbradle/blog>`_ codes.  However,
+we have already generated some data you can use with these tutorials.
 You must download those data from the web.
 
 First, begin by creating a directory in which to work on the wnutils tutorials.
@@ -14,7 +16,7 @@ You might create this off your home directory, so you could type::
     $ cd wnutils_tutorials
 
 Next, download the data tarball
-`wnutils_tutorials_data.tar.gz <http://nucnet-tools.sourceforge.net/data_pub/tutorials/wnutils/2018-06-04/wnutils_tutorials_data.tar.gz>`_
+`wnutils_tutorials_data.tar.gz <http://nucnet-tools.sourceforge.net/data_pub/tutorials/wnutils/2018-06-09/wnutils_tutorials_data.tar.gz>`_
 and move the file to your `wnutils_tutorials` directory.  Extract the
 data by typing::
 
