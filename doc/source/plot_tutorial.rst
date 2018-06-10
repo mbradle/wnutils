@@ -186,7 +186,7 @@ example, to plot the `t9` versus `time` in our two files, type::
 Since the calculations are for different exponential expansion timescales,
 you can label them with a legend.  First, find the timescale by noting
 that :math:`\rho(t) = \rho_0 \exp(-t/\tau)`.  This means that
-:math:`\tau = -t \ln\left(\rho(t)/\rho(0)\right)`.  Choose, say, step 150 to
+:math:`\tau = -t\ /\ln\left(\rho(t)/\rho(0)\right)`.  Choose, say, step 150 to
 compute the `tau` for the two calcluations.  You can type::
 
     >>> import math
@@ -361,8 +361,8 @@ you could type::
 
     >>> my_multi_h5.plot_zone_property_vs_property(
     ...     zone, 'time',('exposure', 'n'), labels=labs,
-    ...     legend={'title':'$\tau_{mix}$', 'shadow':True},
-    ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\tau_n(mb^{-1})$'
+    ...     legend={'title':'$\\tau_{mix}$', 'shadow':True},
+    ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\\tau_n(mb^{-1})$'
     ... )
 
 Plot a zone mass fraction against a property in multiple files.
@@ -372,7 +372,7 @@ You can also plot a mass fraction versus a property in multiple files.
 For example, to plot the mass fraction of fe56 as a function of time,
 type::
 
-    >>> my_multi_h5.plot_zone_mass_fraction_vs_property(zone, 'time', 'fe56', labels=labs, legend={'title':'$\tau_{mix}$'})
+    >>> my_multi_h5.plot_zone_mass_fraction_vs_property(zone, 'time', 'fe56', labels=labs, legend={'title':'$\\tau_{mix}$'})
 
 :obj:`wnutils.multi_h5.Multi_H5` plotting methods accept valid `rcParams` and
 other keywords, as in the :obj:`wnutils.h5.H5` methods.
