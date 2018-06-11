@@ -89,7 +89,7 @@ the `name`, `tag1`, and `tag2`.
 To retrieve all the properties of a given zone, say the 10th zone,
 type::
 
-    >>> props = xml.get_all_properties_for_zone('[position() = 10]')
+    >>> props = my_xml.get_all_properties_for_zone('[position() = 10]')
 
 Now you can print out the properties and their values in this zone by
 typing::
@@ -130,14 +130,14 @@ which shows that it is a hash (:obj:`dict`).  Next, type::
 
 which shows that each dictionary entry is a :obj:`list`.  Next, type::
 
-    >>> print(props['time'][0])
+    >>> type(props['time'][0])
 
 which shows each list entry is a :obj:`str`.
 
 To retrieve properties with tags, you need to enter the appropriate
 tuple.  For example, type::
 
-    >>> props = xml.get_properties(['time', ('exposure', 'n')])
+    >>> props = my_xml.get_properties(['time', ('exposure', 'n')])
 
 To print out the exposures, type::
 
