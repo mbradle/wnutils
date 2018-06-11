@@ -43,7 +43,7 @@ class Multi_Xml(wb.Base):
 
     def plot_property_vs_property(
         self, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        labels=None, **kwargs
+        plotParams=None, **kwargs
     ):
         """Method to plot a property vs. a property in the files.
 
@@ -65,10 +65,13 @@ class Multi_Xml(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             : obj: `matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
 
-            ``labels`` (:obj:`list`, optional): A list of strings giving
-            the legend labels.
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements number of files in the
+            class instance.
 
             ``**kwargs``:  Acceptable: obj: `matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -82,17 +85,19 @@ class Multi_Xml(wb.Base):
 
         xmls = self.get_xml()
 
-        if labels:
-            if len(xmls) != len(labels):
-                print('Number of legend labels must equal number of plots.')
+        if plotParams:
+            if len(xmls) != len(plotParams):
+                print(
+                    'Number of plotParam elements must equal number of plots.'
+                )
                 return
 
-        for i in range(len(xmls)):
-            result = xmls[i].get_properties_as_floats([prop1, prop2])
+        for i, xml in enumerate(xmls):
+            result = xml.get_properties_as_floats([prop1, prop2])
             x = result[prop1] / xfactor
             y = result[prop2] / yfactor
-            if labels:
-                plt.plot(x, y, label=labels[i])
+            if plotParams:
+                plt.plot(x, y, **plotParams[i])
             else:
                 plt.plot(x, y)
 
@@ -104,14 +109,17 @@ class Multi_Xml(wb.Base):
         if('ylabel' not in kwargs):
             plt.ylabel(prop2)
 
-        if labels and 'legend' not in kwargs:
-            plt.legend()
+        if 'legend' not in kwargs:
+            if plotParams:
+                if 'label' in plotParams[0]:
+                    plt.legend()
 
         plt.show()
 
     def plot_mass_fraction_vs_property(self, prop, species, xfactor=1,
                                        use_latex_names=False, labels=None,
-                                       rcParams=None, **kwargs
+                                       rcParams=None, plotParams=None,
+                                       **kwargs
                                        ):
         """Method to plot a mass fraction versus a property.
 
@@ -131,10 +139,13 @@ class Multi_Xml(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
 
-            ``labels`` (:obj:`list`, optional): A list of strings giving
-            the legend labels.
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements number of files in the
+            class instance.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -152,16 +163,18 @@ class Multi_Xml(wb.Base):
 
         xmls = self.get_xml()
 
-        if labels:
-            if len(xmls) != len(labels):
-                print('Number of legend labels must equal number of plots.')
+        if plotParams:
+            if len(xmls) != len(plotParams):
+                print(
+                    'Number of plotParam elements must equal number of plots.'
+                )
                 return
 
-        for i in range(len(xmls)):
-            x = xmls[i].get_properties_as_floats([prop])[prop] / xfactor
-            y = xmls[i].get_mass_fractions([species])
-            if labels:
-                plt.plot(x, y[species], label=labels[i])
+        for i, xml in enumerate(xmls):
+            x = xml.get_properties_as_floats([prop])[prop] / xfactor
+            y = xml.get_mass_fractions([species])
+            if plotParams:
+                plt.plot(x, y[species], **plotParams[i])
             else:
                 plt.plot(x, y[species])
 
@@ -177,7 +190,9 @@ class Multi_Xml(wb.Base):
                 s = species
             plt.ylabel(s)
 
-        if labels and 'legend' not in kwargs:
-            plt.legend()
+        if 'legend' not in kwargs:
+            if plotParams:
+                if 'label' in plotParams[0]:
+                    plt.legend()
 
         plt.show()

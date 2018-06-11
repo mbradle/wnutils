@@ -333,7 +333,7 @@ class H5(wnb.Base):
 
     def plot_zone_property_vs_property(
         self, zone, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        **kwargs
+        plotParams=None, **kwargs
     ):
         """Method to plot a property vs. a property in a zone.
 
@@ -358,7 +358,11 @@ class H5(wnb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`dict`, optional): A dictionary of
+            valid :obj:`matplotlib.pyplot.plot` optional keyword arguments
+            to be applied to the plot.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -376,11 +380,19 @@ class H5(wnb.Base):
 
         self.apply_class_methods(plt, kwargs)
 
-        plt.plot(result[prop1] / xfactor, result[prop2] / yfactor)
+        x = result[prop1] / xfactor
+        y = result[prop2] / yfactor
+
+        if plotParams:
+            plt.plot(x, y, **plotParams)
+        else:
+            plt.plot(x, y)
+
         plt.show()
 
     def plot_group_mass_fractions(
-        self, group, species, use_latex_names=False, rcParams=None, **kwargs
+        self, group, species, use_latex_names=False, rcParams=None,
+        plotParams=None, **kwargs
     ):
         """Method to plot group mass fractions vs. zone.
 
@@ -396,7 +408,12 @@ class H5(wnb.Base):
 
             ``rcParams``` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements as ``species``.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -408,25 +425,34 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        fig = plt.figure()
+        if plotParams:
+            if len(plotParams) != len(species):
+                print(
+                    'Number of plotParam elements must equal' +
+                    ' number of species.'
+                )
+                return
 
         l = []
-        latex_names = []
 
         m = self.get_group_mass_fractions(group)
 
         nuclide_data = self.get_nuclide_data()
 
         if use_latex_names:
-            laxtex_names = self.get_latex_names(species)
+            latex_names = self.get_latex_names(species)
 
-        iy = 0
-        for sp in species:
-            if(len(latex_names) != 0):
-                lab = latex_names[sp]
+        for i, sp in enumerate(species):
+            if plotParams is None:
+                p = {}
             else:
-                lab = sp
-            l.append(plt.plot(m[:, nuclide_data[sp]['index']], label=lab))
+                p = plotParams[i]
+            if 'label' not in p:
+                if use_latex_names:
+                    p = {**p, **{'label':latex_names[sp]}}
+                else:
+                    p = {**p, **{'label':sp}}
+            l.append(plt.plot(m[:, nuclide_data[sp]['index']], **p))
 
         if(len(species) != 1):
             plt.legend()
@@ -445,7 +471,7 @@ class H5(wnb.Base):
         plt.show()
 
     def plot_group_property_in_zones(
-        self, group, property, rcParams=None, **kwargs
+        self, group, property, rcParams=None, plotParams=None, **kwargs
     ):
         """Method to plot a group property vs. zone.
 
@@ -458,7 +484,11 @@ class H5(wnb.Base):
 
             ``rcParams``` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`dict`, optional): A dictionary of
+            valid :obj:`matplotlib.pyplot.plot` optional keyword arguments
+            to be applied to the plot.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -472,7 +502,10 @@ class H5(wnb.Base):
 
         prop = self.get_group_properties_in_zones_as_floats(group, [property])
 
-        plt.plot(prop[property])
+        if plotParams:
+            plt.plot(prop[property], **plotParams)
+        else:
+            plt.plot(prop[property])
 
         self.apply_class_methods(plt, kwargs)
 
@@ -483,7 +516,7 @@ class H5(wnb.Base):
 
     def plot_group_mass_fractions_vs_property(
         self, group, prop, species, xfactor=1, use_latex_names=False,
-        rcParams=None, **kwargs
+        rcParams=None, plotParams=None, **kwargs
     ):
         """Method to plot group mass fractions vs. zone property.
 
@@ -506,7 +539,12 @@ class H5(wnb.Base):
 
             ``rcParams``` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements as ``species``.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -518,10 +556,15 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        fig = plt.figure()
+        if plotParams:
+            if len(plotParams) != len(species):
+                print(
+                    'Number of plotParam elements must equal' +
+                    ' number of species.'
+                )
+                return
 
         l = []
-        latex_names = []
 
         x = self.get_group_properties_in_zones_as_floats(
             group, [prop]
@@ -533,14 +576,18 @@ class H5(wnb.Base):
         if use_latex_names:
             laxtex_names = self.get_latex_names(species)
 
-        iy = 0
-        for sp in species:
+        for i, sp in enumerate(species):
             y = m[:, nuclide_data[sp]['index']]
-            if(len(latex_names) != 0):
-                lab = latex_names[sp]
+            if plotParams is None:
+                p = {}
             else:
-                lab = sp
-            l.append(plt.plot(x / xfactor, y, label=lab))
+                p = plotParams[i]
+            if 'label' not in p:
+                if use_latex_names:
+                    p = {**p, **{'label':latex_names[sp]}}
+                else:
+                    p = {**p, **{'label':sp}}
+            l.append(plt.plot(x / xfactor, y, **p))
 
         if(len(species) != 1):
             plt.legend()
@@ -563,7 +610,8 @@ class H5(wnb.Base):
 
     def plot_zone_mass_fractions_vs_property(
         self, zone, prop, species, xfactor=1, yfactor=None,
-        use_latex_names=False, rcParams=None, **kwargs
+        use_latex_names=False, rcParams=None,
+        plotParams=None,  **kwargs
     ):
         """Method to plot zone mass fractions vs. zone property.
 
@@ -590,7 +638,11 @@ class H5(wnb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`dict`, optional): A dictionary of
+            valid :obj:`matplotlib.pyplot.plot` optional keyword arguments
+            to be applied to the plot.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -602,10 +654,7 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        fig = plt.figure()
-
         l = []
-        latex_names = []
 
         x = self.get_zone_properties_in_groups_as_floats(zone, [prop])[prop]
         m = self.get_zone_mass_fractions_in_groups(zone, species)
@@ -622,14 +671,17 @@ class H5(wnb.Base):
         if use_latex_names:
             latex_names = self.get_latex_names(species)
 
-        for i in range(len(species)):
-            if(len(latex_names) != 0):
-                lab = latex_names[species[i]]
+        for i, sp in enumerate(species):
+            if plotParams is None:
+                p = {}
             else:
-                lab = species[i]
-            l.append(
-                plt.plot(x / xfactor, m[species[i]] / yfactor[i], label=lab)
-            )
+                p = plotParams[i]
+            if 'label' not in p:
+                if use_latex_names:
+                    p = {**p, **{'label':latex_names[sp]}}
+                else:
+                    p = {**p, **{'label':sp}}
+            l.append(plt.plot(x / xfactor, m[species[i]] / yfactor[i], **p))
 
         if(len(species) != 1):
             plt.legend()
@@ -638,7 +690,7 @@ class H5(wnb.Base):
             if(len(species) != 1):
                 plt.ylabel('Mass Fraction')
             else:
-                if(len(latex_names) == 0):
+                if use_latex_names:
                     plt.ylabel('X(' + species[0] + ')')
                 else:
                     plt.ylabel('X(' + latex_names[species[0]] + ')')

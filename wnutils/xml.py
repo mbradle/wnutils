@@ -276,7 +276,8 @@ class Xml(wb.Base):
         return result
 
     def plot_property_vs_property(
-        self, prop1, prop2, xfactor=1, yfactor=1, rcParams=None, **kwargs
+        self, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
+        plotParams=None, **kwargs
     ):
         """Method to plot a property vs. a property.
 
@@ -298,7 +299,11 @@ class Xml(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`dict`, optional): A dictionary of
+            valid :obj:`matplotlib.pyplot.plot` optional keyword arguments
+            to be applied to the plot.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -314,8 +319,14 @@ class Xml(wb.Base):
 
         self.apply_class_methods(plt, kwargs)
 
-        plt.plot(result[prop1] / xfactor, result[prop2] / yfactor)
-
+        x = result[prop1] / xfactor
+        y = result[prop2] / yfactor
+        
+        if plotParams:
+            plt.plot(x, y, **plotParams)
+        else:
+            plt.plot(x, y)
+ 
         if('xlabel' not in kwargs):
             plt.xlabel(prop1)
 
@@ -326,7 +337,7 @@ class Xml(wb.Base):
 
     def plot_mass_fractions_vs_property(self, prop, species, xfactor=1,
                                         use_latex_names=False, rcParams=None,
-                                        **kwargs
+                                        plotParams=None, **kwargs
                                         ):
         """Method to plot the mass fractions versus a property.
 
@@ -346,7 +357,12 @@ class Xml(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements as ``species``.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -359,6 +375,14 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
+        if plotParams:
+            if len(plotParams) != len(species):
+                print(
+                    'Number of plotParam elements must equal number' +
+                    ' of species.'
+                )
+                return
+
         l = []
 
         x = self.get_properties_as_floats([prop])[prop] / xfactor
@@ -368,12 +392,17 @@ class Xml(wb.Base):
         if use_latex_names:
             latex_names = self.get_latex_names(species)
 
-        for sp in species:
-            if use_latex_names:
-                lab = latex_names[sp]
+        for i, sp in enumerate(species):
+            if plotParams is None:
+                p = {}
             else:
-                lab = sp
-            l.append(plt.plot(x, y[sp], label=lab))
+                p = plotParams[i]
+            if 'label' not in p:
+                if use_latex_names:
+                    p = {**p, **{'label':latex_names[sp]}}
+                else:
+                    p = {**p, **{'label':sp}}
+            l.append(plt.plot(x, y[sp], **p))
 
         self.apply_class_methods(plt, kwargs)
 
@@ -396,7 +425,8 @@ class Xml(wb.Base):
         plt.show()
 
     def plot_abundances_vs_nucleon_number(
-        self, nucleon='a', zone_xpath='[last()]', rcParams=None, **kwargs
+        self, nucleon='a', zone_xpath='[last()]', rcParams=None,
+        plotParams=None, **kwargs
     ):
         """Method to plot abundances summed by nucleon number.
 
@@ -411,7 +441,11 @@ class Xml(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`dict`, optional): A dictionary of
+            valid :obj:`matplotlib.pyplot.plot` optional keyword arguments
+            to be applied to the plot.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -433,7 +467,10 @@ class Xml(wb.Base):
             print("Include only one zone in XPath.")
             return
 
-        plt.plot(y[0, :])
+        if plotParams:
+            plt.plot(y[0, :], **plotParams)
+        else:
+            plt.plot(y[0, :])
 
         if('xlabel' not in kwargs):
             plt.xlabel(nucleon)

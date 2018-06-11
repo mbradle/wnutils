@@ -43,7 +43,7 @@ class Multi_H5(wb.Base):
 
     def plot_zone_property_vs_property(
         self, zone, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        labels=None, **kwargs
+        plotParams=None, **kwargs
     ):
         """Method to plot a property vs. a property in the files.
 
@@ -68,10 +68,13 @@ class Multi_H5(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             : obj: `matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
 
-            ``labels`` (:obj:`list`, optional): A list of strings giving
-            the legend labels.
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements number of files in the
+            class instance.
 
             ``**kwargs``:  Acceptable: obj: `matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -85,19 +88,19 @@ class Multi_H5(wb.Base):
 
         h5s = self.get_h5()
 
-        if labels:
-            if len(h5s) != len(labels):
-                print('Number of legend labels must equal number of plots.')
+        if plotParams:
+            if len(h5s) != len(plotParams):
+                print('Number of plot args must equal number of plots.')
                 return
 
-        for i in range(len(h5s)):
-            result = h5s[i].get_zone_properties_in_groups_as_floats(
+        for i, h5 in enumerate(h5s):
+            result = h5.get_zone_properties_in_groups_as_floats(
                 zone, [prop1, prop2]
             )
             x = result[prop1] / xfactor
             y = result[prop2] / yfactor
-            if labels:
-                plt.plot(x, y, label=labels[i])
+            if plotParams:
+                plt.plot(x, y, **plotParams[i])
             else:
                 plt.plot(x, y)
 
@@ -109,14 +112,16 @@ class Multi_H5(wb.Base):
         if('ylabel' not in kwargs):
             plt.ylabel(prop2)
 
-        if labels and 'legend' not in kwargs:
-            plt.legend()
+        if 'legend' not in kwargs:
+            if plotParams:
+                if 'label' in plotParams[0]:
+                    plt.legend()
 
         plt.show()
 
     def plot_zone_mass_fraction_vs_property(self, zone, prop, species,
                                             xfactor=1, use_latex_names=False,
-                                            labels=None, rcParams=None,
+                                            rcParams=None, plotParams=None,
                                             **kwargs
                                             ):
         """Method to plot a mass fraction versus a property.
@@ -140,10 +145,14 @@ class Multi_H5(wb.Base):
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
-            Defaults to leaving the current rcParams unchanged.
+            Defaults to the default rcParams.
 
-            ``labels`` (:obj:`list`, optional): A list of strings giving
-            the legend labels.
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements number of files in the
+            class instance.
+
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -163,16 +172,18 @@ class Multi_H5(wb.Base):
 
         if labels:
             if len(h5s) != len(labels):
-                print('Number of legend labels must equal number of plots.')
+                print(
+                    'Number of plotParam elements must equal number of plots.'
+                )
                 return
 
-        for i in range(len(h5s)):
-            x = h5s[i].get_zone_properties_in_groups_as_floats(
+        for i, h5 in enumerate(h5s):
+            x = h5.get_zone_properties_in_groups_as_floats(
                   zone, [prop]
                 )[prop] / xfactor
-            y = h5s[i].get_zone_mass_fractions_in_groups(zone, [species])
-            if labels:
-                plt.plot(x, y[species], label=labels[i])
+            y = h5.get_zone_mass_fractions_in_groups(zone, [species])
+            if plotParams:
+                plt.plot(x, y[species], **plotParams[i])
             else:
                 plt.plot(x, y[species])
 
@@ -188,7 +199,9 @@ class Multi_H5(wb.Base):
                 s = species
             plt.ylabel(s)
 
-        if labels and 'legend' not in kwargs:
-            plt.legend()
+        if 'legend' not in kwargs:
+            if plotParams:
+                if 'label' in plotParams[0]:
+                    plt.legend()
 
         plt.show()

@@ -40,17 +40,39 @@ print the list of parameters (and their default values) that can be set by typin
 Since the Base class is inherited by the other wnutils classes, the
 `list_rcParams()` method is available from any class instance.
 
-For the purposes of this tutorial, efine a dictionary of parameters by typing::
+For the purposes of this tutorial,
+define a dictionary of parameters by typing::
 
     >>> my_params = {'lines.linewidth': 2, 'font.size': 14}
+
+Setting plot parameters
+-----------------------
+
+The plotting methods accept `plotParams` as a keyword.  These govern the
+lines drawn the plot.  In this case, the keyword is `plotParams`
+and the value is a dictionary of :obj:`matplotlib.pyplot.plot` optional
+keyword arguments and their values.  For example, calling a `wnutils`
+plotting routine with
+
+    >>> params = {'color':'black'}
+
+and then `plotParams = params` in the plotting routine can be thought of
+as plotting with the command::
+
+    >>> import matplotlib.pyplot as plt
+    >>> plt.plot(x, y, color='black')
+
+When the plotting routine creates multiple plots, the keyword argument
+`plotParams` is a :obj:`list` of dictionaries.
 
 Setting plot methods
 --------------------
 
-The plotting routines also accept keywords giving :obj:`matplotlib.pyplot` methods
-and their arguments.  In such a case, the keyword is the method, and the value is
-the argument to the method.  For example, calling a plotting routine with the
-keywork `xlabel = 'time (s)` is equivalent to typing::
+The plotting routines also accept keywords giving :obj:`matplotlib.pyplot`
+methods and their arguments.  In such a case, the keyword is the method,
+and the value is the argument to the method.  For example,
+calling a `wnutils` plotting routine with the
+keyword `xlabel = 'time (s)` is equivalent to typing::
 
     >>> import matplotlib.pyplot as plt
     >>> plt.xlabel('time (s)')
@@ -91,9 +113,13 @@ You can also do this with both procedures.  For example, type::
     >>> kw2 = {'xlabel':'time (s)'}
     >>> my_xml.plot_property_vs_property('time', 't9', ylabel = '$T_9$', **kw2)
 
-Finally, note that you can call with the RcParams previously defined by typing::
+You can call with the RcParams previously defined by typing::
 
     >>> my_xml.plot_property_vs_property('time', 't9', rcParams=my_params, **kw)
+
+You can also call the the plotParams keyword by typing::
+
+    >>> my_xml.plot_property_vs_property('time', 't9', rcParams=my_params, plotParams={'color':'black'}, **kw)
 
 Plot mass fractions against a property.
 .........................................
@@ -191,22 +217,22 @@ compute the `tau` for the two calcluations.  You can type::
 
     >>> import math
     >>> xmls = my_multi_xml.get_xml()
-    >>> labs = []
+    >>> p_params = []
     >>> for xml in xmls:
     ...     props = xml.get_properties_as_floats(['time','rho'])
     ...     tau = -props['time'][150] / math.log(props['rho'][150]/props['rho'][0])
-    ...     labs.append(('{:8.2f}'.format(tau)).strip() + 's')
+    ...     p_params.append({'label':('{:8.2f}'.format(tau)).strip() + 's'})
     ... 
 
-Now call the plot method with the labels keyword by typing::
+Now call the plot method with the plotParams keyword by typing::
 
-    >>> my_multi_xml.plot_property_vs_property('time','t9', labels=labs, legend={'title':'tau'})
+    >>> my_multi_xml.plot_property_vs_property('time','t9', plotParams = p_params, legend={'title':'tau'})
 
 Notice the call to the legend keyword.  The keyword values can be any
 valid keyword argument to :obj:`matplotlib.pyplot.legend`.  Thus, for example,
 you could type::
 
-    >>> my_multi_xml.plot_property_vs_property('time','t9', labels=labs, legend={'title':'tau', 'shadow':True})
+    >>> my_multi_xml.plot_property_vs_property('time','t9', plotParams = p_params, legend={'title':'tau', 'shadow':True})
 
 Plot a mass fraction against a property in multiple files.
 ..........................................................
@@ -215,7 +241,7 @@ You can also plot a mass fraction versus a property in multiple files.
 For example, to plot the mass fraction of fe58 as a function of time
 (and using the labels you defined above), type::
 
-    >>> my_multi_xml.plot_mass_fraction_vs_property('time', 'fe58', labels=labs, legend={'title':'tau'})
+    >>> my_multi_xml.plot_mass_fraction_vs_property('time', 'fe58', plotParams = p_params, legend={'title':'tau'})
 
 :obj:`wnutils.multi_xml.Multi_Xml` plotting methods accept valid `rcParams` and
 other keywords, as in the :obj:`wnutils.xml.Xml` methods.
@@ -346,13 +372,13 @@ is that the first was for a mixing timescale of 10\ :sup:`7` seconds while the
 second was for a mixing timescale of 10\ :sup:`9` seconds.  We can thus add
 a legend by typing::
 
-    >>> labs = ['$10^7\ s$', '$10^9\ s$']
+    >>> p_params = [{'label':'$10^7\ s$', 'color':'black', 'linestyle':'-'}, {'label':'$10^9\ s$', 'color':'black', 'linestyle':':'}]
 
-Now call the plot method with the labels keyword by typing::
+Now call the plot method with the plotParams keyword by typing::
 
     >>> my_multi_h5.plot_zone_property_vs_property(
-    ...     zone, 'time',('exposure', 'n'), labels=labs, legend={'title':'$\tau_{mix}$'},
-    ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\tau_n(mb^{-1})$'
+    ...     zone, 'time',('exposure', 'n'), plotParams = p_params, legend={'title':'$\\tau_{mix}$'},
+    ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\\tau_n(mb^{-1})$'
     ... )
 
 As with :obj:`wnutils.multi_xml`, the legend keyword values can be any
@@ -360,7 +386,7 @@ valid keyword argument to :obj:`matplotlib.pyplot.legend`.  Thus, for example,
 you could type::
 
     >>> my_multi_h5.plot_zone_property_vs_property(
-    ...     zone, 'time',('exposure', 'n'), labels=labs,
+    ...     zone, 'time',('exposure', 'n'), plotParams = p_params,
     ...     legend={'title':'$\\tau_{mix}$', 'shadow':True},
     ...     xlabel='time (yr)', xfactor=3.15e7, ylabel='$\\tau_n(mb^{-1})$'
     ... )
@@ -372,7 +398,7 @@ You can also plot a mass fraction versus a property in multiple files.
 For example, to plot the mass fraction of fe56 as a function of time,
 type::
 
-    >>> my_multi_h5.plot_zone_mass_fraction_vs_property(zone, 'time', 'fe56', labels=labs, legend={'title':'$\\tau_{mix}$'})
+    >>> my_multi_h5.plot_zone_mass_fraction_vs_property(zone, 'time', 'fe56', plotParams = p_params, legend={'title':'$\\tau_{mix}$'})
 
 :obj:`wnutils.multi_h5.Multi_H5` plotting methods accept valid `rcParams` and
 other keywords, as in the :obj:`wnutils.h5.H5` methods.
