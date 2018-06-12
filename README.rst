@@ -9,9 +9,6 @@ Installation
 
 Install the package with pip::
 
-    $ pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple wnutils
-
-..
     $ pip install wnutils
 
 Authors

@@ -63,9 +63,11 @@ as plotting with the command::
     >>> import matplotlib.pyplot as plt
     >>> plt.plot(x, y, color='black')
 
-When the plotting routine creates multiple plots, the object passed in
+When the plotting routine creates multiple curves on the same plot,
+the object passed in
 through `plotParams` is a :obj:`list` of dictionaries
 of :obj:`matplotlib.pyplot.plot` optional keyword arguments.
+Each dictionary in the list corresponds to a curve on the plot.
 
 Setting plot methods
 --------------------

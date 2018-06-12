@@ -5,7 +5,7 @@ Reading in the Data
 
 `webnucleo <http://sourceforge.net/u/mbradle/blog/>`_ data files are
 in either in `XML <https://www.w3.org/TR/REC-xml/>`_ or
-`hdf5 <https://support.hdfgroup.org/HDF5/>`_ format.  `wnutils` routines
+`HDF5 <https://support.hdfgroup.org/HDF5/>`_ format.  `wnutils` routines
 can read either format.
 
 In the following tutorials, you will enter Python commands.  In your
