@@ -399,9 +399,9 @@ class Xml(wb.Base):
                 p = plotParams[i]
             if 'label' not in p:
                 if use_latex_names:
-                    p = {**p, **{'label':latex_names[sp]}}
+                    p = self._merge_dicts(p, {'label':latex_names[sp]})
                 else:
-                    p = {**p, **{'label':sp}}
+                    p = self._merge_dicts(p, {'label':sp})
             l.append(plt.plot(x, y[sp], **p))
 
         self.apply_class_methods(plt, kwargs)

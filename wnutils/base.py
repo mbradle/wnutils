@@ -13,6 +13,11 @@ class Base:
 
         return s
 
+    def _merge_dicts(self, x, y):    # For Python 2
+        z = x.copy()
+        z.update(y)
+        return z
+
     def set_plot_params(self, my_mpl, my_params):
         """Method to set plot parameters.
 

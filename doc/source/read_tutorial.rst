@@ -410,7 +410,7 @@ Read properties of a zone in the groups.
 
 It is possible to retrieve properties from a given zone in all groups.
 To retrieve the properties `time`, `t9`, and
-`rho` in all group for the zone with labels `1`, `0`, `0`, type::
+`rho` in all groups for the zone with labels `1`, `0`, `0`, type::
 
      >>> zone = ('1','0','0')
      >>> props = my_h5.get_zone_properties_in_groups(zone, ['time','t9','rho'])
@@ -436,7 +436,7 @@ To retrieve the properties `time`, `t9`, and
      >>> props = my_h5.get_zone_properties_in_groups_as_floats(zone, ['time','t9','rho'])
 
 This returns a :obj:`dict` of :obj:`numpy.array`.  Each array entry is a
-float.  To print the properties out in the groups, type::
+:obj:`float`.  To print the properties out in the groups, type::
 
      >>> groups = my_h5.get_iterable_groups()
      >>> for i in range(len(groups)):

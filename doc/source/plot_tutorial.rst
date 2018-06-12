@@ -48,10 +48,11 @@ define a dictionary of parameters by typing::
 Setting plot parameters
 -----------------------
 
-The plotting methods accept `plotParams` as a keyword.  These govern the
-lines drawn the plot.  In this case, the keyword is `plotParams`
-and the value is a dictionary of :obj:`matplotlib.pyplot.plot` optional
-keyword arguments and their values.  For example, calling a `wnutils`
+The plotting methods accept `plotParams` as a keyword.  The object
+passed in through the keyword is a :obj:`dict`
+of :obj:`matplotlib.pyplot.plot` optional keyword arguments.
+The dictionary values govern
+the lines drawn on the plot.  For example, calling a `wnutils`
 plotting routine with
 
     >>> params = {'color':'black'}
@@ -62,8 +63,9 @@ as plotting with the command::
     >>> import matplotlib.pyplot as plt
     >>> plt.plot(x, y, color='black')
 
-When the plotting routine creates multiple plots, the keyword argument
-`plotParams` is a :obj:`list` of dictionaries.
+When the plotting routine creates multiple plots, the object passed in
+through `plotParams` is a :obj:`list` of dictionaries
+of :obj:`matplotlib.pyplot.plot` optional keyword arguments.
 
 Setting plot methods
 --------------------
@@ -211,7 +213,7 @@ example, to plot the `t9` versus `time` in our two files, type::
 
 Since the calculations are for different exponential expansion timescales,
 you can label them with a legend.  First, find the timescale by noting
-that :math:`\rho(t) = \rho_0 \exp(-t/\tau)`.  This means that
+that :math:`\rho(t) = \rho(0) \exp(-t/\tau)`.  This means that
 :math:`\tau = -t\ /\ln\left(\rho(t)/\rho(0)\right)`.  Choose, say, step 150 to
 compute the `tau` for the two calcluations.  You can type::
 
@@ -255,7 +257,7 @@ To make plots from webnucleo HDF5 file, first import the namespace::
 
 Next, create an object for each file by typing::
 
-    >>> my_h5 = w5.H5( 'my_output1.h5' )
+    >>> my_h5 = w5.H5('my_output1.h5')
 
 Plot a property versus a property for a given zone.
 ...................................................
@@ -301,10 +303,10 @@ Or, in Python 3.5 or greater, you can type::
 Plot a property in the zones of a given group.
 ..............................................
 
-To plot a property in all the zones of a given group, say Step number 25,
+To plot a property in all the zones of a given group, say Step number 125,
 you can, for example, type::
 
-    >>> my_h5.plot_group_property_in_zones('Step 00025', 't9')
+    >>> my_h5.plot_group_property_in_zones('Step 00125', 't9')
 
 This shows the temperature (in billions of Kelvins) in the zones.  The
 innermost (first) zone is the hottest.
@@ -316,7 +318,7 @@ You can plot the mass fractions for a given group.  The abscissa of the
 plot in this case will be a zone index.  For example, type::
 
      >>> my_h5.plot_group_mass_fractions(
-     ...     'Step 00025', ['he4', 'c12','o16'], use_latex_names=True
+     ...     'Step 00125', ['he4', 'c12','o16'], use_latex_names=True
      ... )
 
 Plot group mass fractions versus a property.
@@ -327,7 +329,7 @@ their zone.  You can also plot against a zone property.  For example,
 type::
 
      >>> my_h5.plot_group_mass_fractions_vs_property(
-     ...     'Step 00025', 't9', ['he4', 'c12','o16'], use_latex_names=True
+     ...     'Step 00125', 't9', ['he4', 'c12','o16'], use_latex_names=True
      ... )
 
 Notice that the plot shows the lowest temperature zone to the right part
@@ -335,7 +337,7 @@ of the plot.  To show the graph with the innermost (hottest) zones plotted
 to the right, use the `xlim` keyword::
 
      >>> my_h5.plot_group_mass_fractions_vs_property(
-     ...     'Step 00025', 't9', ['he4', 'c12','o16'], use_latex_names=True, xlim = [0.3,0]
+     ...     'Step 00125', 't9', ['he4', 'c12','o16'], use_latex_names=True, xlim = [0.3,0]
      ... )
 
 Multi_H5

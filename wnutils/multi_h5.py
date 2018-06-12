@@ -170,8 +170,8 @@ class Multi_H5(wb.Base):
 
         h5s = self.get_h5()
 
-        if labels:
-            if len(h5s) != len(labels):
+        if plotParams:
+            if len(h5s) != len(plotParams):
                 print(
                     'Number of plotParam elements must equal number of plots.'
                 )
