@@ -14,6 +14,7 @@ Contents
    :includehidden:
 
    readme
+   changelog
    documentation
    tutorials
 
