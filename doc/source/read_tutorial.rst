@@ -71,6 +71,24 @@ To confirm that you only retrieved nitrogen data, type::
     ...     print(isotope, ':', 'Z =', n[isotope]['z'], 'A =', n[isotope]['a'])
     ...
 
+Partition function data are retrieved for each species with the key `partf`.
+These data are stored in a two-dimensional :obj:`numpy.array`.  The first
+index of the array indicates whether the data are `t9` (the temperature
+in billions of K) (index value = 0) or the partition function `G`
+(index value = 1).
+To see how this works, try printing out the partition function for one
+for one of the iron isotopes, say, fe56.  Begin
+by extracting the data for the iron isotopes by typing::
+
+    >>> fe = my_xml.get_nuclide_data(nuc_xpath='[z = 26]')
+
+Then print out the partition function `G` as a function of `t9` by typing::
+
+    >>> sp = 'fe56'
+    >>> for i in range(fe[sp]['partf'].shape[1]):
+    ...     print('t9 = ', fe[sp]['partf'][0,i], 'G(t9) = ', fe[sp]['partf'][1,i])
+    ...
+
 Read all properties in a zone.
 ..............................
 

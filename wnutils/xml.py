@@ -36,6 +36,20 @@ class Xml(wb.Base):
             else:
                 data['state'] = ''
             data['mass excess'] = float((nuc.xpath('mass_excess'))[0].text)
+            partf = nuc.xpath('partf_table/point')
+            p = np.zeros(shape=(2,len(partf)))
+            for i, elem in enumerate(partf):
+                p[0,i] = float((elem.xpath('t9')[0].text).strip())
+                p[1,i] = np.power(
+                             10.,
+                             float(
+                                 (elem.xpath('log10_partf')[0].text).strip()
+                             )
+                         ) * (2. * data['spin'] + 1.)
+            ind = p[0,:].argsort()
+            p[0,:] = p[0,ind]
+            p[1,:] = p[1,ind]
+            data['partf'] = p
             result.append(data)
 
         return result
