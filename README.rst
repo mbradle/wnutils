@@ -7,7 +7,8 @@ wnutils is a python package for reading and plotting
 Installation
 ------------
 
-Install the package with pip::
+Install from `PyPI <https://pypi.org/project/wnutils>`_ with pip by
+typing in your favorite terminal::
 
     $ pip install wnutils
 

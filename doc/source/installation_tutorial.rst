@@ -26,6 +26,10 @@ Alternatively, you can just install for yourself with the ``--user`` option::
 
       $ pip install wnutils --user
 
+If you have previously installed wnutils and want to upgrade, type::
+
+      $ pip install --upgrade wnutils
+
 To test that wnutils has installed correctly, type::
 
       $ pip show wnutils
