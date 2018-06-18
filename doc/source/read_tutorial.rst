@@ -71,11 +71,11 @@ To confirm that you only retrieved nitrogen data, type::
     ...     print(isotope, ':', 'Z =', n[isotope]['z'], 'A =', n[isotope]['a'])
     ...
 
-Partition function data are retrieved for each species with the key `partf`.
-These data are stored in a two-dimensional :obj:`numpy.array`.  The first
-index of the array indicates whether the data are `t9` (the temperature
-in billions of K) (index value = 0) or the partition function `G`
-(index value = 1).
+Partition function data are stored in two :obj:`numpy.array`.  The first
+array, with key `t9`, gives the temperature (in billions of k) at which
+the partition function is evaluated.  The second array, with key
+`partf`, gives the partition function `G` evaluated at each of the
+temperature points.
 To see how this works, try printing out the partition function for one
 for one of the iron isotopes, say, fe56.  Begin
 by extracting the data for the iron isotopes by typing::
@@ -85,8 +85,8 @@ by extracting the data for the iron isotopes by typing::
 Then print out the partition function `G` as a function of `t9` by typing::
 
     >>> sp = 'fe56'
-    >>> for i in range(fe[sp]['partf'].shape[1]):
-    ...     print('t9 = ', fe[sp]['partf'][0,i], 'G(t9) = ', fe[sp]['partf'][1,i])
+    >>> for i in range(len(fe[sp]['t9'])):
+    ...     print('t9 = ', fe[sp]['t9'][i], 'G(t9) = ', fe[sp]['partf'][i])
     ...
 
 Read all properties in a zone.
