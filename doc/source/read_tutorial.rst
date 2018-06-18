@@ -72,7 +72,7 @@ To confirm that you only retrieved nitrogen data, type::
     ...
 
 Partition function data are stored in two :obj:`numpy.array`.  The first
-array, with key `t9`, gives the temperature (in billions of k) at which
+array, with key `t9`, gives the temperature points (in billions of k) at which
 the partition function is evaluated.  The second array, with key
 `partf`, gives the partition function `G` evaluated at each of the
 temperature points.
