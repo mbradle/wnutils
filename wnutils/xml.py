@@ -92,7 +92,7 @@ class Xml(wb.Base):
         return result
 
     def _get_zones(self, zone_xpath):
-        return self._root.xpath('//zone' + zone_xpath)
+        return self._root.xpath('//zone_data/zone' + zone_xpath)
 
     def get_mass_fractions(self, nuclides, zone_xpath=' '):
         """Method to retrieve mass fractions of nuclides in specified zones.

@@ -71,12 +71,13 @@ To confirm that you only retrieved nitrogen data, type::
     ...     print(isotope, ':', 'Z =', n[isotope]['z'], 'A =', n[isotope]['a'])
     ...
 
-Partition function data are stored in two :obj:`numpy.array`.  The first
+Partition function data for the nuclei
+are stored in two :obj:`numpy.array` objects.  The first
 array, with key `t9`, gives the temperature points (in billions of k) at which
 the partition function is evaluated.  The second array, with key
 `partf`, gives the partition function `G` evaluated at each of the
 temperature points.
-To see how this works, try printing out the partition function for one
+To see how this works, try printing out the partition function
 for one of the iron isotopes, say, fe56.  Begin
 by extracting the data for the iron isotopes by typing::
 
@@ -397,7 +398,8 @@ Read properties in all zones for a group as floats.
 ...................................................
 
 It is often desirable to retrieve the properties in zones for a group as floats.
-For example, one may again retrieve `time`, `t9`, and `rho` from `Step 00024` but,
+For example,
+one may again retrieve `time`, `t9`, and `rho` from `Step 00024` but,
 this time, as floats by typing::
 
     >>> p = ['time','t9','rho']
