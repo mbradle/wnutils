@@ -70,7 +70,7 @@ class Multi_Xml(wb.Base):
             ``plotParams`` (:obj:`list`, optional): A list of
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
             keyword arguments to be applied to the plot.  The list must
-            have the same number of elements number of files in the
+            have the same number of elements as the number of files in the
             class instance.
 
             ``**kwargs``:  Acceptable: obj: `matplotlib.pyplot` functions.
@@ -144,7 +144,7 @@ class Multi_Xml(wb.Base):
             ``plotParams`` (:obj:`list`, optional): A list of
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
             keyword arguments to be applied to the plot.  The list must
-            have the same number of elements number of files in the
+            have the same number of elements as the number of files in the
             class instance.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.

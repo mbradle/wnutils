@@ -192,7 +192,19 @@ To add a title giving the conditions at that step, type::
     ...             )
     >>> my_xml.plot_abundances_vs_nucleon_number(nucleon='z', zone_xpath='[position() = 20]', xlim = [0,50], ylim = [1.e-10,1], yscale='log', xlabel = 'Atomic Number, Z', ylabel = 'Y(Z)', title=title_str)
 
-Recall that the property arrays are `zero-indexed <https://en.wikipedia.org/wiki/Zero-based_numbering>`_.
+Recall that the property arrays are
+`zero-indexed <https://en.wikipedia.org/wiki/Zero-based_numbering>`_.
+
+You can plot more that one time step (zone) by using an XPath expression.
+For example, to plot the first and last time steps, type::
+
+    >>> my_xml.plot_abundances_vs_nucleon_number(zone_xpath='[(position() = 1) or (position() = last())]', yscale = 'log', ylim = [1.e-10,1])
+
+Use a list of plot parameters to label the steps and other keywords to
+give the plot the desired look::
+
+    >>> p_params = [{'label': 'first'}, {'label': 'last'}]
+    >>> my_xml.plot_abundances_vs_nucleon_number(zone_xpath='[(position() = 1) or (position() = last())]', plotParams = p_params, yscale = 'log', ylim = [1.e-10,1], xlabel = 'A, Mass Number', ylabel = 'Y(A)', xlim = [0,100], legend = {'title': 'time step', 'shadow': True})
 
 Multi_XML
 ---------

@@ -449,9 +449,9 @@ class H5(wnb.Base):
                 p = plotParams[i]
             if 'label' not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label':latex_names[sp]})
+                    p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label':sp})
+                    p = self._merge_dicts(p, {'label': sp})
             l.append(plt.plot(m[:, nuclide_data[sp]['index']], **p))
 
         if(len(species) != 1):
@@ -584,9 +584,9 @@ class H5(wnb.Base):
                 p = plotParams[i]
             if 'label' not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label':latex_names[sp]})
+                    p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label':sp})
+                    p = self._merge_dicts(p, {'label': sp})
             l.append(plt.plot(x / xfactor, y, **p))
 
         if(len(species) != 1):
@@ -678,9 +678,9 @@ class H5(wnb.Base):
                 p = plotParams[i]
             if 'label' not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label':latex_names[sp]})
+                    p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label':sp})
+                    p = self._merge_dicts(p, {'label': sp})
             l.append(plt.plot(x / xfactor, m[species[i]] / yfactor[i], **p))
 
         if(len(species) != 1):

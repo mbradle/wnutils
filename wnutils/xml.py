@@ -42,17 +42,31 @@ class Xml(wb.Base):
             for i, elem in enumerate(partf):
                 data['t9'][i] = float((elem.xpath('t9')[0].text).strip())
                 data['partf'][i] = np.power(
-                             10.,
-                             float(
-                                 (elem.xpath('log10_partf')[0].text).strip()
-                             )
-                         ) * (2. * data['spin'] + 1.)
+                    10.,
+                    float(
+                        (elem.xpath('log10_partf')[0].text).strip()
+                    )
+                ) * (2. * data['spin'] + 1.)
             ind = data['t9'].argsort()
             data['t9'] = data['t9'][ind]
             data['partf'] = data['partf'][ind]
             result.append(data)
 
         return result
+
+    def _get_max_nucleon_numbers(self):
+        nd = self._get_nuclide_data_array('')
+
+        z = np.zeros(len(nd), dtype=np.int8)
+        n = np.zeros(len(nd), dtype=np.int8)
+        a = np.zeros(len(nd), dtype=np.int8)
+
+        for i in range(len(nd)):
+            z[i] = nd[i]['z']
+            n[i] = nd[i]['n']
+            a[i] = nd[i]['a']
+
+        return {'z': np.amax(z), 'n': np.amax(n), 'a': np.amax(a)}
 
     def get_nuclide_data(self, nuc_xpath=' '):
         """Method to retrieve nuclear data from webnucleo XML.
@@ -269,17 +283,9 @@ class Xml(wb.Base):
 
         zones = self._get_zones(zone_xpath)
 
-        nd = self._get_nuclide_data_array('')
+        m = self._get_max_nucleon_numbers()
 
-        maxn = 0
-
-        for i in range(len(nd)):
-            if nd[i][nucleon] > maxn:
-                maxn = nd[i][nucleon]
-
-        maxn += 1
-
-        result = np.zeros((len(zones), maxn))
+        result = np.zeros((len(zones), m[nucleon] + 1))
 
         for i in range(len(zones)):
             sp = self._get_nuclide_data_for_zone(zones[i])
@@ -335,12 +341,12 @@ class Xml(wb.Base):
 
         x = result[prop1] / xfactor
         y = result[prop2] / yfactor
-        
+
         if plotParams:
             plt.plot(x, y, **plotParams)
         else:
             plt.plot(x, y)
- 
+
         if('xlabel' not in kwargs):
             plt.xlabel(prop1)
 
@@ -413,9 +419,9 @@ class Xml(wb.Base):
                 p = plotParams[i]
             if 'label' not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label':latex_names[sp]})
+                    p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label':sp})
+                    p = self._merge_dicts(p, {'label': sp})
             l.append(plt.plot(x, y[sp], **p))
 
         self.apply_class_methods(plt, kwargs)
@@ -450,16 +456,18 @@ class Xml(wb.Base):
             (must be 'z', 'n', or 'a').  Defaults to 'a'.
 
             ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
-            expression to select the (single) zone. Defaults to the last
+            expression to select the zones. Defaults to the last
             zone.
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
             Defaults to the default rcParams.
 
-            ``plotParams`` (:obj:`dict`, optional): A dictionary of
-            valid :obj:`matplotlib.pyplot.plot` optional keyword arguments
-            to be applied to the plot.
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements as the number as zones selected
+            by the zone XPath.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -475,16 +483,20 @@ class Xml(wb.Base):
             self.get_abundances_vs_nucleon_number(nucleon, zone_xpath)
         )
 
-        self.apply_class_methods(plt, kwargs)
-
-        if y.shape[0] != 1:
-            print("Include only one zone in XPath.")
-            return
-
         if plotParams:
-            plt.plot(y[0, :], **plotParams)
-        else:
-            plt.plot(y[0, :])
+            if y.shape[0] != len(plotParams):
+                print(
+                    'Number of plotParam elements must equal number of plots.'
+                )
+                return
+
+        for i in range(y.shape[0]):
+            if plotParams:
+                plt.plot(y[i, :], **plotParams[i])
+            else:
+                plt.plot(y[i, :])
+
+        self.apply_class_methods(plt, kwargs)
 
         if('xlabel' not in kwargs):
             plt.xlabel(nucleon)
@@ -492,5 +504,10 @@ class Xml(wb.Base):
         if('ylabel' not in kwargs):
             s = 'Y(' + nucleon + ')'
             plt.ylabel(s)
+
+        if 'legend' not in kwargs:
+            if plotParams:
+                if 'label' in plotParams[0]:
+                    plt.legend()
 
         plt.show()
