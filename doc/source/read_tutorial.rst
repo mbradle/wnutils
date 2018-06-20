@@ -90,6 +90,36 @@ Then print out the partition function `G` as a function of `t9` by typing::
     ...     print('t9 = ', fe[sp]['t9'][i], 'G(t9) = ', fe[sp]['partf'][i])
     ...
 
+Read the network limits.
+........................
+
+It is often useful to know the limits of the network that comprises the
+nuclei in the nuclear data collection.  To get this information, type::
+
+    >>> lim = my_xml.get_network_limits()
+
+This returns a :obj:`dict` of :obj:`numpy.array` objects.  The array
+retrieved with key `z` gives the atomic numbers.  The array retrieved with
+key `n_min` gives the smallest neutron number present for the corresponding
+atomic number, while the array retrieved with key `n_max` gives the largest
+neutron number present for the corresponding atomic number.  You can print
+out the retrieved data by typing::
+
+    >>> for z in range(len(lim['z'])):
+    ...     print('Z =', z, ': N_min =', lim['n_min'][z], ', N_max =', lim['n_max'][z])
+    ...
+
+You can retrieve a subnetwork with an XPath expression.  For example,
+you can type::
+
+    >>> lim = my_xml.get_network_limits(nuc_xpath = '[z <= 5 or z >= 25]')
+
+Now print out the data::
+
+    >>> for i in range(len(lim['z'])):
+    ...     print('Z =', lim['z'][i], ': N_min =', lim['n_min'][i], ', N_max =', lim['n_max'][i])
+    ...
+
 Read all properties in a zone.
 ..............................
 
@@ -235,6 +265,39 @@ For example, to retrieve the mass fraction in the first 10 zones, type::
     >>> x = my_xml.get_mass_fractions(
     ...      ['o16','si28','s36'], zone_xpath='[position() <= 10]'
     ... ) 
+
+Read all abundances in zones.
+.............................
+
+You can retrieve abundances in the zones as a function of atomic and
+neutron number.  The retrieved data are stored in a three-dimensional
+:obj:`numpy.array`.  The first index gives the zone, the second
+gives the atomic number, and the third gives the neutron number.  The
+array value is the abundance (per nucleon).  Zones can be selected by
+XPath.
+
+To see how this works, retrieve the abundances in all zones by typing::
+
+    >>> abunds = my_xml.get_all_abundances_in_zones()
+
+Now print out the abundances in the 50th zone (remember the zero-indexing)
+by typing::
+
+    >>> for z in range(abunds.shape[1]):
+    ...     for n in range(abunds.shape[2]):
+    ...         print('Z =', z, ', N =', n, ', Y(Z,N) =', abunds[49,z,n])
+    ...
+
+You could do the same by typing::
+
+    >>> abunds = my_xml.get_all_abundances_in_zones(zone_xpath='[position() = 50]')
+    >>> for z in range(abunds.shape[1]):
+    ...     for n in range(abunds.shape[2]):
+    ...         print('Z =', z, ', N =', n, ', Y(Z,N) =', abunds[0,z,n])
+    ...
+
+This is because the XPath selects only one zone, which will have index 0 in
+the retrieved data.
 
 Retrieve abundances summed over nucleon number in zones.
 ........................................................

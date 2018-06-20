@@ -110,6 +110,7 @@ class H5(wnb.Base):
             data['name'] = nuclide_data[i][0].decode('ascii')
             data['z'] = nuclide_data[i][2]
             data['a'] = nuclide_data[i][3]
+            data['n'] = data['a'] - data['z']
             data['source'] = nuclide_data[i][4].decode('ascii')
             data['state'] = nuclide_data[i][5].decode('ascii')
             data['spin'] = nuclide_data[i][6]
@@ -138,6 +139,7 @@ class H5(wnb.Base):
             data['index'] = i
             data['z'] = nuclide_data[i]['z']
             data['a'] = nuclide_data[i]['a']
+            data['n'] = nuclide_data[i]['n']
             data['source'] = nuclide_data[i]['source']
             data['state'] = nuclide_data[i]['state']
             data['mass excess'] = nuclide_data[i]['mass excess']

@@ -11,6 +11,13 @@ New:
 
   * The nuclear partition function data for each nuclide have been added to
     the nuclear data output.
+  * It is now possible to retrieve the abundances of all nuclides in zones or
+    a subset of zones in the xml namespace.
+  * It is now possible to retrieve the network limits in the xml namespace.
+
+Internal:
+
+  * XPath selection of zones has been improved.
 
 Version 1.0.0
 -------------

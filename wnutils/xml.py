@@ -90,6 +90,54 @@ class Xml(wb.Base):
 
         return result
 
+    def get_network_limits(self, nuc_xpath = ' '):
+        """Method to retrieve the network limits from the nuclide data.
+
+        Args:
+            ``nuc_xpath`` (:obj:`str`, optional): XPath expression to select
+            the nuclides.  Defaults to all nuclides.
+
+        Returns:
+            :obj:`dict`: A dictionary of :obj:`numpy.array` containing the
+            network limits.  The array with key `z` gives the atomic values.
+            The array with key `n_min` gives the lowest neutron number present
+            for the corresponding atomic number.  The array with key `n_max`
+            gives the highest neutron number present for the corresponding
+            atomic number.
+
+        """
+
+        nd = self._get_nuclide_data_array(nuc_xpath)
+
+        zs = set()
+
+        for i in range(len(nd)):
+            if nd[i]['z'] not in zs:
+                zs.add(nd[i]['z'])
+
+        zt = []
+        for zz in zs:
+            zt.append(zz)
+
+        zt.sort()
+
+        zlim = [[] for i in range(len(zt))]
+
+        for i in range(len(nd)):
+            loc = [j for j, zj in enumerate(zt) if zj == nd[i]['z']]
+            zlim[loc[0]].append(nd[i]['n'])
+            
+        z = np.zeros(len(zlim), dtype=np.int_)
+        n_min = np.zeros(len(zlim), dtype=np.int_)
+        n_max = np.zeros(len(zlim), dtype=np.int_)
+
+        for i in range(len(zlim)):
+            z[i] = int(zt[i])
+            n_min[i] = int(min(zlim[i]))
+            n_max[i] = int(max(zlim[i]))
+
+        return {'z': z, 'n_min': n_min, 'n_max': n_max}
+
     def _get_nuclide_data_for_zone(self, zone):
         result = {}
 
@@ -259,6 +307,35 @@ class Xml(wb.Base):
             props[prop] = np.array(props[prop], np.float_)
 
         return props
+
+    def get_all_abundances_in_zones(self, zone_xpath=' '):
+        """Method to retrieve all abundances in zones.
+
+        Args:
+            ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
+            zones.  Defaults to all zones.
+
+        Returns:
+            :obj:`numpy.array`: A three-dimensional array in which the first
+            index gives the zone, the second gives the atomic number,
+            and the third gives the neutron number.  The array value
+            is the abundance.
+
+        """
+
+        zones = self._get_zones(zone_xpath)
+
+        m = self._get_max_nucleon_numbers()
+
+        result = np.zeros((len(zones), m['z'] + 1, m['n'] + 1))
+
+        for i in range(len(zones)):
+            sp = self._get_nuclide_data_for_zone(zones[i])
+
+            for s in sp:
+                result[i, sp[s]['z'], sp[s]['n']] += sp[s]['x'] / sp[s]['a']
+
+        return result
 
     def get_abundances_vs_nucleon_number(self, nucleon='a', zone_xpath=' '):
         """Method to retrieve abundances summed over nucleon number in zones.
