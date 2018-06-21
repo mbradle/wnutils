@@ -57,9 +57,9 @@ class Xml(wb.Base):
     def _get_max_nucleon_numbers(self):
         nd = self._get_nuclide_data_array('')
 
-        z = np.zeros(len(nd), dtype=np.int8)
-        n = np.zeros(len(nd), dtype=np.int8)
-        a = np.zeros(len(nd), dtype=np.int8)
+        z = np.zeros(len(nd), dtype=np.int_)
+        n = np.zeros(len(nd), dtype=np.int_)
+        a = np.zeros(len(nd), dtype=np.int_)
 
         for i in range(len(nd)):
             z[i] = nd[i]['z']
