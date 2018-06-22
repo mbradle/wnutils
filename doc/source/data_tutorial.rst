@@ -27,7 +27,8 @@ You can now check that you have the expected files by typing::
 
     $ ls
 
-You will see the files `my_output.h5`, `my_output1.xml`, `my_output2.xml`,
+You will see the files `my_output1.h5`, `my_output2.h5`,
+`my_output1.xml`, `my_output2.xml`,
 and `wnutils_tutorials_data.tar`.  Since you have the data, you can remove
 the tar file if you would like by typing::
 
