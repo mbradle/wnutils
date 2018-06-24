@@ -617,7 +617,7 @@ class Xml(wb.Base):
             `function \
             <https://docs.python.org/3/library/stdtypes.html#functions>`_
             that applies the title to each frame of the movie.  The function
-            must a single argument, an :obj:`int` giving the index of the
+            must take a single argument, an :obj:`int` giving the index of the
             frame to which the title will be applied.  Other data can be bound
             to the function.  The function must return either a :obj:`str`
             giving the title or a two-element :obj:`tuple` in which the

@@ -45,7 +45,7 @@ Then create an object for each file.  For example, type::
     >>> my_xml = wx.Xml('my_output1.xml')
 
 Animating the abundances versus nucleon number
-----------------------------------------------
+..............................................
 
 To make a movie of the abundances versus mass number, you can type::
 
