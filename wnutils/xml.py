@@ -1,6 +1,7 @@
 import wnutils.base as wb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 import numpy as np
 from lxml import etree
 
@@ -90,7 +91,7 @@ class Xml(wb.Base):
 
         return result
 
-    def get_network_limits(self, nuc_xpath = ' '):
+    def get_network_limits(self, nuc_xpath=' '):
         """Method to retrieve the network limits from the nuclide data.
 
         Args:
@@ -126,7 +127,7 @@ class Xml(wb.Base):
         for i in range(len(nd)):
             loc = [j for j, zj in enumerate(zt) if zj == nd[i]['z']]
             zlim[loc[0]].append(nd[i]['n'])
-            
+
         z = np.zeros(len(zlim), dtype=np.int_)
         n_min = np.zeros(len(zlim), dtype=np.int_)
         n_max = np.zeros(len(zlim), dtype=np.int_)
@@ -588,3 +589,96 @@ class Xml(wb.Base):
                     plt.legend()
 
         plt.show()
+
+    def make_abundances_vs_nucleon_number_movie(
+        self, movie_name, nucleon='a', zone_xpath=' ', fps=15,
+        title_func=None, rcParams=None, plotParams=None,
+        **kwargs
+    ):
+        """Method to make of movie of abundances summed by nucleon number.
+
+        Args:
+
+            ``movie_name`` (:obj:`str`): A string giving the name of the
+            movie to be made.
+
+            ``nucleon`` (:obj:`str`, optional): A string giving the nucleon
+            (must be 'z', 'n', or 'a').  Defaults to 'a'.
+
+            ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
+            expression to select the zones. Defaults to the last
+            zone.
+
+            ``fps`` (:obj:`float`, optional): A float giving the frames
+            per second in the resulting movie.
+
+            ``title_func`` (optional):
+            A
+            `function \
+            <https://docs.python.org/3/library/stdtypes.html#functions>`_
+            that applies the title to each frame of the movie.  The function
+            must a single argument, an :obj:`int` giving the index of the
+            frame to which the title will be applied.  Other data can be bound
+            to the function.  The function must return either a :obj:`str`
+            giving the title or a two-element :obj:`tuple` in which the
+            first element is a string giving the title and the second element
+            is a :obj:`dict` with optional :obj:`matplotlib.pyplot.title`
+            keyword arguments.  The default is a title giving the time in
+            seconds, the temperature in billions of Kelvins, and the
+            mass density in grams / cc.
+
+            ``rcParams`` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.rcParams` to be applied to the plot.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements as the number as zones selected
+            by the zone XPath.
+
+            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            Include directly, as a :obj:`dict`, or both.
+
+        Returns:
+            A matplotlib plot.
+
+        """
+        fig = plt.figure()
+
+        self.set_plot_params(mpl, rcParams)
+
+        abunds = self.get_abundances_vs_nucleon_number(
+            nucleon=nucleon, zone_xpath=zone_xpath
+        )
+        props = self.get_properties_as_floats(
+                    ['time', 't9', 'rho'], zone_xpath=zone_xpath
+                )
+
+        def updatefig(i):
+            fig.clear()
+            if plotParams:
+                plt.plot(abunds[i, :], **plotParams)
+            else:
+                plt.plot(abunds[i, :])
+            if title_func:
+                tf = title_func(i)
+                if tf:
+                    if type(tf) is tuple:
+                        plt.title(tf[0], **tf[1])
+                    elif type(tf) is str:
+                        plt.title(tf)
+                    else:
+                        print("Invalid return from title function.")
+                        return
+            else:
+                plt.title(self.make_time_t9_rho_title_str(props, i))
+            if 'xlabel' not in kwargs:
+                plt.xlabel(nucleon)
+            if 'ylabel' not in kwargs:
+                plt.ylabel('Y(' + nucleon + ')')
+            self.apply_class_methods(plt, kwargs)
+            plt.draw()
+
+        anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
+        anim.save(movie_name, fps=fps)

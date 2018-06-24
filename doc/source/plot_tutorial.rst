@@ -1,3 +1,5 @@
+.. _plotting:
+
 Plotting the Data
 ==================
 

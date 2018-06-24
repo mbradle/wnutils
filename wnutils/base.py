@@ -170,3 +170,48 @@ class Base:
         name = elem_name + str(a) + state
 
         return name
+
+    def make_time_t9_rho_title_str(self, props, i):
+        """Method to create a default title string.
+
+        Args:
+            ``props`` (:obj:`dict`): A dictionary of :obj:`float`.
+            The dictionary must contain entries that are
+            :obj:`numpy.array` objects containing `time, the time in seconds,
+            `t9`, the temperature in billions of Kelvins,
+            `rho`, the mass density in grams per cubic centimeter, and
+
+            ``i`` (:obj:`int`): An integer giving the location in the
+            arrays of the properties to use to construct the string.
+
+        Returns:
+            :obj:`str`: The default title string.
+
+        """
+
+        title_str = \
+            "time (s) = %8.2e, $T_9$ = %4.2f, rho (g/cc) = %8.2e" % \
+            (props['time'][i], props['t9'][i], props['rho'][i])
+        return title_str
+
+    def make_time_title_str(self, props, i):
+        """Method to create a default title string.
+
+        Args:
+            ``props`` (:obj:`dict`): A dictionary of :obj:`float`.
+            The dictionary must contain entries that are
+            :obj:`numpy.array` objects containing `time, the time in seconds,
+            `t9`, the temperature in billions of Kelvins,
+            `rho`, the mass density in grams per cubic centimeter, and
+
+            ``i`` (:obj:`int`): An integer giving the location in the
+            arrays of the properties to use to construct the string.
+
+        Returns:
+            :obj:`str`: The default title string.
+
+        """
+
+        title_str = \
+            "time (s) = %8.2e" % (props['time'][i])
+        return title_str

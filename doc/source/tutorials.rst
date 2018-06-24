@@ -8,4 +8,5 @@ Tutorials
    data_tutorial
    read_tutorial
    plot_tutorial
+   animate_tutorial
 
