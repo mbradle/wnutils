@@ -4,15 +4,16 @@ Animating the Data
 As with plotting,
 if you have read in the various data from a webnucleo file, you can
 animate them using `matplotlib <https://matplotlib.org>`_.
-We have found, however, that it is convenient to have a number of movie methods
-in the ``wnutils`` API.  This tutorial demonstrates how to use these
-methods.
+We have found, however, that it is convenient to have a handful of movie
+methods in the `wnutils` API.  This tutorial demonstrates how to use these
+methods.  Interested users may, if desired, build their own movie routines
+based on the source code of the `wnutils` routines.
 
 Animation writers
 -----------------
 
-The default animation writer is `ffmpeg <https://ffmpeg.org>`_.  You should
-install it.  In linux,
+The default animation writer is `ffmpeg <https://ffmpeg.org>`_.  If you
+do not already have it on your system, you should install it.  In linux,
 use `apt-get <https://en.wikipedia.org/wiki/APT_(Debian)>`_.  To install,
 type::
 
@@ -134,3 +135,59 @@ title function.  For example, you could type::
 
 If you do not do this, you will have a mismatch between the frames and their
 titles.
+
+Animating the network abundances
+................................
+
+You can animate the network abundances in the neutron number-proton number
+plane.  For example, type::
+
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4')
+
+The black curves in the movie show the network limits.  The properties of
+those lines are set with `plotParams`.  To see how this works, type::
+
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4', plotParams={'color': 'green', 'linestyle': 'dotted'})
+
+The routine takes keyword arguments, as usual.  For example, type::
+
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4', xlim=[0,60], ylim = [0,50])
+
+The abundances are shown by the blue-purple color intensity.  The details
+are set by the keyword argument `imParams`, which is a :obj:`dict` of
+valid :obj:`matplotlib.pyplot.imshow` options.  The default is as if you
+had called the routine with imParams={'origin':'lower', 'cmap': cm.BuPu,
+'norm': LogNorm(), 'vmin': 1.e-10, 'vmax': 1}, which shows that the abundances
+are displayed on a logarithmic scale with maximum value 1 and minimum value
+1.e-10.  We can override any or all of these.  For example, to change the
+minimum abundance to 1.e-15 and the color map to reds, type::
+
+    >>> import matplotlib.cm as cm
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4', xlim=[0,60], ylim = [0,50], imParams = {'cmap': cm.Reds, 'vmin': 1.e-15})
+
+It is often desirable to add a colorbar.  For example, you can create
+colorbar properties by typing::
+
+    >>> cb = {'shrink': 0.85, 'label': 'Abundance', 'aspect': 10, 'ticks': [1.e-10, 1.e-8, 1.e-6, 1.e-4, 1.e-2, 1.]}
+
+The arguments to the colorbar properties are any valid
+:obj:`matplotlib.pyplot.colorbar` optional keyword argument.  You can now
+type::
+
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4', xlim=[0,60], ylim = [0,50], colorbar = cb)
+
+Of course, you will want to make sure that your ticks in the colorbar are
+consistent with your limits.  For example, you can type::
+
+    >>> cb = {'shrink': 0.85, 'label': 'Abundance', 'aspect': 10, 'ticks': [1.e-15, 1.e-10, 1.e-5, 1.]}
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4', xlim=[0,60], ylim = [0,50], imParams = {'cmap': cm.Reds, 'vmin': 1.e-15}, colorbar = cb)
+
+As with the routine to animate abundances versus nucleon number, you can
+use `zone_xpath` to select steps and `title_func` to define your own title
+string.  For example, if you defined `my_title2()` as above, you can type::
+
+    >>> props = my_xml.get_properties_as_floats(['time','t9'])
+    >>> bind = lambda i: my_title(props, i)
+    >>> my_xml.make_network_abundances_movie('network_abunds.mp4', xlim=[0,60], ylim = [0,50], imParams = {'cmap': cm.Reds, 'vmin': 1.e-15}, colorbar = cb, title_func = bind)
+	
+

@@ -1,6 +1,8 @@
 import wnutils.base as wb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+from matplotlib.colors import LogNorm
 import matplotlib.animation as animation
 import numpy as np
 from lxml import etree
@@ -606,8 +608,7 @@ class Xml(wb.Base):
             (must be 'z', 'n', or 'a').  Defaults to 'a'.
 
             ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
-            expression to select the zones. Defaults to the last
-            zone.
+            expression to select the zones. Defaults to all zones.
 
             ``fps`` (:obj:`float`, optional): A float giving the frames
             per second in the resulting movie.
@@ -628,14 +629,12 @@ class Xml(wb.Base):
             mass density in grams / cc.
 
             ``rcParams`` (:obj:`dict`, optional): A dictionary of
-            :obj:`matplotlib.rcParams` to be applied to the plot.
+            :obj:`matplotlib.rcParams` to be applied to the movie.
             Defaults to the default rcParams.
 
             ``plotParams`` (:obj:`list`, optional): A list of
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
-            keyword arguments to be applied to the plot.  The list must
-            have the same number of elements as the number as zones selected
-            by the zone XPath.
+            keyword arguments to be applied to the lines in the movie.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -682,3 +681,123 @@ class Xml(wb.Base):
 
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
+
+    def make_network_abundances_movie(
+        self, movie_name, zone_xpath=' ', fps=15, title_func=None,
+        rcParams=None, imParams={},
+        show_limits=True, plotParams={'color': 'black'}, **kwargs
+    ):
+        """Method to make of movie of network abundances.
+
+        Args:
+
+            ``movie_name`` (:obj:`str`): A string giving the name of the
+            movie to be made.
+
+            ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
+            expression to select the zones. Defaults to all zones.
+
+            ``fps`` (:obj:`float`, optional): A float giving the frames
+            per second in the resulting movie.
+
+            ``title_func`` (optional):
+            A
+            `function \
+            <https://docs.python.org/3/library/stdtypes.html#functions>`_
+            that applies the title to each frame of the movie.  The function
+            must take a single argument, an :obj:`int` giving the index of the
+            frame to which the title will be applied.  Other data can be bound
+            to the function.  The function must return either a :obj:`str`
+            giving the title or a two-element :obj:`tuple` in which the
+            first element is a string giving the title and the second element
+            is a :obj:`dict` with optional :obj:`matplotlib.pyplot.title`
+            keyword arguments.  The default is a title giving the time in
+            seconds, the temperature in billions of Kelvins, and the
+            mass density in grams / cc.
+
+            ``rcParams`` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.rcParams` to be applied to the movie.
+            Defaults to the default rcParams.
+
+            ``imParams`` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.pyplot.imshow` options to be applied to the
+            movie.  The default is equivalent to calling with
+            imParams={'origin':'lower', 'cmap': cm.BuPu, 'norm': LogNorm(),
+            'vmin': 1.e-10, 'vmax': 1}.  `cm` in this call is the
+            :obj:`matplotlib.cm` namespace.  Any or all of these options
+            can be overridden or others added by
+            setting any of them in the input :obj:`dict`.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the network limits.
+            Defaults are shown in the usage statement.
+
+            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            Include directly, as a :obj:`dict`, or both.
+
+        Returns:
+            A matplotlib plot.
+
+        """
+
+        fig = plt.figure()
+
+        self.set_plot_params(mpl, rcParams)
+
+        abunds = self.get_all_abundances_in_zones( zone_xpath = zone_xpath)
+        props = self.get_properties_as_floats(
+                    ['time','t9','rho'], zone_xpath=zone_xpath
+                )
+        lim = self.get_network_limits()
+
+        xr = [0,abunds.shape[2]]
+        yr = [0,abunds.shape[1]]
+        if 'xlim' in kwargs:
+            xr = [kwargs['xlim'][0],kwargs['xlim'][1]]
+        if 'ylim' in kwargs:
+            yr = [kwargs['ylim'][0],kwargs['ylim'][1]]
+
+        if 'origin' not in imParams:
+            imParams = self._merge_dicts({'origin': 'lower'}, imParams)
+        if 'cmap' not in imParams:
+            imParams = self._merge_dicts({'cmap': cm.BuPu}, imParams)
+        if 'norm' not in imParams:
+            imParams = self._merge_dicts({'norm': LogNorm()}, imParams)
+        if 'vmin' not in imParams:
+            imParams = self._merge_dicts({'vmin': 1.e-10}, imParams)
+        if 'vmax' not in imParams:
+            imParams = self._merge_dicts({'vmax': 1.}, imParams)
+
+        def updatefig(i):
+            fig.clear()
+            z = abunds[i, yr[0]:yr[1], xr[0]:xr[1]]
+            plt.imshow(z, **imParams)
+            if show_limits:
+                if plotParams:
+                    plt.plot(lim['n_min'], lim['z'], **plotParams)
+                    plt.plot(lim['n_max'], lim['z'], **plotParams)
+                else:
+                    plt.plot(lim['n_min'], lim['z'])
+                    plt.plot(lim['n_max'], lim['z'])
+            if title_func:
+                tf = title_func(i)
+                if type(tf) is str:
+                    plt.title(tf)
+                elif type(tf) is tuple:
+                    plt.title(tf[0], tf[1])
+                else:
+                    print('Invalid return from title function.')
+                    return
+            else:
+                plt.title(self.make_time_t9_rho_title_str(props, i))
+            if 'xlabel' not in kwargs:
+                plt.xlabel('N, Neutron Number')
+            if 'ylabel' not in kwargs:
+                plt.ylabel('Z, Atomic Number')
+            self.apply_class_methods(plt, kwargs)
+            plt.draw()
+
+        anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
+        anim.save(movie_name, fps=fps)
+

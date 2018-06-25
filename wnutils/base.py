@@ -177,9 +177,9 @@ class Base:
         Args:
             ``props`` (:obj:`dict`): A dictionary of :obj:`float`.
             The dictionary must contain entries that are
-            :obj:`numpy.array` objects containing `time, the time in seconds,
-            `t9`, the temperature in billions of Kelvins,
-            `rho`, the mass density in grams per cubic centimeter, and
+            :obj:`numpy.array` objects containing `time`, the time in seconds,
+            `t9`, the temperature in billions of Kelvins, and
+            `rho`, the mass density in grams per cubic centimeter.
 
             ``i`` (:obj:`int`): An integer giving the location in the
             arrays of the properties to use to construct the string.
@@ -199,10 +199,8 @@ class Base:
 
         Args:
             ``props`` (:obj:`dict`): A dictionary of :obj:`float`.
-            The dictionary must contain entries that are
-            :obj:`numpy.array` objects containing `time, the time in seconds,
-            `t9`, the temperature in billions of Kelvins,
-            `rho`, the mass density in grams per cubic centimeter, and
+            The dictionary must contain at least one
+            :obj:`numpy.array` object containing `time`, the time in seconds.
 
             ``i`` (:obj:`int`): An integer giving the location in the
             arrays of the properties to use to construct the string.
