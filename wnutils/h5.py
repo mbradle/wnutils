@@ -464,10 +464,10 @@ class H5(wnb.Base):
             if(len(species) != 1):
                 plt.ylabel('Mass Fraction')
             else:
-                if(len(latex_names) == 0):
-                    plt.ylabel('X(' + species[0] + ')')
-                else:
+                if use_latex_names:
                     plt.ylabel('X(' + latex_names[species[0]] + ')')
+                else:
+                    plt.ylabel('X(' + species[0] + ')')
 
         self.apply_class_methods(plt, kwargs)
 
@@ -599,10 +599,10 @@ class H5(wnb.Base):
             if(len(species) != 1):
                 plt.ylabel('Mass Fraction')
             else:
-                if(len(latex_names) == 0):
-                    plt.ylabel('X(' + species[0] + ')')
-                else:
+                if use_latex_names:
                     plt.ylabel('X(' + latex_names[species[0]] + ')')
+                else:
+                    plt.ylabel('X(' + species[0] + ')')
 
         if('xlabel' not in kwargs):
             plt.xlabel(prop)
@@ -694,9 +694,9 @@ class H5(wnb.Base):
                 plt.ylabel('Mass Fraction')
             else:
                 if use_latex_names:
-                    plt.ylabel('X(' + species[0] + ')')
-                else:
                     plt.ylabel('X(' + latex_names[species[0]] + ')')
+                else:
+                    plt.ylabel('X(' + species[0] + ')')
 
         if('xlabel' not in kwargs):
             plt.xlabel(prop)
