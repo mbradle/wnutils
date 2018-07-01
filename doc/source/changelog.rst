@@ -13,7 +13,7 @@ New:
 
 Fix:
 
-  * Some tutorial typos have been fixed.
+  * Some tutorial typos have been fixed and some text has been added.
 
 Version 1.1.1
 -------------
