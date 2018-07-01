@@ -199,7 +199,7 @@ To make movies from HDF5 files, import the namespace::
 
 Then create an object for each file.  For example, type::
 
-    >>> my_h5 = wx.Xml('my_output1.h5')
+    >>> my_h5 = w5.H5('my_output1.h5')
 
 Animating the abundances in zones
 .................................
