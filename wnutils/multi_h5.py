@@ -179,8 +179,8 @@ class Multi_H5(wb.Base):
 
         for i, h5 in enumerate(h5s):
             x = h5.get_zone_properties_in_groups_as_floats(
-                  zone, [prop]
-                )[prop] / xfactor
+                zone, [prop]
+            )[prop] / xfactor
             y = h5.get_zone_mass_fractions_in_groups(zone, [species])
             if plotParams:
                 plt.plot(x, y[species], **plotParams[i])

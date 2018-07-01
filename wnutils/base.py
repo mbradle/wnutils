@@ -194,7 +194,7 @@ class Base:
             (props['time'][i], props['t9'][i], props['rho'][i])
         return title_str
 
-    def make_time_title_str(self, props, i):
+    def make_time_title_str(self, time):
         """Method to create a default title string.
 
         Args:
@@ -202,8 +202,8 @@ class Base:
             The dictionary must contain at least one
             :obj:`numpy.array` object containing `time`, the time in seconds.
 
-            ``i`` (:obj:`int`): An integer giving the location in the
-            arrays of the properties to use to construct the string.
+            ``time`` (:obj:`int`): A float giving the time
+            to use to construct the string.
 
         Returns:
             :obj:`str`: The default title string.
@@ -211,5 +211,5 @@ class Base:
         """
 
         title_str = \
-            "time (s) = %8.2e" % (props['time'][i])
+            "time (s) = %8.2e" % (time)
         return title_str

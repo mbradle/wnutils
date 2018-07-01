@@ -159,11 +159,11 @@ class Xml(wb.Base):
     def _get_zones(self, zone_xpath):
         return self._root.xpath('//zone_data/zone' + zone_xpath)
 
-    def get_mass_fractions(self, nuclides, zone_xpath=' '):
+    def get_mass_fractions(self, species, zone_xpath=' '):
         """Method to retrieve mass fractions of nuclides in specified zones.
 
         Args:
-            ``nuclides`` (:obj:`list`): List of strings giving the species
+            ``species`` (:obj:`list`): List of strings giving the species
             to retrieve.
 
             ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
@@ -171,7 +171,7 @@ class Xml(wb.Base):
 
         Returns:
             :obj:`dict`: A dictionary of :obj:`numpy.array` containing the
-            mass fractions of the requested nuclides in the zones as floats.
+            mass fractions of the requested species in the zones as floats.
 
         """
 
@@ -179,16 +179,16 @@ class Xml(wb.Base):
 
         zones = self._get_zones(zone_xpath)
 
-        for nuclide in nuclides:
-            result[nuclide] = np.zeros(len(zones))
+        for sp in species:
+            result[sp] = np.zeros(len(zones))
 
         for i in range(len(zones)):
-            for nuclide in nuclides:
+            for sp in species:
                 data = zones[i].find(
                     'mass_fractions/nuclide[@name="%s"]/x' % nuclide
                 )
                 if data is not None:
-                    result[nuclide][i] = float(data.text)
+                    result[sp][i] = float(data.text)
 
         return result
 
@@ -651,8 +651,8 @@ class Xml(wb.Base):
             nucleon=nucleon, zone_xpath=zone_xpath
         )
         props = self.get_properties_as_floats(
-                    ['time', 't9', 'rho'], zone_xpath=zone_xpath
-                )
+            ['time', 't9', 'rho'], zone_xpath=zone_xpath
+        )
 
         def updatefig(i):
             fig.clear()
@@ -745,18 +745,18 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        abunds = self.get_all_abundances_in_zones( zone_xpath = zone_xpath)
+        abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
         props = self.get_properties_as_floats(
-                    ['time','t9','rho'], zone_xpath=zone_xpath
-                )
+            ['time', 't9', 'rho'], zone_xpath=zone_xpath
+        )
         lim = self.get_network_limits()
 
-        xr = [0,abunds.shape[2]]
-        yr = [0,abunds.shape[1]]
+        xr = [0, abunds.shape[2]]
+        yr = [0, abunds.shape[1]]
         if 'xlim' in kwargs:
-            xr = [kwargs['xlim'][0],kwargs['xlim'][1]]
+            xr = [kwargs['xlim'][0], kwargs['xlim'][1]]
         if 'ylim' in kwargs:
-            yr = [kwargs['ylim'][0],kwargs['ylim'][1]]
+            yr = [kwargs['ylim'][0], kwargs['ylim'][1]]
 
         if 'origin' not in imParams:
             imParams = self._merge_dicts({'origin': 'lower'}, imParams)
@@ -800,4 +800,3 @@ class Xml(wb.Base):
 
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
-

@@ -19,7 +19,7 @@ type::
 
     $ sudo apt install ffmpeg
 
-On a mac with `Mac Ports <https://www.macports.org>`_, type::
+On a mac with `MacPorts <https://www.macports.org>`_, type::
 
     $ sudo port install ffmpeg
 
@@ -190,4 +190,70 @@ string.  For example, if you defined `my_title2()` as above, you can type::
     >>> bind = lambda i: my_title(props, i)
     >>> my_xml.make_network_abundances_movie('network_abunds.mp4', xlim=[0,60], ylim = [0,50], imParams = {'cmap': cm.Reds, 'vmin': 1.e-15}, colorbar = cb, title_func = bind)
 	
+H5
+--
 
+To make movies from HDF5 files, import the namespace::
+
+    >>> import wnutils.h5 as w5
+
+Then create an object for each file.  For example, type::
+
+    >>> my_h5 = wx.Xml('my_output1.h5')
+
+Animating the abundances in zones
+.................................
+
+Most commonly one writes out HDF5 files for multi-zone network calculations.
+The output in `my_output1.h5` and `my_output2.h5` is for one-dimensional
+multi-zone network calculations in which matter burns in the individual
+zones and mixes between the zones.  In such calculation, one generally
+wants to see the evolution of the mass fractions
+in the zones as a function of time.  To see an example of how you can do this,
+type::
+
+    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4')
+
+This creates a movie `abunds.mp4` of o16 and ne20 in the zones as a
+function of time.  The
+x axis shows zone indices.  The y axis gives mass fractions.  The scale
+of the y axis changes.  Since you probably want that fixed, call with
+keyword arguments.  For example, you can type::
+
+    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction')
+
+Keep the legend from moving, call with the `legend` keyword.  For example,
+type::
+
+    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'})
+
+To use your own title, define a title function as before.  For example,
+to change from seconds to years, type::
+
+    >>> def my_time_title(props, i):
+    ...     title_str = "time (yr) = %8.2e" % (props['time'][i] / 3.15e7)
+    ...     return title_str
+    ... 
+
+Next, bind data to the function by typing::
+
+    >>> zone = ('0','0','0')
+    >>> props = my_h5.get_zone_properties_in_groups_as_floats( zone, ['time'] )
+    >>> bind = lambda i: my_time_title(props, i)
+
+Now you can call the routine with the title function by typing::
+
+    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'}, title_func=bind, use_latex_names=True)
+
+This example also labels the species with superscripts for the species
+mass number.
+
+You can also plot the zone abundances against a zone property.  Since each
+zone in `my_output1.h5` has a temperature, you can plot against that by typing::
+
+    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', property='t9', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'}, title_func=bind, use_latex_names=True, xlim=[0.3,0], xlabel='$T_9$')
+
+Notice the `xlim` to get the temperatures oriented correctly with zone index.
+
+As with other movies, you can call the routine with `rcParams` and `plotParams`,
+as desired.

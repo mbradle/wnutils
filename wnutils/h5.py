@@ -2,6 +2,7 @@ import wnutils.base as wnb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.animation as animation
 import warnings
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=FutureWarning)
@@ -162,7 +163,7 @@ class H5(wnb.Base):
 
         return self._h5file['/' + group + '/Mass Fractions']
 
-    def get_zone_mass_fractions_in_groups(self, zone, nuclides):
+    def get_zone_mass_fractions_in_groups(self, zone, species):
         """Method to return zone mass fractions in all groups.
 
         Args:
@@ -170,7 +171,7 @@ class H5(wnb.Base):
             ``zone`` (:obj:`tuple`): A three element tuple giving the three
             labels for the zone.
 
-            ``nuclides`` (:obj:`list`): A list of strings giving the nuclides
+            ``species`` (:obj:`list`): A list of strings giving the species
             whose mass fractions are to be retrieved.
 
         Returns:
@@ -183,16 +184,16 @@ class H5(wnb.Base):
 
         result = {}
 
-        for nuclide in nuclides:
-            result[nuclide] = np.array([])
+        for sp in species:
+            result[sp] = np.array([])
 
         for group_name in self.get_iterable_groups():
             zone_index = self._get_group_zone_labels_hash(group_name)
             x = self.get_group_mass_fractions(group_name)
-            for nuclide in nuclides:
-                result[nuclide] = np.append(
-                    result[nuclide],
-                    x[zone_index[zone], nuclide_hash[nuclide]['index']]
+            for sp in species:
+                result[sp] = np.append(
+                    result[sp],
+                    x[zone_index[zone], nuclide_hash[sp]['index']]
                 )
 
         return result
@@ -703,3 +704,130 @@ class H5(wnb.Base):
         self.apply_class_methods(plt, kwargs)
 
         plt.show()
+
+    def make_abundances_movie(
+        self, species, movie_name, property=None, fps=15, xfactor=1,
+        use_latex_names=False, title_func=None, rcParams=None, plotParams=None,
+        **kwargs
+    ):
+        """Method to make of movie of abundances in the zones.
+
+        Args:
+
+            ``species`` (:obj:`list`): A list of the species to include
+            in the movie.
+
+            ``movie_name`` (:obj:`str`): A string giving the name of the
+            movie to be made.
+
+            ``property`` (:obj:`str`, optional): A string giving property
+            to be the x axis.  Defaults to zone index.
+
+            ``fps`` (:obj:`float`, optional): A float giving the frames
+            per second in the resulting movie.
+
+            ``xfactor`` (:obj:`float`, optional): A float giving the
+            scaling of the x axis.
+
+            ``use_latex_names`` (:obj:`bool`, optional): If set to True,
+            species names converted to latex format.
+
+            ``title_func`` (optional):
+            A
+            `function \
+            <https://docs.python.org/3/library/stdtypes.html#functions>`_
+            that applies the title to each frame of the movie.  The function
+            must take a single argument, an :obj:`int` giving the index of the
+            frame to which the title will be applied.  Other data can be bound
+            to the function.  The function must return either a :obj:`str`
+            giving the title or a two-element :obj:`tuple` in which the
+            first element is a string giving the title and the second element
+            is a :obj:`dict` with optional :obj:`matplotlib.pyplot.title`
+            keyword arguments.  The default is a title giving the time in
+            seconds.
+
+            ``rcParams`` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.rcParams` to be applied to the movie.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the lines in the movie.
+
+            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            Include directly, as a :obj:`dict`, or both.
+
+        Returns:
+            A matplotlib plot.
+
+        """
+        if plotParams:
+            if len(plotParams) != len(species):
+                print(
+                    'Number of plotParam elements must equal' +
+                    ' number of species.'
+                )
+                return
+
+        fig = plt.figure()
+
+        self.set_plot_params(mpl, rcParams)
+
+        nuclide_data = self.get_nuclide_data()
+
+        groups = self.get_iterable_groups()
+
+        if use_latex_names:
+            latex_names = self.get_latex_names(species)
+
+        def updatefig(i):
+            fig.clear()
+            x = self.get_group_mass_fractions(groups[i])
+            for j, sp in enumerate(species):
+                if plotParams is None:
+                    p = {}
+                else:
+                    p = plotParams[j]
+                if 'label' not in p:
+                    if use_latex_names:
+                        p = self._merge_dicts(
+                            p, {'label': latex_names[sp]}
+                        )
+                    else:
+                        p = self._merge_dicts(p, {'label': sp})
+                if property:
+                    p_prop = self.get_group_properties_in_zones_as_floats(
+                        groups[i], [property]
+                    )
+                    plt.plot(
+                        p_prop[property] / xfactor,
+                        x[:, nuclide_data[sp]['index']],
+                        **p
+                    )
+                else:
+                    plt.plot(x[:, nuclide_data[sp]['index']], **p)
+
+            if title_func:
+                tf = title_func(i)
+                if tf:
+                    if type(tf) is tuple:
+                        plt.title(tf[0], **tf[1])
+                    elif type(tf) is str:
+                        plt.title(tf)
+                    else:
+                        print("Invalid return from title function.")
+                        return
+            else:
+                props = self.get_group_properties_in_zones_as_floats(
+                    groups[i], ['time']
+                )
+                plt.title(self.make_time_title_str(props['time'][0]))
+            if 'ylabel' not in kwargs:
+                plt.ylabel('Mass Fraction')
+            if 'legend' not in kwargs:
+                plt.legend()
+            self.apply_class_methods(plt, kwargs)
+            plt.draw()
+
+        anim = animation.FuncAnimation(fig, updatefig, len(groups))
+        anim.save(movie_name, fps=fps)
