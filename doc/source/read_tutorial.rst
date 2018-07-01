@@ -547,3 +547,42 @@ To print them out, you can now type::
     >>> for i in range(len(groups)):
     ...     print(groups[i],':','X(o16)=',x['o16'][i],'X(o17)=',x['o17'][i],'X(o18)=',x['o18'][i])
     ... 
+
+Multi_H5
+--------
+
+The :obj:`wnutils.multi_h5.Multi_H5` class allows you to access and plot data
+from multiple webnucleo HDF5 files.  First import the namespace by typing::
+
+    >>> import wnutils.multi_h5 as m5
+
+Then create a class instance from a :obj:`list` of HDF5 files.
+For this tutorial, type
+
+    >>> my_multi_h5 = m5.Multi_H5(['my_output1.h5','my_output2.h5'])
+
+Methods allow you to access or plot data from the files.
+
+Read data from the individual HDF5 instances.
+.............................................
+
+To retrieve the individual HDF5 instances from a Multi_H5 instance, type::
+
+    >>> h5s = my_multi_h5.get_h5()
+
+To retrieve the original file names, type::
+
+    >>> files = my_multi_h5.get_files()
+
+Of course the number of HDF5 instances must equal the number of files.  To
+confirm, type::
+
+    >>> print(len(h5s) == len(files))
+
+Use the methods on the individual instances.  For example, type::
+
+    >>> for i in range(len(h5s)):
+    ...     props = h5s[i].get_zone_properties_in_groups(('0','0','0'), ['time'])
+    ...     print(files[i],'has',len(props['time']),'groups.')
+    ...
+
