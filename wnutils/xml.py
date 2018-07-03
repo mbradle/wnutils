@@ -185,7 +185,7 @@ class Xml(wb.Base):
         for i in range(len(zones)):
             for sp in species:
                 data = zones[i].find(
-                    'mass_fractions/nuclide[@name="%s"]/x' % nuclide
+                    'mass_fractions/nuclide[@name="%s"]/x' % sp
                 )
                 if data is not None:
                     result[sp][i] = float(data.text)

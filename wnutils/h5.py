@@ -705,12 +705,12 @@ class H5(wnb.Base):
 
         plt.show()
 
-    def make_abundances_movie(
+    def make_mass_fractions_movie(
         self, species, movie_name, property=None, fps=15, xfactor=1,
         use_latex_names=False, title_func=None, rcParams=None, plotParams=None,
         **kwargs
     ):
-        """Method to make of movie of abundances in the zones.
+        """Method to make of movie of mass fractions in the zones.
 
         Args:
 

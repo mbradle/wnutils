@@ -201,31 +201,31 @@ Then create an object for each file.  For example, type::
 
     >>> my_h5 = w5.H5('my_output1.h5')
 
-Animating the abundances in zones
-.................................
+Animating the mass fractions in zones
+.....................................
 
 Most commonly one writes out HDF5 files for multi-zone network calculations.
 The output in `my_output1.h5` and `my_output2.h5` is for one-dimensional
 multi-zone network calculations in which matter burns in the individual
-zones and mixes between the zones.  In such calculation, one generally
+zones and mixes between the zones.  In such calculations, one generally
 wants to see the evolution of the mass fractions
 in the zones as a function of time.  To see an example of how you can do this,
 type::
 
-    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4')
+    >>> my_h5.make_mass_fractions_movie(['o16','ne20'], 'mass_fracs.mp4')
 
-This creates a movie `abunds.mp4` of o16 and ne20 in the zones as a
+This creates a movie `mass_fracs.mp4` of o16 and ne20 in the zones as a
 function of time.  The
 x axis shows zone indices.  The y axis gives mass fractions.  The scale
 of the y axis changes.  Since you probably want that fixed, call with
 keyword arguments.  For example, you can type::
 
-    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction')
+    >>> my_h5.make_mass_fractions_movie(['o16','ne20'], 'mass_fracs.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction')
 
-Keep the legend from moving, call with the `legend` keyword.  For example,
+To keep the legend from moving, call with the `legend` keyword.  For example,
 type::
 
-    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'})
+    >>> my_h5.make_mass_fractions_movie(['o16','ne20'], 'mass_fracs.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'})
 
 To use your own title, define a title function as before.  For example,
 to change from seconds to years, type::
@@ -243,7 +243,7 @@ Next, bind data to the function by typing::
 
 Now you can call the routine with the title function by typing::
 
-    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'}, title_func=bind, use_latex_names=True)
+    >>> my_h5.make_mass_fractions_movie(['o16','ne20'], 'mass_fracs.mp4', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'}, title_func=bind, use_latex_names=True)
 
 This example also labels the species with superscripts for the species
 mass number.
@@ -251,7 +251,7 @@ mass number.
 You can also plot the zone abundances against a zone property.  Since each
 zone in `my_output1.h5` has a temperature, you can plot against that by typing::
 
-    >>> my_h5.make_abundances_movie(['o16','ne20'], 'abunds.mp4', property='t9', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'}, title_func=bind, use_latex_names=True, xlim=[0.3,0], xlabel='$T_9$')
+    >>> my_h5.make_mass_fractions_movie(['o16','ne20'], 'mass_fracs.mp4', property='t9', ylim = [1.e-10,1], yscale = 'log', ylabel = 'Mass Fraction', legend={'loc': 'lower right'}, title_func=bind, use_latex_names=True, xlim=[0.3,0], xlabel='$T_9$')
 
 Notice the `xlim` to get the temperatures oriented correctly with zone index.
 

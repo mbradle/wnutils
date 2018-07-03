@@ -52,7 +52,7 @@ You can retrieve the nuclide data in the webnucleo XML file by typing::
     >>> nuclides = my_xml.get_nuclide_data()
 
 This returns a dictionary of data with the key being the nuclide name.
-You may print out all the data for a specific nuclide, say o16, by typing::
+You may print out all the data for a specific nuclide, say, o16, by typing::
 
     >>> print(nuclides['o16'])
 
@@ -135,7 +135,7 @@ be retrieved by a :obj:`str`.  If the property has tags, the identifier
 for the property is a :obj:`tuple` of up to three strings, namely,
 the `name`, `tag1`, and `tag2`.
 
-To retrieve all the properties of a given zone, say the 10th zone,
+To retrieve all the properties of a given zone, say, the 10th zone,
 type::
 
     >>> props = my_xml.get_all_properties_for_zone('[position() = 10]')

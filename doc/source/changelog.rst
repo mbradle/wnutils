@@ -4,6 +4,16 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.2.2
+-------------
+
+Fix:
+
+  * An XPath error in an xml routine has been fixed.
+  * A number of typos in the tutorials have been fixed.
+  * The name of an h5 movie routine has been changed to better reflect its
+    purpose.
+
 Version 1.2.1
 -------------
 

@@ -78,7 +78,7 @@ The plotting routines also accept keywords giving :obj:`matplotlib.pyplot`
 methods and their arguments.  In such a case, the keyword is the method,
 and the value is the argument to the method.  For example,
 calling a `wnutils` plotting routine with the
-keyword `xlabel = 'time (s)` is equivalent to typing::
+keyword `xlabel = 'time (s)'` is equivalent to typing::
 
     >>> import matplotlib.pyplot as plt
     >>> plt.xlabel('time (s)')
@@ -319,7 +319,7 @@ Or, in Python 3.5 or greater, you can type::
 Plot a property in the zones of a given group.
 ..............................................
 
-To plot a property in all the zones of a given group, say Step number 125,
+To plot a property in all the zones of a given group, say, Step number 125,
 you can, for example, type::
 
     >>> my_h5.plot_group_property_in_zones('Step 00125', 't9')
