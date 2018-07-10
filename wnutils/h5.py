@@ -381,8 +381,6 @@ class H5(wnb.Base):
             self.get_zone_properties_in_groups_as_floats(zone, [prop1, prop2])
         )
 
-        self.apply_class_methods(plt, kwargs)
-
         x = result[prop1] / xfactor
         y = result[prop2] / yfactor
 
@@ -391,7 +389,9 @@ class H5(wnb.Base):
         else:
             plt.plot(x, y)
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
 
     def plot_group_mass_fractions(
         self, group, species, use_latex_names=False, rcParams=None,
@@ -471,7 +471,7 @@ class H5(wnb.Base):
 
         self.apply_class_methods(plt, kwargs)
 
-        plt.show()
+        self.show_or_close(plt, kwargs)
 
     def plot_group_property_in_zones(
         self, group, property, rcParams=None, plotParams=None, **kwargs
@@ -510,12 +510,12 @@ class H5(wnb.Base):
         else:
             plt.plot(prop[property])
 
-        self.apply_class_methods(plt, kwargs)
-
         if 'ylabel' not in kwargs:
             plt.ylabel(property)
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
 
     def plot_group_mass_fractions_vs_property(
         self, group, prop, species, xfactor=1, use_latex_names=False,
@@ -609,7 +609,7 @@ class H5(wnb.Base):
 
         self.apply_class_methods(plt, kwargs)
 
-        plt.show()
+        self.show_or_close(plt, kwargs)
 
     def plot_zone_mass_fractions_vs_property(
         self, zone, prop, species, xfactor=1, yfactor=None,
@@ -703,7 +703,7 @@ class H5(wnb.Base):
 
         self.apply_class_methods(plt, kwargs)
 
-        plt.show()
+        self.show_or_close(plt, kwargs)
 
     def make_mass_fractions_movie(
         self, species, movie_name, property=None, fps=15, xfactor=1,

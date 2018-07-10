@@ -417,8 +417,6 @@ class Xml(wb.Base):
 
         result = self.get_properties_as_floats([prop1, prop2])
 
-        self.apply_class_methods(plt, kwargs)
-
         x = result[prop1] / xfactor
         y = result[prop2] / yfactor
 
@@ -433,7 +431,9 @@ class Xml(wb.Base):
         if('ylabel' not in kwargs):
             plt.ylabel(prop2)
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
 
     def plot_mass_fractions_vs_property(self, prop, species, xfactor=1,
                                         use_latex_names=False, rcParams=None,
@@ -504,8 +504,6 @@ class Xml(wb.Base):
                     p = self._merge_dicts(p, {'label': sp})
             l.append(plt.plot(x, y[sp], **p))
 
-        self.apply_class_methods(plt, kwargs)
-
         if len(species) > 1 and 'legend' not in kwargs:
             plt.legend()
 
@@ -522,7 +520,9 @@ class Xml(wb.Base):
                     s = species[0]
                 plt.ylabel(s)
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
 
     def plot_abundances_vs_nucleon_number(
         self, nucleon='a', zone_xpath='[last()]', rcParams=None,
@@ -576,8 +576,6 @@ class Xml(wb.Base):
             else:
                 plt.plot(y[i, :])
 
-        self.apply_class_methods(plt, kwargs)
-
         if('xlabel' not in kwargs):
             plt.xlabel(nucleon)
 
@@ -590,7 +588,9 @@ class Xml(wb.Base):
                 if 'label' in plotParams[0]:
                     plt.legend()
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
 
     def make_abundances_vs_nucleon_number_movie(
         self, movie_name, nucleon='a', zone_xpath=' ', fps=15,

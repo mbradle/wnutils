@@ -18,6 +18,34 @@ class Base:
         z.update(y)
         return z
 
+    def show_or_close(self, plt, kwargs):
+        """Method to show or close plot.
+
+        Args:
+            ``plt`` (:obj:`matplotlib.pyplot`): A pyplot plot instance.
+
+            ``keyword_params`` (:obj:`dict`): A dictionary of functions that
+            will be applied to the plot.  The key is the function and the
+            value is the argument of the function.
+
+        Returns:
+            On successful return, the plot has been shown or closed.
+ 
+        """
+
+        if 'show' in kwargs or 'savefig' not in kwargs:
+            plt.show()
+        else:
+            plt.close()
+
+    def _class_comparator(self, k):
+        if k == 'show':
+           return 2
+        elif k == 'savefig':
+           return 1
+        else:
+           return 0
+
     def set_plot_params(self, my_mpl, my_params):
         """Method to set plot parameters.
 
@@ -54,7 +82,7 @@ class Base:
 
         """
 
-        for key in keyword_params:
+        for key in sorted(keyword_params, key=self._class_comparator):
             method = None
 
             try:
@@ -69,7 +97,10 @@ class Base:
             if isinstance(keyword_params[key], dict):
                 method(**keyword_params[key])
             else:
-                method(keyword_params[key])
+                if isinstance(keyword_params[key], tuple):
+                    method(keyword_params[key][0], **keyword_params[key][1])
+                else:
+                    method(keyword_params[key])
 
     def list_rcParams(self):
         """Method to list default rcParams.

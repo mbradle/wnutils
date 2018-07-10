@@ -101,8 +101,6 @@ class Multi_Xml(wb.Base):
             else:
                 plt.plot(x, y)
 
-        self.apply_class_methods(plt, kwargs)
-
         if('xlabel' not in kwargs):
             plt.xlabel(prop1)
 
@@ -114,7 +112,9 @@ class Multi_Xml(wb.Base):
                 if 'label' in plotParams[0]:
                     plt.legend()
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
 
     def plot_mass_fraction_vs_property(self, prop, species, xfactor=1,
                                        use_latex_names=False, labels=None,
@@ -178,8 +178,6 @@ class Multi_Xml(wb.Base):
             else:
                 plt.plot(x, y[species])
 
-        self.apply_class_methods(plt, kwargs)
-
         if('xlabel' not in kwargs):
             plt.xlabel(prop)
 
@@ -195,4 +193,6 @@ class Multi_Xml(wb.Base):
                 if 'label' in plotParams[0]:
                     plt.legend()
 
-        plt.show()
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
