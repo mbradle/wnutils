@@ -83,7 +83,15 @@ keyword `xlabel = 'time (s)'` is equivalent to typing::
     >>> import matplotlib.pyplot as plt
     >>> plt.xlabel('time (s)')
 
-These can be entered directly or as a dictionary.
+These can be entered directly or as a dictionary.  If the method takes
+an argument and optional keywords, enter these as a tuple.  For example,
+you can call a `wnutils` plotting routine with the keyword
+`savefig = ('my_fig.png', {'bbox_inches': 'tight'})` is equivalent to typing::
+
+    >>> plt.savefig('my_fig.png', bbox_inches = 'tight')
+
+The tuple must have two elements--the argument and the dictionary of optional
+keyword arguments.
 
 XML
 ---
