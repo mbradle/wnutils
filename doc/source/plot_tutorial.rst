@@ -85,7 +85,7 @@ keyword `xlabel = 'time (s)'` is equivalent to typing::
 
 These can be entered directly or as a dictionary.  If the method takes
 an argument and optional keywords, enter these as a tuple.  For example,
-you can call a `wnutils` plotting routine with the keyword
+calling a `wnutils` plotting routine with the keyword
 `savefig = ('my_fig.png', {'bbox_inches': 'tight'})` is equivalent to typing::
 
     >>> plt.savefig('my_fig.png', bbox_inches = 'tight')
