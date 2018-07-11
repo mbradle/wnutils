@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.3.0
+-------------
+
+New:
+
+  * It is now possible to set plot method arguments as a tuple giving an
+    argument and a dictionary of optional keyword arguments.
+
 Version 1.2.2
 -------------
 

@@ -216,6 +216,15 @@ give the plot the desired look::
     >>> p_params = [{'label': 'first'}, {'label': 'last'}]
     >>> my_xml.plot_abundances_vs_nucleon_number(zone_xpath='[(position() = 1) or (position() = last())]', plotParams = p_params, yscale = 'log', ylim = [1.e-10,1], xlabel = 'A, Mass Number', ylabel = 'Y(A)', xlim = [0,100], legend = {'title': 'time step', 'shadow': True})
 
+It is also possible to label the steps with the legend keyword.  To do this,
+type::
+
+    >>> my_xml.plot_abundances_vs_nucleon_number(zone_xpath='[(position() = 1) or (position() = last())]', yscale = 'log', ylim = [1.e-10,1], xlabel = 'A, Mass Number', ylabel = 'Y(A)', xlim = [0,100], legend = (['first','last'], {'title': 'time step', 'shadow': True}))
+
+You can save the figure as a file, for example, by typing::
+
+    >>> my_xml.plot_abundances_vs_nucleon_number(zone_xpath='[(position() = 1) or (position() = last())]', yscale = 'log', ylim = [1.e-10,1], xlabel = 'A, Mass Number', ylabel = 'Y(A)', xlim = [0,100], legend = (['first','last'], {'title': 'time step', 'shadow': True}), savefig = ('my_fig.png', {'bbox_inches': 'tight'}))
+
 Multi_XML
 ---------
 
