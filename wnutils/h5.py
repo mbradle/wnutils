@@ -47,7 +47,7 @@ class H5(wnb.Base):
         return result
 
     def get_zone_labels_for_group(self, group):
-        """Method to return the zone labels for a group in a webnucleo hdf5 file.
+        """Method to return zone labels for a group in a webnucleo hdf5 file.
 
         Args:
             ``group`` (:obj:`str`): The name of the group.
@@ -436,7 +436,7 @@ class H5(wnb.Base):
                 )
                 return
 
-        l = []
+        plots = []
 
         m = self.get_group_mass_fractions(group)
 
@@ -455,7 +455,7 @@ class H5(wnb.Base):
                     p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
                     p = self._merge_dicts(p, {'label': sp})
-            l.append(plt.plot(m[:, nuclide_data[sp]['index']], **p))
+            plots.append(plt.plot(m[:, nuclide_data[sp]['index']], **p))
 
         if(len(species) != 1):
             plt.legend()
@@ -567,7 +567,7 @@ class H5(wnb.Base):
                 )
                 return
 
-        l = []
+        plots = []
 
         x = self.get_group_properties_in_zones_as_floats(
             group, [prop]
@@ -590,7 +590,7 @@ class H5(wnb.Base):
                     p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
                     p = self._merge_dicts(p, {'label': sp})
-            l.append(plt.plot(x / xfactor, y, **p))
+            plots.append(plt.plot(x / xfactor, y, **p))
 
         if(len(species) != 1):
             plt.legend()
@@ -657,8 +657,6 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        l = []
-
         x = self.get_zone_properties_in_groups_as_floats(zone, [prop])[prop]
         m = self.get_zone_mass_fractions_in_groups(zone, species)
 
@@ -684,7 +682,7 @@ class H5(wnb.Base):
                     p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
                     p = self._merge_dicts(p, {'label': sp})
-            l.append(plt.plot(x / xfactor, m[species[i]] / yfactor[i], **p))
+            plt.plot(x / xfactor, m[species[i]] / yfactor[i], **p)
 
         if(len(species) != 1):
             plt.legend()

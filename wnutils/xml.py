@@ -156,6 +156,165 @@ class Xml(wb.Base):
 
         return result
 
+    def _get_non_smoker_data(self, non_smoker):
+
+        result = {}
+        result['type'] = non_smoker.tag
+
+        def set_fit_data(node):
+            fit_data = {}
+            tags = [
+                'Zt', 'At', 'Zf', 'Af', 'Q', 'spint', 'spinf', 'TlowHf',
+                'Tlowfit', 'Thighfit', 'acc', 'a1', 'a2', 'a3', 'a4', 'a5',
+                'a6', 'a7', 'a8'
+            ]
+
+            for tag in tags:
+                datum = node.xpath(tag)
+                if datum:
+                    fit_data[tag] = float(datum[0].text)
+
+            return fit_data
+
+        fits = non_smoker.xpath('fit')
+
+        if fits:
+            result['fits'] = []
+            for fit in fits:
+                data = {}
+                note = fit.xpath('@note')
+                if note:
+                    data['note'] = note[0]
+                data = self._merge_dicts(data, set_fit_data(fit))
+                result['fits'].append(data)
+
+        else:
+            result = self._merge_dicts(result, set_fit_data(non_smoker))
+
+        return result
+
+    def _get_rate_table_data(self, rate_table):
+        result = {}
+        result['type'] = rate_table.tag
+        table = rate_table.xpath('point')
+        result['t9'] = np.zeros(len(table))
+        result['rate'] = np.zeros(len(table))
+        result['sef'] = np.zeros(len(table))
+        for i, elem in enumerate(table):
+            result['t9'][i] = float((elem.xpath('t9')[0].text).strip())
+            result['rate'][i] = float((elem.xpath('rate')[0].text).strip())
+            result['sef'][i] = float((elem.xpath('sef')[0].text).strip())
+
+        ind = result['t9'].argsort()
+        result['t9'] = result['t9'][ind]
+        result['rate'] = result['rate'][ind]
+        result['sef'] = result['sef'][ind]
+
+        return result
+
+    def _get_single_rate_data(self, single_rate):
+        result = {}
+        result['type'] = single_rate.tag
+        result['rate'] = float(single_rate.text)
+
+        return result
+
+    def _get_user_rate_data(self, user_rate):
+        result = {}
+        result['type'] = user_rate.tag
+        key = user_rate.xpath('@key')
+        result['key'] = key[0]
+
+        properties = user_rate.xpath('properties/property')
+
+        props = {}
+
+        for property in properties:
+            name = property.xpath('@name')
+            tag1 = property.xpath('@tag1')
+            tag2 = property.xpath('@tag2')
+
+            key = name[0]
+            if tag1:
+                key = (name[0], tag1[0])
+            if tag2:
+                key += tag2[0],
+
+            props[key] = property.text
+
+        result = self._merge_dicts(result, props)
+
+        return result
+
+    def _get_individual_reaction_data(self, reaction):
+        result = {}
+
+        non_smoker = reaction.xpath('non_smoker_fit')
+        if non_smoker:
+            return self._get_non_smoker_data(non_smoker[0])
+
+        rate_table = reaction.xpath('rate_table')
+        if rate_table:
+            return self._get_rate_table_data(rate_table[0])
+
+        single_rate = reaction.xpath('single_rate')
+        if single_rate:
+            return self._get_single_rate_data(single_rate[0])
+
+        user_rate = reaction.xpath('user_rate')
+        if user_rate:
+            return self._get_user_rate_data(user_rate[0])
+
+    def _get_reaction_data_array(self, reac_xpath):
+        result = []
+
+        reactions = self._root.xpath('//reaction_data/reaction' + reac_xpath)
+
+        for reaction in reactions:
+            data = {}
+            data['source'] = reaction.xpath('source')[0].text
+            data['reactants'] = []
+            data['products'] = []
+            reactants = reaction.xpath('reactant')
+            for reactant in reactants:
+                data['reactants'].append(reactant.text)
+            products = reaction.xpath('product')
+            for product in products:
+                data['products'].append(product.text)
+
+            data['data'] = self._get_individual_reaction_data(reaction)
+
+            result.append(data)
+
+        return result
+
+    def get_reaction_data(self, reac_xpath=' '):
+        """Method to retrieve reaction data from webnucleo XML.
+
+        Args:
+            ``reac_xpath`` (:obj:`str`, optional): XPath expression to select
+            reactions.  Defaults to all reactions.
+
+        Returns:
+            :obj:`dict`: A dictionary of reaction data.  The data for each
+            reaction are themselves contained in a :obj:`dict`.
+
+        """
+
+        def _create_reaction_string(reaction):
+            s = " + ".join(reaction['reactants'])
+            s += ' -> '
+            s += " + ".join(reaction['products'])
+            return s
+
+        result = {}
+        reactions = self._get_reaction_data_array(reac_xpath)
+        for i in range(len(reactions)):
+            s = _create_reaction_string(reactions[i])
+            result[s] = reactions[i]
+
+        return result
+
     def _get_zones(self, zone_xpath):
         return self._root.xpath('//zone_data/zone' + zone_xpath)
 
@@ -278,12 +437,12 @@ class Xml(wb.Base):
             name = property.xpath('@name')
             tag1 = property.xpath('@tag1')
             tag2 = property.xpath('@tag2')
-            if len(tag2) == 0 and len(tag1) == 0:
-                p_name = name[0]
-            elif len(tag2) == 0:
+            if tag1:
                 p_name = (name[0], tag1[0])
+                if tag2:
+                    p_name += tag2[0],
             else:
-                p_name = (name[0], tag1[0], tag2[0])
+                p_name = name[0]
             result[p_name] = property.text
 
         return result
@@ -483,7 +642,7 @@ class Xml(wb.Base):
                 )
                 return
 
-        l = []
+        plots = []
 
         x = self.get_properties_as_floats([prop])[prop] / xfactor
 
@@ -502,7 +661,7 @@ class Xml(wb.Base):
                     p = self._merge_dicts(p, {'label': latex_names[sp]})
                 else:
                     p = self._merge_dicts(p, {'label': sp})
-            l.append(plt.plot(x, y[sp], **p))
+            plots.append(plt.plot(x, y[sp], **p))
 
         if len(species) > 1 and 'legend' not in kwargs:
             plt.legend()

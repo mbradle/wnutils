@@ -30,7 +30,7 @@ class Base:
 
         Returns:
             On successful return, the plot has been shown or closed.
- 
+
         """
 
         if 'show' in kwargs or 'savefig' not in kwargs:
@@ -40,11 +40,11 @@ class Base:
 
     def _class_comparator(self, k):
         if k == 'show':
-           return 2
+            return 2
         elif k == 'savefig':
-           return 1
+            return 1
         else:
-           return 0
+            return 0
 
     def set_plot_params(self, my_mpl, my_params):
         """Method to set plot parameters.
