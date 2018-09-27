@@ -128,7 +128,7 @@ You can retrieve the reaction data in the webnucleo XML file by typing::
     >>> reactions = my_xml.get_reaction_data()
 
 This returns a dictionary with the key being the reaction string and each
-value being a :class:`Reaction`.  To see a list of the reactions, type::
+value being a :class:`.Reaction`.  To see a list of the reactions, type::
 
     >>> for r in reactions:
     ...     print(r)
