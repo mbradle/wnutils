@@ -9,40 +9,40 @@ wnutils package
 Submodules
 ----------
 
-wnutils.base module
--------------------
+wnutils\.base module
+--------------------
 
 .. automodule:: wnutils.base
     :members:
     :undoc-members:
     :show-inheritance:
 
-wnutils.h5 module
------------------
+wnutils\.h5 module
+------------------
 
 .. automodule:: wnutils.h5
     :members:
     :undoc-members:
     :show-inheritance:
 
-wnutils.multi\_h5 module
-------------------------
+wnutils\.multi\_h5 module
+-------------------------
 
 .. automodule:: wnutils.multi_h5
     :members:
     :undoc-members:
     :show-inheritance:
 
-wnutils.multi\_xml module
--------------------------
+wnutils\.multi\_xml module
+--------------------------
 
 .. automodule:: wnutils.multi_xml
     :members:
     :undoc-members:
     :show-inheritance:
 
-wnutils.xml module
-------------------
+wnutils\.xml module
+-------------------
 
 .. automodule:: wnutils.xml
     :members:

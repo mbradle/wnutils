@@ -120,6 +120,57 @@ Now print out the data::
     ...     print('Z =', lim['z'][i], ': N_min =', lim['n_min'][i], ', N_max =', lim['n_max'][i])
     ...
 
+Read the reaction data.
+.......................
+
+You can retrieve the reaction data in the webnucleo XML file by typing::
+
+    >>> reactions = my_xml.get_reaction_data()
+
+This returns a dictionary with the key being the reaction string and each
+value being a :class:`Reaction`.  To see a list of the reactions, type::
+
+    >>> for r in reactions:
+    ...     print(r)
+    ...
+
+You can use an XPath expression to select the reactions.  For example, you
+can type::
+
+    >>> reactions = my_xml.get_reaction_data('[count(non_smoker_fit) = 1]')
+
+Since the reaction data include the reaction type, you can confirm your request
+by typing::
+
+    >>> for r in reactions:
+    ...    data = reactions[r].get_data()
+    ...    print(r, ': type is', data['type'])
+    ...
+
+You may choose a particular reaction from the dictionary by typing, for
+example::
+
+    >>> reac = reactions['n + he4 + he4 -> be9 + gamma']
+
+It is then possible to retrieve the `reactants`, `products`, the reaction
+string, and code giving
+the source by typing::
+
+    >>> print(reac.get_reactants())
+    >>> print(reac.get_products())
+    >>> print(reac.get_string())
+    >>> print(reac.get_source())
+
+You can also compute the rate for the reaction (among interacting multiplets
+and assuming one of the standard rate forms `single_rate`, `rate_table`,
+or `non_smoker_fit`) at a variety of temperatures by typing::
+
+    >>> import numpy as np
+    >>> t9s = np.power(10., np.linspace(-2,1))
+    >>> for t9 in t9s:
+    ...     print(t9, reac.compute_rate(t9))
+    ...
+
 Read all properties in a zone.
 ..............................
 

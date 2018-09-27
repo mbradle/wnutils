@@ -110,7 +110,7 @@ class Reaction(wb.Base):
 
         return result
 
-    def _get_data(self, reaction_node):
+    def _get_reaction_data(self, reaction_node):
         result = {}
 
         non_smoker = reaction_node.xpath('non_smoker_fit')
@@ -129,7 +129,7 @@ class Reaction(wb.Base):
         if user_rate:
             return self._get_user_rate_data(user_rate[0])
 
-    def set_data(self, reaction_node):
+    def _set_data(self, reaction_node):
         self.source = reaction_node.xpath('source')[0].text
 
         reactants = reaction_node.xpath('reactant')
@@ -140,13 +140,7 @@ class Reaction(wb.Base):
         for product in products:
             self.products.append(product.text)
 
-        self.data = self._get_data(reaction_node)
-
-    def get_reaction_string(self):
-        s = " + ".join(self.reactants)
-        s += ' -> '
-        s += " + ".join(self.products)
-        return s
+        self.data = self._get_reaction_data(reaction_node)
 
     def _compute_rate_table_rate(self, t9):
         t = self.data['t9']
@@ -246,6 +240,19 @@ class Reaction(wb.Base):
 
         """
         return self.data
+
+    def get_string(self):
+        """Method to return the string for a reaction.
+
+        Returns:
+            :obj:`str`: The reaction string.
+
+        """
+
+        s = " + ".join(self.reactants)
+        s += ' -> '
+        s += " + ".join(self.products)
+        return s
 
 
 class Xml(wb.Base):
@@ -403,7 +410,7 @@ class Xml(wb.Base):
 
         for reaction in reactions:
             r = Reaction()
-            r.set_data(reaction)
+            r._set_data(reaction)
 
             result.append(r)
 
@@ -425,7 +432,7 @@ class Xml(wb.Base):
         result = {}
         reactions = self._get_reaction_data_array(reac_xpath)
         for reaction in reactions:
-            result[reaction.get_reaction_string()] = reaction
+            result[reaction.get_string()] = reaction
 
         return result
 
