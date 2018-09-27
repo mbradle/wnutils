@@ -6,6 +6,246 @@ from matplotlib.colors import LogNorm
 import matplotlib.animation as animation
 import numpy as np
 from lxml import etree
+from scipy.interpolate import interp1d
+
+class Reaction(wb.Base):
+    """A class for storing and retrieving data about reactions.
+
+       """
+
+
+    def __init__(self):
+        self.reactants = []
+        self.products = []
+        self.source = ""
+        self.data = {}
+        
+    def _get_non_smoker_data(self, non_smoker):
+
+        result = {}
+        result['type'] = non_smoker.tag
+
+        def set_fit_data(node):
+            fit_data = {}
+            tags = [
+                'Zt', 'At', 'Zf', 'Af', 'Q', 'spint', 'spinf', 'TlowHf',
+                'Tlowfit', 'Thighfit', 'acc', 'a1', 'a2', 'a3', 'a4', 'a5',
+                'a6', 'a7', 'a8'
+            ]
+
+            for tag in tags:
+                datum = node.xpath(tag)
+                if datum:
+                    fit_data[tag] = float(datum[0].text)
+
+            return fit_data
+
+        fits = non_smoker.xpath('fit')
+
+        if fits:
+            result['fits'] = []
+            for fit in fits:
+                data = {}
+                note = fit.xpath('@note')
+                if note:
+                    data['note'] = note[0]
+                data = self._merge_dicts(data, set_fit_data(fit))
+                result['fits'].append(data)
+
+        else:
+            result = self._merge_dicts(result, set_fit_data(non_smoker))
+
+        return result
+
+    def _get_rate_table_data(self, rate_table):
+        result = {}
+        result['type'] = rate_table.tag
+        table = rate_table.xpath('point')
+        result['t9'] = np.zeros(len(table))
+        result['rate'] = np.zeros(len(table))
+        result['sef'] = np.zeros(len(table))
+        for i, elem in enumerate(table):
+            result['t9'][i] = float((elem.xpath('t9')[0].text).strip())
+            result['rate'][i] = float((elem.xpath('rate')[0].text).strip())
+            result['sef'][i] = float((elem.xpath('sef')[0].text).strip())
+
+        ind = result['t9'].argsort()
+        result['t9'] = result['t9'][ind]
+        result['rate'] = result['rate'][ind]
+        result['sef'] = result['sef'][ind]
+
+        return result
+
+    def _get_single_rate_data(self, single_rate):
+        result = {}
+        result['type'] = single_rate.tag
+        result['rate'] = float(single_rate.text)
+
+        return result
+
+    def _get_user_rate_data(self, user_rate):
+        result = {}
+        result['type'] = user_rate.tag
+        key = user_rate.xpath('@key')
+        result['key'] = key[0]
+
+        properties = user_rate.xpath('properties/property')
+
+        props = {}
+
+        for property in properties:
+            name = property.xpath('@name')
+            tag1 = property.xpath('@tag1')
+            tag2 = property.xpath('@tag2')
+
+            key = name[0]
+            if tag1:
+                key = (name[0], tag1[0])
+            if tag2:
+                key += tag2[0],
+
+            props[key] = property.text
+
+        result = self._merge_dicts(result, props)
+
+        return result
+
+    def _get_data(self, reaction_node):
+        result = {}
+
+        non_smoker = reaction_node.xpath('non_smoker_fit')
+        if non_smoker:
+            return self._get_non_smoker_data(non_smoker[0])
+
+        rate_table = reaction_node.xpath('rate_table')
+        if rate_table:
+            return self._get_rate_table_data(rate_table[0])
+
+        single_rate = reaction_node.xpath('single_rate')
+        if single_rate:
+            return self._get_single_rate_data(single_rate[0])
+
+        user_rate = reaction_node.xpath('user_rate')
+        if user_rate:
+            return self._get_user_rate_data(user_rate[0])
+
+    def set_data(self, reaction_node):
+        self.source = reaction_node.xpath('source')[0].text
+
+        reactants = reaction_node.xpath('reactant')
+        for reactant in reactants:
+            self.reactants.append(reactant.text)
+
+        products = reaction_node.xpath('product')
+        for product in products:
+            self.products.append(product.text)
+
+        self.data = self._get_data(reaction_node)
+
+    def get_reaction_string(self):
+        s = " + ".join(self.reactants)
+        s += ' -> '
+        s += " + ".join(self.products)
+        return s
+
+    def _compute_rate_table_rate(self, t9):
+        t = self.data['t9']
+        lr = np.log10(self.data['rate'])
+        sef = self.data['sef']
+
+        if len(t) <= 2:
+            f1 = interp1d(t, lr, kind='linear')
+            f2 = interp1d(t, sef, kind='linear')
+            return np.power(10., f1(t9)) * f2(t9)
+        else:
+            f1 = interp1d(t, lr, kind='cubic')
+            f2 = interp1d(t, sef, kind='cubic')
+            return np.power(10., f1(t9)) * f2(t9)
+
+    def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
+        def non_smoker_function(fit, t9):
+            x = (
+                  fit['a1'] + fit['a2'] / t9 + fit['a3'] / np.power(t9, 1./3.)
+                  + fit['a4'] * np.power(t9, 1./3.) + fit['a5'] * t9
+                  + fit['a6'] * np.power(t9, 5./3.) + fit['a7'] * np.log(t9)
+                )
+            return np.exp(x)
+
+        if t9 < fit['Tlowfit']:
+            return non_smoker_function(fit, fit['Tlowfit'])
+        elif t9 > fit['Thighfit']:
+            return non_smoker_function(fit, fit['Thighfit'])
+        else:
+            return non_smoker_function(fit, t9) 
+
+    def _compute_non_smoker_fit_rate(self, t9):
+        fits = self.data['fits']
+        if len(fits) != 0:
+            result = 0.
+            for fit in fits:
+                result += self._compute_non_smoker_fit_rate_for_fit(fit, t9)
+            return result 
+        else:
+            return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
+
+    def compute_rate(self, t9, **kwargs):
+        """Method to compute rate for a reaction at input t9.
+
+        Args:
+            ``t9`` (:obj:`float`):  The temperature in billions of K giving
+            the rate for the reaction.
+
+        Returns:
+            :obj:`float`: The computed rate.
+
+        """
+
+        if self.data['type'] == 'single_rate':
+            return self.data['rate']
+        elif self.data['type'] == 'rate_table':
+            return self._compute_rate_table_rate(t9)
+        elif self.data['type'] == 'non_smoker_fit':
+            return self._compute_non_smoker_fit_rate(t9)
+        else:
+            print('No such reaction type')
+            return None
+
+    def get_reactants(self):
+        """Method to return the reactants for a reaction.
+
+        Returns:
+            :obj:`list`: A list of :obj:`str` giving the reactants.
+
+        """
+        return self.reactants
+
+    def get_products(self):
+        """Method to return the products for a reaction.
+
+        Returns:
+            :obj:`list`: A list of :obj:`str` giving the products.
+
+        """
+        return self.products
+
+    def get_source(self):
+        """Method to return the data source for a reaction.
+
+        Returns:
+            :obj:`str`: The source.
+
+        """
+        return self.source
+
+    def get_data(self):
+        """Method to return the data for a reaction.
+
+        Returns:
+            :obj:`dict`: A dictionary containing the rate data for the
+            reaction.
+
+        """
+        return self.data
 
 
 class Xml(wb.Base):
@@ -156,135 +396,16 @@ class Xml(wb.Base):
 
         return result
 
-    def _get_non_smoker_data(self, non_smoker):
-
-        result = {}
-        result['type'] = non_smoker.tag
-
-        def set_fit_data(node):
-            fit_data = {}
-            tags = [
-                'Zt', 'At', 'Zf', 'Af', 'Q', 'spint', 'spinf', 'TlowHf',
-                'Tlowfit', 'Thighfit', 'acc', 'a1', 'a2', 'a3', 'a4', 'a5',
-                'a6', 'a7', 'a8'
-            ]
-
-            for tag in tags:
-                datum = node.xpath(tag)
-                if datum:
-                    fit_data[tag] = float(datum[0].text)
-
-            return fit_data
-
-        fits = non_smoker.xpath('fit')
-
-        if fits:
-            result['fits'] = []
-            for fit in fits:
-                data = {}
-                note = fit.xpath('@note')
-                if note:
-                    data['note'] = note[0]
-                data = self._merge_dicts(data, set_fit_data(fit))
-                result['fits'].append(data)
-
-        else:
-            result = self._merge_dicts(result, set_fit_data(non_smoker))
-
-        return result
-
-    def _get_rate_table_data(self, rate_table):
-        result = {}
-        result['type'] = rate_table.tag
-        table = rate_table.xpath('point')
-        result['t9'] = np.zeros(len(table))
-        result['rate'] = np.zeros(len(table))
-        result['sef'] = np.zeros(len(table))
-        for i, elem in enumerate(table):
-            result['t9'][i] = float((elem.xpath('t9')[0].text).strip())
-            result['rate'][i] = float((elem.xpath('rate')[0].text).strip())
-            result['sef'][i] = float((elem.xpath('sef')[0].text).strip())
-
-        ind = result['t9'].argsort()
-        result['t9'] = result['t9'][ind]
-        result['rate'] = result['rate'][ind]
-        result['sef'] = result['sef'][ind]
-
-        return result
-
-    def _get_single_rate_data(self, single_rate):
-        result = {}
-        result['type'] = single_rate.tag
-        result['rate'] = float(single_rate.text)
-
-        return result
-
-    def _get_user_rate_data(self, user_rate):
-        result = {}
-        result['type'] = user_rate.tag
-        key = user_rate.xpath('@key')
-        result['key'] = key[0]
-
-        properties = user_rate.xpath('properties/property')
-
-        props = {}
-
-        for property in properties:
-            name = property.xpath('@name')
-            tag1 = property.xpath('@tag1')
-            tag2 = property.xpath('@tag2')
-
-            key = name[0]
-            if tag1:
-                key = (name[0], tag1[0])
-            if tag2:
-                key += tag2[0],
-
-            props[key] = property.text
-
-        result = self._merge_dicts(result, props)
-
-        return result
-
-    def _get_individual_reaction_data(self, reaction):
-        result = {}
-
-        non_smoker = reaction.xpath('non_smoker_fit')
-        if non_smoker:
-            return self._get_non_smoker_data(non_smoker[0])
-
-        rate_table = reaction.xpath('rate_table')
-        if rate_table:
-            return self._get_rate_table_data(rate_table[0])
-
-        single_rate = reaction.xpath('single_rate')
-        if single_rate:
-            return self._get_single_rate_data(single_rate[0])
-
-        user_rate = reaction.xpath('user_rate')
-        if user_rate:
-            return self._get_user_rate_data(user_rate[0])
-
     def _get_reaction_data_array(self, reac_xpath):
         result = []
 
         reactions = self._root.xpath('//reaction_data/reaction' + reac_xpath)
 
         for reaction in reactions:
-            data = {}
-            data['source'] = reaction.xpath('source')[0].text
-            data['reactants'] = []
-            data['products'] = []
-            reactants = reaction.xpath('reactant')
-            for reactant in reactants:
-                data['reactants'].append(reactant.text)
-            products = reaction.xpath('product')
-            for product in products:
-                data['products'].append(product.text)
+            r = Reaction()
+            r.set_data(reaction)
 
-            data['data'] = self._get_individual_reaction_data(reaction)
-
-            result.append(data)
+            result.append(r)
 
         return result
 
@@ -297,21 +418,14 @@ class Xml(wb.Base):
 
         Returns:
             :obj:`dict`: A dictionary of reaction data.  The data for each
-            reaction are themselves contained in a :obj:`dict`.
+            reaction are themselves contained in a :class:`Reaction`.
 
         """
 
-        def _create_reaction_string(reaction):
-            s = " + ".join(reaction['reactants'])
-            s += ' -> '
-            s += " + ".join(reaction['products'])
-            return s
-
         result = {}
         reactions = self._get_reaction_data_array(reac_xpath)
-        for i in range(len(reactions)):
-            s = _create_reaction_string(reactions[i])
-            result[s] = reactions[i]
+        for reaction in reactions:
+            result[reaction.get_reaction_string()] = reaction
 
         return result
 
