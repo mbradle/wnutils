@@ -182,12 +182,15 @@ class Reaction(wb.Base):
         else:
             return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
 
-    def compute_rate(self, t9, **kwargs):
+    def compute_rate(self, t9, user_funcs=' '):
         """Method to compute rate for a reaction at input t9.
 
         Args:
             ``t9`` (:obj:`float`):  The temperature in billions of K giving
             the rate for the reaction.
+
+            ``user_funcs`` (:obj:`dict`):  A dictionary of user-defined
+            functions associated with a user_rate key.
 
         Returns:
             :obj:`float`: The computed rate.
@@ -200,6 +203,11 @@ class Reaction(wb.Base):
             return self._compute_rate_table_rate(t9)
         elif self.data['type'] == 'non_smoker_fit':
             return self._compute_non_smoker_fit_rate(t9)
+        elif self.data['type'] == 'user_rate':
+            if self.data['key'] not in user_funcs:
+                print('Function not defined for key ' + self.data['key'])
+                return None
+            return user_funcs[self.data['key']](self, t9)
         else:
             print('No such reaction type')
             return None
