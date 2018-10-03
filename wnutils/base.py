@@ -113,6 +113,35 @@ class Base:
         import matplotlib as my_mpl
         print(my_mpl.rcParams.keys())
 
+    def _create_latex_string(self, str):
+        l_hash = {
+            'gamma': '\\gamma',
+            'electron': '{\rm e}^-',
+            'positron': '{\rm e}^+',
+            'neutrino_e': '\nu_e',
+            'anti-neutrino_e': '{\bar \nu}_e',
+            'neutrino_mu': '\nu_\mu',
+            'anti-neutrino_mu': '{\bar \nu}_\mu',
+            'neutrino_tau': '\nu_\tau',
+            'anti-neutrino_tau': '{\bar \nu}_\tau'
+        }
+
+        if str in l_hash:
+            return l_hash[str]
+        else:
+            if len(str) != 1 or str[0] != 'n':
+                letters = str[0].upper()
+            else:
+                letters = str[0]
+            numbers = ""
+            for i in range(1, len(str)):
+                if str[i].isalpha():
+                    letters += str[i]
+                if str[i].isdigit():
+                    numbers += str[i]
+            return r"^{%s}\rm{%s}" % (numbers, letters)
+
+
     def get_latex_names(self, nuclides):
         """Method to get latex strings of nuclides' names.
 
@@ -126,17 +155,7 @@ class Base:
 
         latex_names = {}
         for nuclide in nuclides:
-            if len(nuclide) != 1 or nuclide[0] != 'n':
-                letters = nuclide[0].upper()
-            else:
-                letters = nuclide[0]
-            numbers = ""
-            for i in range(1, len(nuclide)):
-                if nuclide[i].isalpha():
-                    letters += nuclide[i]
-                if nuclide[i].isdigit():
-                    numbers += nuclide[i]
-            name = r"$^{%s}\rm{%s}$" % (numbers, letters)
+            name = r"$%s$" % (self._create_latex_string(nuclide))
             latex_names[nuclide] = name
 
         return latex_names

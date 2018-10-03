@@ -262,6 +262,29 @@ class Reaction(wb.Base):
         s += " + ".join(self.products)
         return s
 
+    def get_latex_string(self):
+        """Method to return the latex string for a reaction.
+
+        Returns:
+            :obj:`str`: The reaction string.
+
+        """
+
+        l_reactants = []
+        for r in self.reactants:
+            l_reactants.append(self._create_latex_string(r))
+
+        l_products = []
+        for p in self.products:
+            l_products.append(self._create_latex_string(p))
+
+        s = "$"
+        s += " + ".join(l_reactants)
+        s += ' \\to '
+        s += " + ".join(l_products)
+        s += "$"
+        return s
+
 
 class Xml(wb.Base):
     """A class for reading and plotting webnucleo xml files.
