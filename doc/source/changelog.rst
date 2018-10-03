@@ -9,7 +9,8 @@ Version 1.4.0
 
 New:
 
-  * It is now possible to retrieve reaction data from webnucleo xml files.
+  * It is now possible to retrieve reaction data from webnucleo xml files
+    and compute rates for standard rate functions.
 
 Version 1.3.0
 -------------

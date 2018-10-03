@@ -171,6 +171,13 @@ or `non_smoker_fit`) at a variety of temperatures by typing::
     ...     print(t9, reac.compute_rate(t9))
     ...
 
+To compute the rate for user-defined rate functions, each defined with a
+`user_rate` `key`, first write a python routine for each rate function,
+then bind any data to that function (which must still take `t9` as an
+argument), and then create a dictionary of the functions associated with
+each `key`.  Pass that dictionary into the `compute_rate` method with
+the keyword `user_funcs`.
+
 Read all properties in a zone.
 ..............................
 

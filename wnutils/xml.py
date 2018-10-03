@@ -8,18 +8,18 @@ import numpy as np
 from lxml import etree
 from scipy.interpolate import interp1d
 
+
 class Reaction(wb.Base):
     """A class for storing and retrieving data about reactions.
 
        """
-
 
     def __init__(self):
         self.reactants = []
         self.products = []
         self.source = ""
         self.data = {}
-        
+
     def _get_non_smoker_data(self, non_smoker):
 
         result = {}
@@ -159,10 +159,10 @@ class Reaction(wb.Base):
     def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
         def non_smoker_function(fit, t9):
             x = (
-                  fit['a1'] + fit['a2'] / t9 + fit['a3'] / np.power(t9, 1./3.)
-                  + fit['a4'] * np.power(t9, 1./3.) + fit['a5'] * t9
-                  + fit['a6'] * np.power(t9, 5./3.) + fit['a7'] * np.log(t9)
-                )
+                fit['a1'] + fit['a2'] / t9 + fit['a3'] / np.power(t9, 1./3.)
+                + fit['a4'] * np.power(t9, 1./3.) + fit['a5'] * t9
+                + fit['a6'] * np.power(t9, 5./3.) + fit['a7'] * np.log(t9)
+            )
             return np.exp(x)
 
         if t9 < fit['Tlowfit']:
@@ -170,7 +170,7 @@ class Reaction(wb.Base):
         elif t9 > fit['Thighfit']:
             return non_smoker_function(fit, fit['Thighfit'])
         else:
-            return non_smoker_function(fit, t9) 
+            return non_smoker_function(fit, t9)
 
     def _compute_non_smoker_fit_rate(self, t9):
         fits = self.data['fits']
@@ -178,7 +178,7 @@ class Reaction(wb.Base):
             result = 0.
             for fit in fits:
                 result += self._compute_non_smoker_fit_rate_for_fit(fit, t9)
-            return result 
+            return result
         else:
             return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
 
@@ -189,8 +189,8 @@ class Reaction(wb.Base):
             ``t9`` (:obj:`float`):  The temperature in billions of K giving
             the rate for the reaction.
 
-            ``user_funcs`` (:obj:`dict`):  A dictionary of user-defined
-            functions associated with a user_rate key.
+            ``user_funcs`` (:obj:`dict`, optional):  A dictionary of
+            user-defined functions associated with a user_rate key.
 
         Returns:
             :obj:`float`: The computed rate.

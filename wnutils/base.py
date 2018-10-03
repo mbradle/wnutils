@@ -141,7 +141,6 @@ class Base:
                     numbers += str[i]
             return r"^{%s}\rm{%s}" % (numbers, letters)
 
-
     def get_latex_names(self, nuclides):
         """Method to get latex strings of nuclides' names.
 
