@@ -278,7 +278,7 @@ class Reaction(wb.Base):
         for p in self.products:
             l_products.append(self._create_latex_string(p))
 
-        s = "$"
+        s = r"$"
         s += " + ".join(l_reactants)
         s += ' \\to '
         s += " + ".join(l_products)

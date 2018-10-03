@@ -116,14 +116,14 @@ class Base:
     def _create_latex_string(self, str):
         l_hash = {
             'gamma': '\\gamma',
-            'electron': '{\rm e}^-',
-            'positron': '{\rm e}^+',
-            'neutrino_e': '\nu_e',
-            'anti-neutrino_e': '{\bar \nu}_e',
-            'neutrino_mu': '\nu_\mu',
-            'anti-neutrino_mu': '{\bar \nu}_\mu',
-            'neutrino_tau': '\nu_\tau',
-            'anti-neutrino_tau': '{\bar \nu}_\tau'
+            'electron': '{\\rm e}^-',
+            'positron': '{\\rm e}^+',
+            'neutrino_e': '\\nu_e',
+            'anti-neutrino_e': '{\\bar \\nu}_e',
+            'neutrino_mu': '\\nu_\\mu',
+            'anti-neutrino_mu': '{\\bar \\nu}_\\mu',
+            'neutrino_tau': '\\nu_\\tau',
+            'anti-neutrino_tau': '{\\bar \\nu}_\\tau'
         }
 
         if str in l_hash:
