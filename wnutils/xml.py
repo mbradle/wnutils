@@ -41,9 +41,9 @@ class Reaction(wb.Base):
             return fit_data
 
         fits = non_smoker.xpath('fit')
+        result['fits'] = []
 
         if fits:
-            result['fits'] = []
             for fit in fits:
                 data = {}
                 note = fit.xpath('@note')
@@ -53,7 +53,7 @@ class Reaction(wb.Base):
                 result['fits'].append(data)
 
         else:
-            result = self._merge_dicts(result, set_fit_data(non_smoker))
+            result['fits'].append(set_fit_data(non_smoker))
 
         return result
 
