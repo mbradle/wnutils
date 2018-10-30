@@ -177,6 +177,15 @@ class Base:
 
         """
 
+        # Special cases
+
+        if z == 0 and a == 1:
+            return 'n'
+        elif z == 0 and a == 2:
+            return 'nn'
+
+        # Normal cases
+
         s_zname = ['n',
                    'h', 'he', 'li', 'be', 'b',
                    'c', 'n', 'o', 'f', 'ne',
