@@ -535,29 +535,34 @@ class Xml(wb.Base):
         for property in properties:
             dict[property] = []
 
-        for property in properties:
+        zones = self._get_zones(zone_xpath)
 
-            tup = properties_t[property]
+        for zone in zones:
 
-            path = '//zone' + zone_xpath + '/optional_properties/property'
+            for property in properties:
 
-            if len(tup) == 1:
-                path += '[@name="%s"]' % tup[0].strip()
-            elif len(tup) == 2:
-                path += '[@name="%s" and @tag1="%s"]' % (
-                    tup[0].strip(), tup[1].strip())
-            else:
-                path += '[@name="%s" and @tag1="%s" and @tag2="%s"]' % (
-                    tup[0].strip(), tup[1].strip(), tup[2].strip())
+                tup = properties_t[property]
 
-            props = self._root.xpath(path)
+                path = 'optional_properties/property'
 
-            if len(props) == 0:
-                print("Property", self._get_property_name(tup), "not found.")
-                return
+                if len(tup) == 1:
+                    path += '[@name="%s"]' % tup[0].strip()
+                elif len(tup) == 2:
+                    path += '[@name="%s" and @tag1="%s"]' % (
+                        tup[0].strip(), tup[1].strip())
+                else:
+                    path += '[@name="%s" and @tag1="%s" and @tag2="%s"]' % (
+                        tup[0].strip(), tup[1].strip(), tup[2].strip())
 
-            for elem in props:
-                dict[property].append(elem.text)
+                data = zone.find(path)
+
+                if data is None:
+                    print(
+                        "Property", self._get_property_name(tup), "not found."
+                    )
+                    return
+                
+                dict[property].append(data.text)
 
         return dict
 
