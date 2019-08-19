@@ -2,18 +2,18 @@ class Base:
     """Class for setting wnutils parameters and utilities."""
 
     def _get_property_name(self, tup):
-        if(len(tup) == 1):
+        if len(tup) == 1:
             s = tup[0]
-        elif(len(tup) == 2):
-            s = tup[0] + ', ' + tup[1]
-        elif(len(tup) == 3):
-            s = tup[0] + ', ' + tup[1] + ', ' + tup[2]
+        elif len(tup) == 2:
+            s = tup[0] + ", " + tup[1]
+        elif len(tup) == 3:
+            s = tup[0] + ", " + tup[1] + ", " + tup[2]
         else:
-            s = 'Invalid property name'
+            s = "Invalid property name"
 
         return s
 
-    def _merge_dicts(self, x, y):    # For Python 2
+    def _merge_dicts(self, x, y):  # For Python 2
         z = x.copy()
         z.update(y)
         return z
@@ -33,15 +33,15 @@ class Base:
 
         """
 
-        if 'show' in kwargs or 'savefig' not in kwargs:
+        if "show" in kwargs or "savefig" not in kwargs:
             plt.show()
         else:
             plt.close()
 
     def _class_comparator(self, k):
-        if k == 'show':
+        if k == "show":
             return 2
-        elif k == 'savefig':
+        elif k == "savefig":
             return 1
         else:
             return 0
@@ -90,7 +90,7 @@ class Base:
             except AttributeError:
                 raise NotImplementedError(
                     "Class `{}` does not implement `{}`".format(
-                        plt.__class__.__name__, method_name
+                        plt.__class__.__name__, method
                     )
                 )
 
@@ -111,25 +111,26 @@ class Base:
         """
 
         import matplotlib as my_mpl
+
         print(my_mpl.rcParams.keys())
 
     def _create_latex_string(self, str):
         l_hash = {
-            'gamma': '\\gamma',
-            'electron': '{\\rm e}^-',
-            'positron': '{\\rm e}^+',
-            'neutrino_e': '\\nu_e',
-            'anti-neutrino_e': '{\\bar \\nu}_e',
-            'neutrino_mu': '\\nu_\\mu',
-            'anti-neutrino_mu': '{\\bar \\nu}_\\mu',
-            'neutrino_tau': '\\nu_\\tau',
-            'anti-neutrino_tau': '{\\bar \\nu}_\\tau'
+            "gamma": "\\gamma",
+            "electron": "{\\rm e}^-",
+            "positron": "{\\rm e}^+",
+            "neutrino_e": "\\nu_e",
+            "anti-neutrino_e": "{\\bar \\nu}_e",
+            "neutrino_mu": "\\nu_\\mu",
+            "anti-neutrino_mu": "{\\bar \\nu}_\\mu",
+            "neutrino_tau": "\\nu_\\tau",
+            "anti-neutrino_tau": "{\\bar \\nu}_\\tau",
         }
 
         if str in l_hash:
             return l_hash[str]
         else:
-            if len(str) != 1 or str[0] != 'n':
+            if len(str) != 1 or str[0] != "n":
                 letters = str[0].upper()
             else:
                 letters = str[0]
@@ -180,42 +181,137 @@ class Base:
         # Special cases
 
         if z == 0 and a == 1:
-            return 'n'
+            return "n"
         elif z == 0 and a == 2:
-            return 'nn'
+            return "nn"
 
         # Normal cases
 
-        s_zname = ['n',
-                   'h', 'he', 'li', 'be', 'b',
-                   'c', 'n', 'o', 'f', 'ne',
-                   'na', 'mg', 'al', 'si', 'p',
-                   's', 'cl', 'ar', 'k', 'ca',
-                   'sc', 'ti', 'v', 'cr', 'mn',
-                   'fe', 'co', 'ni', 'cu', 'zn',
-                   'ga', 'ge', 'as', 'se', 'br',
-                   'kr', 'rb', 'sr', 'y', 'zr',
-                   'nb', 'mo', 'tc', 'ru', 'rh',
-                   'pd', 'ag', 'cd', 'in', 'sn',
-                   'sb', 'te', 'i', 'xe', 'cs',
-                   'ba', 'la', 'ce', 'pr', 'nd',
-                   'pm', 'sm', 'eu', 'gd', 'tb',
-                   'dy', 'ho', 'er', 'tm', 'yb',
-                   'lu', 'hf', 'ta', 'w', 're',
-                   'os', 'ir', 'pt', 'au', 'hg',
-                   'tl', 'pb', 'bi', 'po', 'at',
-                   'rn', 'fr', 'ra', 'ac', 'th',
-                   'pa', 'u', 'np', 'pu', 'am',
-                   'cm', 'bk', 'cf', 'es', 'fm',
-                   'md', 'no', 'lr', 'rf', 'db',
-                   'sg', 'bh', 'hs', 'mt', 'ds',
-                   'rg', 'cn', 'nh', 'fl', 'mc',
-                   'lv', 'ts', 'og'
-                   ]
+        s_zname = [
+            "n",
+            "h",
+            "he",
+            "li",
+            "be",
+            "b",
+            "c",
+            "n",
+            "o",
+            "f",
+            "ne",
+            "na",
+            "mg",
+            "al",
+            "si",
+            "p",
+            "s",
+            "cl",
+            "ar",
+            "k",
+            "ca",
+            "sc",
+            "ti",
+            "v",
+            "cr",
+            "mn",
+            "fe",
+            "co",
+            "ni",
+            "cu",
+            "zn",
+            "ga",
+            "ge",
+            "as",
+            "se",
+            "br",
+            "kr",
+            "rb",
+            "sr",
+            "y",
+            "zr",
+            "nb",
+            "mo",
+            "tc",
+            "ru",
+            "rh",
+            "pd",
+            "ag",
+            "cd",
+            "in",
+            "sn",
+            "sb",
+            "te",
+            "i",
+            "xe",
+            "cs",
+            "ba",
+            "la",
+            "ce",
+            "pr",
+            "nd",
+            "pm",
+            "sm",
+            "eu",
+            "gd",
+            "tb",
+            "dy",
+            "ho",
+            "er",
+            "tm",
+            "yb",
+            "lu",
+            "hf",
+            "ta",
+            "w",
+            "re",
+            "os",
+            "ir",
+            "pt",
+            "au",
+            "hg",
+            "tl",
+            "pb",
+            "bi",
+            "po",
+            "at",
+            "rn",
+            "fr",
+            "ra",
+            "ac",
+            "th",
+            "pa",
+            "u",
+            "np",
+            "pu",
+            "am",
+            "cm",
+            "bk",
+            "cf",
+            "es",
+            "fm",
+            "md",
+            "no",
+            "lr",
+            "rf",
+            "db",
+            "sg",
+            "bh",
+            "hs",
+            "mt",
+            "ds",
+            "rg",
+            "cn",
+            "nh",
+            "fl",
+            "mc",
+            "lv",
+            "ts",
+            "og",
+        ]
 
-        ex_name = ['n', 'u', 'b', 't', 'q', 'p', 'h', 's', 'o', 'e']
+        ex_name = ["n", "u", "b", "t", "q", "p", "h", "s", "o", "e"]
 
-        elem_name = ''
+        elem_name = ""
         if z <= len(s_zname):
             elem_name = s_zname[z]
         else:
@@ -247,9 +343,11 @@ class Base:
 
         """
 
-        title_str = \
-            "time (s) = %8.2e, $T_9$ = %4.2f, rho (g/cc) = %8.2e" % \
-            (props['time'][i], props['t9'][i], props['rho'][i])
+        title_str = "time (s) = %8.2e, $T_9$ = %4.2f, rho (g/cc) = %8.2e" % (
+            props["time"][i],
+            props["t9"][i],
+            props["rho"][i],
+        )
         return title_str
 
     def make_time_title_str(self, time):
@@ -268,6 +366,5 @@ class Base:
 
         """
 
-        title_str = \
-            "time (s) = %8.2e" % (time)
+        title_str = "time (s) = %8.2e" % (time)
         return title_str

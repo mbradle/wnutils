@@ -2,7 +2,6 @@ import wnutils.base as wb
 import wnutils.xml as wx
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 class Multi_Xml(wb.Base):
@@ -42,8 +41,14 @@ class Multi_Xml(wb.Base):
         return self._xml
 
     def plot_property_vs_property(
-        self, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        plotParams=None, **kwargs
+        self,
+        prop1,
+        prop2,
+        xfactor=1,
+        yfactor=1,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot a property vs. a property in the files.
 
@@ -88,7 +93,7 @@ class Multi_Xml(wb.Base):
         if plotParams:
             if len(xmls) != len(plotParams):
                 print(
-                    'Number of plotParam elements must equal number of plots.'
+                    "Number of plotParam elements must equal number of plots."
                 )
                 return
 
@@ -101,26 +106,32 @@ class Multi_Xml(wb.Base):
             else:
                 plt.plot(x, y)
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop1)
 
-        if('ylabel' not in kwargs):
+        if "ylabel" not in kwargs:
             plt.ylabel(prop2)
 
-        if 'legend' not in kwargs:
+        if "legend" not in kwargs:
             if plotParams:
-                if 'label' in plotParams[0]:
+                if "label" in plotParams[0]:
                     plt.legend()
 
         self.apply_class_methods(plt, kwargs)
 
         self.show_or_close(plt, kwargs)
 
-    def plot_mass_fraction_vs_property(self, prop, species, xfactor=1,
-                                       use_latex_names=False, labels=None,
-                                       rcParams=None, plotParams=None,
-                                       **kwargs
-                                       ):
+    def plot_mass_fraction_vs_property(
+        self,
+        prop,
+        species,
+        xfactor=1,
+        use_latex_names=False,
+        labels=None,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
+    ):
         """Method to plot a mass fraction versus a property.
 
         Args:
@@ -166,7 +177,7 @@ class Multi_Xml(wb.Base):
         if plotParams:
             if len(xmls) != len(plotParams):
                 print(
-                    'Number of plotParam elements must equal number of plots.'
+                    "Number of plotParam elements must equal number of plots."
                 )
                 return
 
@@ -178,19 +189,19 @@ class Multi_Xml(wb.Base):
             else:
                 plt.plot(x, y[species])
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
-        if('ylabel' not in kwargs):
+        if "ylabel" not in kwargs:
             if use_latex_names:
-                s = '$X(' + latex_names[species][1:-1] + ')$'
+                s = "$X(" + latex_names[species][1:-1] + ")$"
             else:
                 s = species
             plt.ylabel(s)
 
-        if 'legend' not in kwargs:
+        if "legend" not in kwargs:
             if plotParams:
-                if 'label' in plotParams[0]:
+                if "label" in plotParams[0]:
                     plt.legend()
 
         self.apply_class_methods(plt, kwargs)

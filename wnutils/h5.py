@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
 import warnings
+
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=FutureWarning)
     import h5py
@@ -21,28 +22,28 @@ class H5(wnb.Base):
        """
 
     def __init__(self, file):
-        self._h5file = h5py.File(file, 'r')
+        self._h5file = h5py.File(file, "r")
 
     def _get_group_zone_property_hash(self, group, zone_index):
 
-        properties = (
-            self._h5file['/' + group + '/Zone Properties/' + str(zone_index)]
-        )
+        properties = self._h5file[
+            "/" + group + "/Zone Properties/" + str(zone_index)
+        ]
 
         result = {}
 
         for property in properties:
-            p0 = property[0].decode('ascii')
-            p1 = property[1].decode('ascii')
-            p2 = property[2].decode('ascii')
-            name = ''
-            if(p1 == '0' and p2 == '0'):
+            p0 = property[0].decode("ascii")
+            p1 = property[1].decode("ascii")
+            p2 = property[2].decode("ascii")
+            name = ""
+            if p1 == "0" and p2 == "0":
                 name = p0
-            elif(p1 != '0' and p2 == '0'):
+            elif p1 != "0" and p2 == "0":
                 name = (p0, p1)
             else:
                 name = (p0, p1, p2)
-            result[name] = property[3].decode('ascii')
+            result[name] = property[3].decode("ascii")
 
         return result
 
@@ -58,16 +59,16 @@ class H5(wnb.Base):
 
         """
 
-        zone_labels = self._h5file['/' + group + '/Zone Labels']
+        zone_labels = self._h5file["/" + group + "/Zone Labels"]
 
         result = []
 
         for i in range(len(zone_labels)):
             result.append(
                 (
-                    zone_labels[i][0].decode('ascii'),
-                    zone_labels[i][1].decode('ascii'),
-                    zone_labels[i][2].decode('ascii')
+                    zone_labels[i][0].decode("ascii"),
+                    zone_labels[i][1].decode("ascii"),
+                    zone_labels[i][2].decode("ascii"),
                 )
             )
 
@@ -95,7 +96,7 @@ class H5(wnb.Base):
         result = []
 
         for group_name in self._h5file:
-            if(group_name != 'Nuclide Data'):
+            if group_name != "Nuclide Data":
                 result.append(group_name)
 
         return result
@@ -104,18 +105,18 @@ class H5(wnb.Base):
 
         result = []
 
-        nuclide_data = self._h5file['/Nuclide Data']
+        nuclide_data = self._h5file["/Nuclide Data"]
 
         for i in range(len(nuclide_data)):
             data = {}
-            data['name'] = nuclide_data[i][0].decode('ascii')
-            data['z'] = nuclide_data[i][2]
-            data['a'] = nuclide_data[i][3]
-            data['n'] = data['a'] - data['z']
-            data['source'] = nuclide_data[i][4].decode('ascii')
-            data['state'] = nuclide_data[i][5].decode('ascii')
-            data['spin'] = nuclide_data[i][6]
-            data['mass excess'] = nuclide_data[i][7]
+            data["name"] = nuclide_data[i][0].decode("ascii")
+            data["z"] = nuclide_data[i][2]
+            data["a"] = nuclide_data[i][3]
+            data["n"] = data["a"] - data["z"]
+            data["source"] = nuclide_data[i][4].decode("ascii")
+            data["state"] = nuclide_data[i][5].decode("ascii")
+            data["spin"] = nuclide_data[i][6]
+            data["mass excess"] = nuclide_data[i][7]
             result.append(data)
 
         return result
@@ -137,15 +138,15 @@ class H5(wnb.Base):
 
         for i in range(len(nuclide_data)):
             data = {}
-            data['index'] = i
-            data['z'] = nuclide_data[i]['z']
-            data['a'] = nuclide_data[i]['a']
-            data['n'] = nuclide_data[i]['n']
-            data['source'] = nuclide_data[i]['source']
-            data['state'] = nuclide_data[i]['state']
-            data['mass excess'] = nuclide_data[i]['mass excess']
-            data['spin'] = nuclide_data[i]['spin']
-            result[nuclide_data[i]['name']] = data
+            data["index"] = i
+            data["z"] = nuclide_data[i]["z"]
+            data["a"] = nuclide_data[i]["a"]
+            data["n"] = nuclide_data[i]["n"]
+            data["source"] = nuclide_data[i]["source"]
+            data["state"] = nuclide_data[i]["state"]
+            data["mass excess"] = nuclide_data[i]["mass excess"]
+            data["spin"] = nuclide_data[i]["spin"]
+            result[nuclide_data[i]["name"]] = data
 
         return result
 
@@ -161,7 +162,7 @@ class H5(wnb.Base):
 
         """
 
-        return self._h5file['/' + group + '/Mass Fractions']
+        return self._h5file["/" + group + "/Mass Fractions"]
 
     def get_zone_mass_fractions_in_groups(self, zone, species):
         """Method to return zone mass fractions in all groups.
@@ -192,8 +193,7 @@ class H5(wnb.Base):
             x = self.get_group_mass_fractions(group_name)
             for sp in species:
                 result[sp] = np.append(
-                    result[sp],
-                    x[zone_index[zone], nuclide_hash[sp]['index']]
+                    result[sp], x[zone_index[zone], nuclide_hash[sp]["index"]]
                 )
 
         return result
@@ -297,12 +297,11 @@ class H5(wnb.Base):
         zone_labels_hash = self._get_group_zone_labels_hash(group)
 
         for zone_labels in self.get_zone_labels_for_group(group):
-            p = (
-                self._get_group_zone_property_hash(
-                    group, zone_labels_hash[
-                        (zone_labels[0], zone_labels[1], zone_labels[2])
-                    ]
-                )
+            p = self._get_group_zone_property_hash(
+                group,
+                zone_labels_hash[
+                    (zone_labels[0], zone_labels[1], zone_labels[2])
+                ],
             )
             for property in properties:
                 result[property].append(p[property])
@@ -335,8 +334,15 @@ class H5(wnb.Base):
         return result
 
     def plot_zone_property_vs_property(
-        self, zone, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        plotParams=None, **kwargs
+        self,
+        zone,
+        prop1,
+        prop2,
+        xfactor=1,
+        yfactor=1,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot a property vs. a property in a zone.
 
@@ -377,8 +383,8 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        result = (
-            self.get_zone_properties_in_groups_as_floats(zone, [prop1, prop2])
+        result = self.get_zone_properties_in_groups_as_floats(
+            zone, [prop1, prop2]
         )
 
         x = result[prop1] / xfactor
@@ -394,8 +400,13 @@ class H5(wnb.Base):
         self.show_or_close(plt, kwargs)
 
     def plot_group_mass_fractions(
-        self, group, species, use_latex_names=False, rcParams=None,
-        plotParams=None, **kwargs
+        self,
+        group,
+        species,
+        use_latex_names=False,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot group mass fractions vs. zone.
 
@@ -431,8 +442,8 @@ class H5(wnb.Base):
         if plotParams:
             if len(plotParams) != len(species):
                 print(
-                    'Number of plotParam elements must equal' +
-                    ' number of species.'
+                    "Number of plotParam elements must equal"
+                    + " number of species."
                 )
                 return
 
@@ -450,24 +461,24 @@ class H5(wnb.Base):
                 p = {}
             else:
                 p = plotParams[i]
-            if 'label' not in p:
+            if "label" not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label': latex_names[sp]})
+                    p = self._merge_dicts(p, {"label": latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label': sp})
-            plots.append(plt.plot(m[:, nuclide_data[sp]['index']], **p))
+                    p = self._merge_dicts(p, {"label": sp})
+            plots.append(plt.plot(m[:, nuclide_data[sp]["index"]], **p))
 
-        if(len(species) != 1):
+        if len(species) != 1:
             plt.legend()
 
-        if('ylabel' not in kwargs):
-            if(len(species) != 1):
-                plt.ylabel('Mass Fraction')
+        if "ylabel" not in kwargs:
+            if len(species) != 1:
+                plt.ylabel("Mass Fraction")
             else:
                 if use_latex_names:
-                    plt.ylabel('X(' + latex_names[species[0]] + ')')
+                    plt.ylabel("X(" + latex_names[species[0]] + ")")
                 else:
-                    plt.ylabel('X(' + species[0] + ')')
+                    plt.ylabel("X(" + species[0] + ")")
 
         self.apply_class_methods(plt, kwargs)
 
@@ -510,7 +521,7 @@ class H5(wnb.Base):
         else:
             plt.plot(prop[property])
 
-        if 'ylabel' not in kwargs:
+        if "ylabel" not in kwargs:
             plt.ylabel(property)
 
         self.apply_class_methods(plt, kwargs)
@@ -518,8 +529,15 @@ class H5(wnb.Base):
         self.show_or_close(plt, kwargs)
 
     def plot_group_mass_fractions_vs_property(
-        self, group, prop, species, xfactor=1, use_latex_names=False,
-        rcParams=None, plotParams=None, **kwargs
+        self,
+        group,
+        prop,
+        species,
+        xfactor=1,
+        use_latex_names=False,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot group mass fractions vs. zone property.
 
@@ -562,16 +580,14 @@ class H5(wnb.Base):
         if plotParams:
             if len(plotParams) != len(species):
                 print(
-                    'Number of plotParam elements must equal' +
-                    ' number of species.'
+                    "Number of plotParam elements must equal"
+                    + " number of species."
                 )
                 return
 
         plots = []
 
-        x = self.get_group_properties_in_zones_as_floats(
-            group, [prop]
-        )[prop]
+        x = self.get_group_properties_in_zones_as_floats(group, [prop])[prop]
         m = self.get_group_mass_fractions(group)
 
         nuclide_data = self.get_nuclide_data()
@@ -580,31 +596,31 @@ class H5(wnb.Base):
             latex_names = self.get_latex_names(species)
 
         for i, sp in enumerate(species):
-            y = m[:, nuclide_data[sp]['index']]
+            y = m[:, nuclide_data[sp]["index"]]
             if plotParams is None:
                 p = {}
             else:
                 p = plotParams[i]
-            if 'label' not in p:
+            if "label" not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label': latex_names[sp]})
+                    p = self._merge_dicts(p, {"label": latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label': sp})
+                    p = self._merge_dicts(p, {"label": sp})
             plots.append(plt.plot(x / xfactor, y, **p))
 
-        if(len(species) != 1):
+        if len(species) != 1:
             plt.legend()
 
-        if('ylabel' not in kwargs):
-            if(len(species) != 1):
-                plt.ylabel('Mass Fraction')
+        if "ylabel" not in kwargs:
+            if len(species) != 1:
+                plt.ylabel("Mass Fraction")
             else:
                 if use_latex_names:
-                    plt.ylabel('X(' + latex_names[species[0]] + ')')
+                    plt.ylabel("X(" + latex_names[species[0]] + ")")
                 else:
-                    plt.ylabel('X(' + species[0] + ')')
+                    plt.ylabel("X(" + species[0] + ")")
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
         self.apply_class_methods(plt, kwargs)
@@ -612,9 +628,16 @@ class H5(wnb.Base):
         self.show_or_close(plt, kwargs)
 
     def plot_zone_mass_fractions_vs_property(
-        self, zone, prop, species, xfactor=1, yfactor=None,
-        use_latex_names=False, rcParams=None,
-        plotParams=None,  **kwargs
+        self,
+        zone,
+        prop,
+        species,
+        xfactor=1,
+        yfactor=None,
+        use_latex_names=False,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot zone mass fractions vs. zone property.
 
@@ -663,11 +686,11 @@ class H5(wnb.Base):
         if yfactor:
             if len(yfactor) != len(species):
                 print(
-                    'yfactor length must be the same as the number of species.'
+                    "yfactor length must be the same as the number of species."
                 )
                 return
         else:
-            yfactor = np.full(len(species), 1.)
+            yfactor = np.full(len(species), 1.0)
 
         if use_latex_names:
             latex_names = self.get_latex_names(species)
@@ -677,26 +700,26 @@ class H5(wnb.Base):
                 p = {}
             else:
                 p = plotParams[i]
-            if 'label' not in p:
+            if "label" not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label': latex_names[sp]})
+                    p = self._merge_dicts(p, {"label": latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label': sp})
+                    p = self._merge_dicts(p, {"label": sp})
             plt.plot(x / xfactor, m[species[i]] / yfactor[i], **p)
 
-        if(len(species) != 1):
+        if len(species) != 1:
             plt.legend()
 
-        if('ylabel' not in kwargs):
-            if(len(species) != 1):
-                plt.ylabel('Mass Fraction')
+        if "ylabel" not in kwargs:
+            if len(species) != 1:
+                plt.ylabel("Mass Fraction")
             else:
                 if use_latex_names:
-                    plt.ylabel('X(' + latex_names[species[0]] + ')')
+                    plt.ylabel("X(" + latex_names[species[0]] + ")")
                 else:
-                    plt.ylabel('X(' + species[0] + ')')
+                    plt.ylabel("X(" + species[0] + ")")
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
         self.apply_class_methods(plt, kwargs)
@@ -704,8 +727,16 @@ class H5(wnb.Base):
         self.show_or_close(plt, kwargs)
 
     def make_mass_fractions_movie(
-        self, species, movie_name, property=None, fps=15, xfactor=1,
-        use_latex_names=False, title_func=None, rcParams=None, plotParams=None,
+        self,
+        species,
+        movie_name,
+        property=None,
+        fps=15,
+        xfactor=1,
+        use_latex_names=False,
+        title_func=None,
+        rcParams=None,
+        plotParams=None,
         **kwargs
     ):
         """Method to make of movie of mass fractions in the zones.
@@ -762,8 +793,8 @@ class H5(wnb.Base):
         if plotParams:
             if len(plotParams) != len(species):
                 print(
-                    'Number of plotParam elements must equal' +
-                    ' number of species.'
+                    "Number of plotParam elements must equal"
+                    + " number of species."
                 )
                 return
 
@@ -786,24 +817,22 @@ class H5(wnb.Base):
                     p = {}
                 else:
                     p = plotParams[j]
-                if 'label' not in p:
+                if "label" not in p:
                     if use_latex_names:
-                        p = self._merge_dicts(
-                            p, {'label': latex_names[sp]}
-                        )
+                        p = self._merge_dicts(p, {"label": latex_names[sp]})
                     else:
-                        p = self._merge_dicts(p, {'label': sp})
+                        p = self._merge_dicts(p, {"label": sp})
                 if property:
                     p_prop = self.get_group_properties_in_zones_as_floats(
                         groups[i], [property]
                     )
                     plt.plot(
                         p_prop[property] / xfactor,
-                        x[:, nuclide_data[sp]['index']],
+                        x[:, nuclide_data[sp]["index"]],
                         **p
                     )
                 else:
-                    plt.plot(x[:, nuclide_data[sp]['index']], **p)
+                    plt.plot(x[:, nuclide_data[sp]["index"]], **p)
 
             if title_func:
                 tf = title_func(i)
@@ -817,12 +846,12 @@ class H5(wnb.Base):
                         return
             else:
                 props = self.get_group_properties_in_zones_as_floats(
-                    groups[i], ['time']
+                    groups[i], ["time"]
                 )
-                plt.title(self.make_time_title_str(props['time'][0]))
-            if 'ylabel' not in kwargs:
-                plt.ylabel('Mass Fraction')
-            if 'legend' not in kwargs:
+                plt.title(self.make_time_title_str(props["time"][0]))
+            if "ylabel" not in kwargs:
+                plt.ylabel("Mass Fraction")
+            if "legend" not in kwargs:
                 plt.legend()
             self.apply_class_methods(plt, kwargs)
             plt.draw()

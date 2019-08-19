@@ -4,6 +4,13 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.4.3
+-------------
+
+Fix:
+
+  * The zone XPath in routines to retrieve properties has been fixed.
+
 Version 1.4.2
 -------------
 
