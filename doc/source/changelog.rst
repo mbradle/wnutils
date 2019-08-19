@@ -9,7 +9,7 @@ Version 1.4.3
 
 Fix:
 
-  * The zone XPath in routines to retrieve properties has been fixed.
+  * The zone XPath in routines has been fixed.
 
 Version 1.4.2
 -------------
