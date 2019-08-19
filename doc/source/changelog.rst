@@ -9,7 +9,7 @@ Version 1.4.3
 
 Fix:
 
-  * The zone XPath in routines has been fixed.
+  * The XPath expressions in some routines have been fixed.
 
 Version 1.4.2
 -------------
