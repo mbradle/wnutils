@@ -23,14 +23,30 @@ class Reaction(wb.Base):
     def _get_non_smoker_data(self, non_smoker):
 
         result = {}
-        result['type'] = non_smoker.tag
+        result["type"] = non_smoker.tag
 
         def set_fit_data(node):
             fit_data = {}
             tags = [
-                'Zt', 'At', 'Zf', 'Af', 'Q', 'spint', 'spinf', 'TlowHf',
-                'Tlowfit', 'Thighfit', 'acc', 'a1', 'a2', 'a3', 'a4', 'a5',
-                'a6', 'a7', 'a8'
+                "Zt",
+                "At",
+                "Zf",
+                "Af",
+                "Q",
+                "spint",
+                "spinf",
+                "TlowHf",
+                "Tlowfit",
+                "Thighfit",
+                "acc",
+                "a1",
+                "a2",
+                "a3",
+                "a4",
+                "a5",
+                "a6",
+                "a7",
+                "a8",
             ]
 
             for tag in tags:
@@ -40,69 +56,69 @@ class Reaction(wb.Base):
 
             return fit_data
 
-        fits = non_smoker.xpath('fit')
-        result['fits'] = []
+        fits = non_smoker.xpath("fit")
+        result["fits"] = []
 
         if fits:
             for fit in fits:
                 data = {}
-                note = fit.xpath('@note')
+                note = fit.xpath("@note")
                 if note:
-                    data['note'] = note[0]
+                    data["note"] = note[0]
                 data = self._merge_dicts(data, set_fit_data(fit))
-                result['fits'].append(data)
+                result["fits"].append(data)
 
         else:
-            result['fits'].append(set_fit_data(non_smoker))
+            result["fits"].append(set_fit_data(non_smoker))
 
         return result
 
     def _get_rate_table_data(self, rate_table):
         result = {}
-        result['type'] = rate_table.tag
-        table = rate_table.xpath('point')
-        result['t9'] = np.zeros(len(table))
-        result['rate'] = np.zeros(len(table))
-        result['sef'] = np.zeros(len(table))
+        result["type"] = rate_table.tag
+        table = rate_table.xpath("point")
+        result["t9"] = np.zeros(len(table))
+        result["rate"] = np.zeros(len(table))
+        result["sef"] = np.zeros(len(table))
         for i, elem in enumerate(table):
-            result['t9'][i] = float((elem.xpath('t9')[0].text).strip())
-            result['rate'][i] = float((elem.xpath('rate')[0].text).strip())
-            result['sef'][i] = float((elem.xpath('sef')[0].text).strip())
+            result["t9"][i] = float((elem.xpath("t9")[0].text).strip())
+            result["rate"][i] = float((elem.xpath("rate")[0].text).strip())
+            result["sef"][i] = float((elem.xpath("sef")[0].text).strip())
 
-        ind = result['t9'].argsort()
-        result['t9'] = result['t9'][ind]
-        result['rate'] = result['rate'][ind]
-        result['sef'] = result['sef'][ind]
+        ind = result["t9"].argsort()
+        result["t9"] = result["t9"][ind]
+        result["rate"] = result["rate"][ind]
+        result["sef"] = result["sef"][ind]
 
         return result
 
     def _get_single_rate_data(self, single_rate):
         result = {}
-        result['type'] = single_rate.tag
-        result['rate'] = float(single_rate.text)
+        result["type"] = single_rate.tag
+        result["rate"] = float(single_rate.text)
 
         return result
 
     def _get_user_rate_data(self, user_rate):
         result = {}
-        result['type'] = user_rate.tag
-        key = user_rate.xpath('@key')
-        result['key'] = key[0]
+        result["type"] = user_rate.tag
+        key = user_rate.xpath("@key")
+        result["key"] = key[0]
 
-        properties = user_rate.xpath('properties/property')
+        properties = user_rate.xpath("properties/property")
 
         props = {}
 
         for property in properties:
-            name = property.xpath('@name')
-            tag1 = property.xpath('@tag1')
-            tag2 = property.xpath('@tag2')
+            name = property.xpath("@name")
+            tag1 = property.xpath("@tag1")
+            tag2 = property.xpath("@tag2")
 
             key = name[0]
             if tag1:
                 key = (name[0], tag1[0])
             if tag2:
-                key += tag2[0],
+                key += (tag2[0],)
 
             props[key] = property.text
 
@@ -111,78 +127,81 @@ class Reaction(wb.Base):
         return result
 
     def _get_reaction_data(self, reaction_node):
-        result = {}
 
-        non_smoker = reaction_node.xpath('non_smoker_fit')
+        non_smoker = reaction_node.xpath("non_smoker_fit")
         if non_smoker:
             return self._get_non_smoker_data(non_smoker[0])
 
-        rate_table = reaction_node.xpath('rate_table')
+        rate_table = reaction_node.xpath("rate_table")
         if rate_table:
             return self._get_rate_table_data(rate_table[0])
 
-        single_rate = reaction_node.xpath('single_rate')
+        single_rate = reaction_node.xpath("single_rate")
         if single_rate:
             return self._get_single_rate_data(single_rate[0])
 
-        user_rate = reaction_node.xpath('user_rate')
+        user_rate = reaction_node.xpath("user_rate")
         if user_rate:
             return self._get_user_rate_data(user_rate[0])
 
     def _set_data(self, reaction_node):
-        self.source = reaction_node.xpath('source')[0].text
+        self.source = reaction_node.xpath("source")[0].text
 
-        reactants = reaction_node.xpath('reactant')
+        reactants = reaction_node.xpath("reactant")
         for reactant in reactants:
             self.reactants.append(reactant.text)
 
-        products = reaction_node.xpath('product')
+        products = reaction_node.xpath("product")
         for product in products:
             self.products.append(product.text)
 
         self.data = self._get_reaction_data(reaction_node)
 
     def _compute_rate_table_rate(self, t9):
-        t = self.data['t9']
-        lr = np.log10(self.data['rate'])
-        sef = self.data['sef']
+        t = self.data["t9"]
+        lr = np.log10(self.data["rate"])
+        sef = self.data["sef"]
 
         if len(t) <= 2:
-            f1 = interp1d(t, lr, kind='linear')
-            f2 = interp1d(t, sef, kind='linear')
-            return np.power(10., f1(t9)) * f2(t9)
+            f1 = interp1d(t, lr, kind="linear")
+            f2 = interp1d(t, sef, kind="linear")
+            return np.power(10.0, f1(t9)) * f2(t9)
         else:
-            f1 = interp1d(t, lr, kind='cubic')
-            f2 = interp1d(t, sef, kind='cubic')
-            return np.power(10., f1(t9)) * f2(t9)
+            f1 = interp1d(t, lr, kind="cubic")
+            f2 = interp1d(t, sef, kind="cubic")
+            return np.power(10.0, f1(t9)) * f2(t9)
 
     def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
         def non_smoker_function(fit, t9):
             x = (
-                fit['a1'] + fit['a2'] / t9 + fit['a3'] / np.power(t9, 1./3.)
-                + fit['a4'] * np.power(t9, 1./3.) + fit['a5'] * t9
-                + fit['a6'] * np.power(t9, 5./3.) + fit['a7'] * np.log(t9)
+                fit["a1"]
+                + fit["a2"] / t9
+                + fit["a3"] / np.power(t9, 1.0 / 3.0)
+                + fit["a4"] * np.power(t9, 1.0 / 3.0)
+                + fit["a5"] * t9
+                + fit["a6"] * np.power(t9, 5.0 / 3.0)
+                + fit["a7"] * np.log(t9)
             )
             return np.exp(x)
 
-        if t9 < fit['Tlowfit']:
-            return non_smoker_function(fit, fit['Tlowfit'])
-        elif t9 > fit['Thighfit']:
-            return non_smoker_function(fit, fit['Thighfit'])
+        if t9 < fit["Tlowfit"]:
+            return non_smoker_function(fit, fit["Tlowfit"])
+        elif t9 > fit["Thighfit"]:
+            return non_smoker_function(fit, fit["Thighfit"])
         else:
             return non_smoker_function(fit, t9)
 
     def _compute_non_smoker_fit_rate(self, t9):
-        fits = self.data['fits']
+        fits = self.data["fits"]
         if len(fits) != 0:
-            result = 0.
+            result = 0.0
             for fit in fits:
                 result += self._compute_non_smoker_fit_rate_for_fit(fit, t9)
             return result
         else:
             return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
 
-    def compute_rate(self, t9, user_funcs=' '):
+    def compute_rate(self, t9, user_funcs=" "):
         """Method to compute rate for a reaction at input t9.
 
         Args:
@@ -197,19 +216,19 @@ class Reaction(wb.Base):
 
         """
 
-        if self.data['type'] == 'single_rate':
-            return self.data['rate']
-        elif self.data['type'] == 'rate_table':
+        if self.data["type"] == "single_rate":
+            return self.data["rate"]
+        elif self.data["type"] == "rate_table":
             return self._compute_rate_table_rate(t9)
-        elif self.data['type'] == 'non_smoker_fit':
+        elif self.data["type"] == "non_smoker_fit":
             return self._compute_non_smoker_fit_rate(t9)
-        elif self.data['type'] == 'user_rate':
-            if self.data['key'] not in user_funcs:
-                print('Function not defined for key ' + self.data['key'])
+        elif self.data["type"] == "user_rate":
+            if self.data["key"] not in user_funcs:
+                print("Function not defined for key " + self.data["key"])
                 return None
-            return user_funcs[self.data['key']](self, t9)
+            return user_funcs[self.data["key"]](self, t9)
         else:
-            print('No such reaction type')
+            print("No such reaction type")
             return None
 
     def get_reactants(self):
@@ -258,7 +277,7 @@ class Reaction(wb.Base):
         """
 
         s = " + ".join(self.reactants)
-        s += ' -> '
+        s += " -> "
         s += " + ".join(self.products)
         return s
 
@@ -280,7 +299,7 @@ class Reaction(wb.Base):
 
         s = r"$"
         s += " + ".join(l_reactants)
-        s += ' \\to '
+        s += " \\to "
         s += " + ".join(l_products)
         s += "$"
         return s
@@ -303,53 +322,50 @@ class Xml(wb.Base):
     def _get_nuclide_data_array(self, nuc_xpath):
         result = []
 
-        nuclides = self._root.xpath('//nuclear_data/nuclide' + nuc_xpath)
+        nuclides = self._root.xpath("//nuclear_data/nuclide" + nuc_xpath)
 
         for nuc in nuclides:
             data = {}
-            data['z'] = int((nuc.xpath('z'))[0].text)
-            data['a'] = int((nuc.xpath('a'))[0].text)
-            data['n'] = data['a'] - data['z']
-            data['source'] = (nuc.xpath('source'))[0].text
-            data['spin'] = float((nuc.xpath('spin'))[0].text)
-            if nuc.xpath('state'):
-                data['state'] = (nuc.xpath('state'))[0].text
+            data["z"] = int((nuc.xpath("z"))[0].text)
+            data["a"] = int((nuc.xpath("a"))[0].text)
+            data["n"] = data["a"] - data["z"]
+            data["source"] = (nuc.xpath("source"))[0].text
+            data["spin"] = float((nuc.xpath("spin"))[0].text)
+            if nuc.xpath("state"):
+                data["state"] = (nuc.xpath("state"))[0].text
             else:
-                data['state'] = ''
-            data['mass excess'] = float((nuc.xpath('mass_excess'))[0].text)
-            partf = nuc.xpath('partf_table/point')
-            data['t9'] = np.zeros(len(partf))
-            data['partf'] = np.zeros(len(partf))
+                data["state"] = ""
+            data["mass excess"] = float((nuc.xpath("mass_excess"))[0].text)
+            partf = nuc.xpath("partf_table/point")
+            data["t9"] = np.zeros(len(partf))
+            data["partf"] = np.zeros(len(partf))
             for i, elem in enumerate(partf):
-                data['t9'][i] = float((elem.xpath('t9')[0].text).strip())
-                data['partf'][i] = np.power(
-                    10.,
-                    float(
-                        (elem.xpath('log10_partf')[0].text).strip()
-                    )
-                ) * (2. * data['spin'] + 1.)
-            ind = data['t9'].argsort()
-            data['t9'] = data['t9'][ind]
-            data['partf'] = data['partf'][ind]
+                data["t9"][i] = float((elem.xpath("t9")[0].text).strip())
+                data["partf"][i] = np.power(
+                    10.0, float((elem.xpath("log10_partf")[0].text).strip())
+                ) * (2.0 * data["spin"] + 1.0)
+            ind = data["t9"].argsort()
+            data["t9"] = data["t9"][ind]
+            data["partf"] = data["partf"][ind]
             result.append(data)
 
         return result
 
     def _get_max_nucleon_numbers(self):
-        nd = self._get_nuclide_data_array('')
+        nd = self._get_nuclide_data_array("")
 
         z = np.zeros(len(nd), dtype=np.int_)
         n = np.zeros(len(nd), dtype=np.int_)
         a = np.zeros(len(nd), dtype=np.int_)
 
         for i in range(len(nd)):
-            z[i] = nd[i]['z']
-            n[i] = nd[i]['n']
-            a[i] = nd[i]['a']
+            z[i] = nd[i]["z"]
+            n[i] = nd[i]["n"]
+            a[i] = nd[i]["a"]
 
-        return {'z': np.amax(z), 'n': np.amax(n), 'a': np.amax(a)}
+        return {"z": np.amax(z), "n": np.amax(n), "a": np.amax(a)}
 
-    def get_nuclide_data(self, nuc_xpath=' '):
+    def get_nuclide_data(self, nuc_xpath=" "):
         """Method to retrieve nuclear data from webnucleo XML.
 
         Args:
@@ -365,13 +381,13 @@ class Xml(wb.Base):
         nuclides = self._get_nuclide_data_array(nuc_xpath)
         for i in range(len(nuclides)):
             s = self.create_nuclide_name(
-                nuclides[i]['z'], nuclides[i]['a'], nuclides[i]['state']
+                nuclides[i]["z"], nuclides[i]["a"], nuclides[i]["state"]
             )
             result[s] = nuclides[i]
 
         return result
 
-    def get_network_limits(self, nuc_xpath=' '):
+    def get_network_limits(self, nuc_xpath=" "):
         """Method to retrieve the network limits from the nuclide data.
 
         Args:
@@ -393,8 +409,8 @@ class Xml(wb.Base):
         zs = set()
 
         for i in range(len(nd)):
-            if nd[i]['z'] not in zs:
-                zs.add(nd[i]['z'])
+            if nd[i]["z"] not in zs:
+                zs.add(nd[i]["z"])
 
         zt = []
         for zz in zs:
@@ -405,8 +421,8 @@ class Xml(wb.Base):
         zlim = [[] for i in range(len(zt))]
 
         for i in range(len(nd)):
-            loc = [j for j, zj in enumerate(zt) if zj == nd[i]['z']]
-            zlim[loc[0]].append(nd[i]['n'])
+            loc = [j for j, zj in enumerate(zt) if zj == nd[i]["z"]]
+            zlim[loc[0]].append(nd[i]["n"])
 
         z = np.zeros(len(zlim), dtype=np.int_)
         n_min = np.zeros(len(zlim), dtype=np.int_)
@@ -417,27 +433,27 @@ class Xml(wb.Base):
             n_min[i] = int(min(zlim[i]))
             n_max[i] = int(max(zlim[i]))
 
-        return {'z': z, 'n_min': n_min, 'n_max': n_max}
+        return {"z": z, "n_min": n_min, "n_max": n_max}
 
     def _get_nuclide_data_for_zone(self, zone):
         result = {}
 
-        species = zone.xpath('mass_fractions/nuclide')
+        species = zone.xpath("mass_fractions/nuclide")
 
         for sp in species:
             data = {}
-            data['z'] = int((sp.xpath('z'))[0].text)
-            data['a'] = int((sp.xpath('a'))[0].text)
-            data['n'] = data['a'] - data['z']
-            data['x'] = float((sp.xpath('x'))[0].text)
-            result[sp.xpath('@name')[0]] = data
+            data["z"] = int((sp.xpath("z"))[0].text)
+            data["a"] = int((sp.xpath("a"))[0].text)
+            data["n"] = data["a"] - data["z"]
+            data["x"] = float((sp.xpath("x"))[0].text)
+            result[sp.xpath("@name")[0]] = data
 
         return result
 
     def _get_reaction_data_array(self, reac_xpath):
         result = []
 
-        reactions = self._root.xpath('//reaction_data/reaction' + reac_xpath)
+        reactions = self._root.xpath("//reaction_data/reaction" + reac_xpath)
 
         for reaction in reactions:
             r = Reaction()
@@ -447,7 +463,7 @@ class Xml(wb.Base):
 
         return result
 
-    def get_reaction_data(self, reac_xpath=' '):
+    def get_reaction_data(self, reac_xpath=" "):
         """Method to retrieve reaction data from webnucleo XML.
 
         Args:
@@ -468,9 +484,9 @@ class Xml(wb.Base):
         return result
 
     def _get_zones(self, zone_xpath):
-        return self._root.xpath('//zone_data/zone' + zone_xpath)
+        return self._root.xpath("//zone_data/zone" + zone_xpath)
 
-    def get_mass_fractions(self, species, zone_xpath=' '):
+    def get_mass_fractions(self, species, zone_xpath=" "):
         """Method to retrieve mass fractions of nuclides in specified zones.
 
         Args:
@@ -495,15 +511,15 @@ class Xml(wb.Base):
 
         for i in range(len(zones)):
             for sp in species:
-                data = zones[i].find(
+                data = zones[i].xpath(
                     'mass_fractions/nuclide[@name="%s"]/x' % sp
                 )
-                if data is not None:
-                    result[sp][i] = float(data.text)
+                if len(data) == 1:
+                    result[sp][i] = float(data[0].text)
 
         return result
 
-    def get_properties(self, properties, zone_xpath=' '):
+    def get_properties(self, properties, zone_xpath=" "):
         """Method to retrieve properties in specified zones in an xml file
 
         Args:
@@ -535,29 +551,39 @@ class Xml(wb.Base):
         for property in properties:
             dict[property] = []
 
-        for property in properties:
+        zones = self._get_zones(zone_xpath)
 
-            tup = properties_t[property]
+        for zone in zones:
 
-            path = '//zone' + zone_xpath + '/optional_properties/property'
+            for property in properties:
 
-            if len(tup) == 1:
-                path += '[@name="%s"]' % tup[0].strip()
-            elif len(tup) == 2:
-                path += '[@name="%s" and @tag1="%s"]' % (
-                    tup[0].strip(), tup[1].strip())
-            else:
-                path += '[@name="%s" and @tag1="%s" and @tag2="%s"]' % (
-                    tup[0].strip(), tup[1].strip(), tup[2].strip())
+                tup = properties_t[property]
 
-            props = self._root.xpath(path)
+                path = "optional_properties/property"
 
-            if len(props) == 0:
-                print("Property", self._get_property_name(tup), "not found.")
-                return
+                if len(tup) == 1:
+                    path += '[@name="%s"]' % tup[0].strip()
+                elif len(tup) == 2:
+                    path += '[@name="%s" and @tag1="%s"]' % (
+                        tup[0].strip(),
+                        tup[1].strip(),
+                    )
+                else:
+                    path += '[@name="%s" and @tag1="%s" and @tag2="%s"]' % (
+                        tup[0].strip(),
+                        tup[1].strip(),
+                        tup[2].strip(),
+                    )
 
-            for elem in props:
-                dict[property].append(elem.text)
+                data = zone.xpath(path)
+
+                if len(data) == 0:
+                    print(
+                        "Property", self._get_property_name(tup), "not found."
+                    )
+                    return
+
+                dict[property].append(data[0].text)
 
         return dict
 
@@ -579,27 +605,27 @@ class Xml(wb.Base):
         zones = self._get_zones(zone_xpath)
 
         if len(zones) != 1:
-            print('Incorrect number of zones.')
+            print("Incorrect number of zones.")
             return
 
-        props = zones[0].xpath('optional_properties/property')
+        props = zones[0].xpath("optional_properties/property")
 
         for property in props:
-            p_name = ''
-            name = property.xpath('@name')
-            tag1 = property.xpath('@tag1')
-            tag2 = property.xpath('@tag2')
+            p_name = ""
+            name = property.xpath("@name")
+            tag1 = property.xpath("@tag1")
+            tag2 = property.xpath("@tag2")
             if tag1:
                 p_name = (name[0], tag1[0])
                 if tag2:
-                    p_name += tag2[0],
+                    p_name += (tag2[0],)
             else:
                 p_name = name[0]
             result[p_name] = property.text
 
         return result
 
-    def get_properties_as_floats(self, properties, zone_xpath=' '):
+    def get_properties_as_floats(self, properties, zone_xpath=" "):
         """Method to retrieve properties in zones in an xml file as floats.
 
         Args:
@@ -622,7 +648,7 @@ class Xml(wb.Base):
 
         return props
 
-    def get_all_abundances_in_zones(self, zone_xpath=' '):
+    def get_all_abundances_in_zones(self, zone_xpath=" "):
         """Method to retrieve all abundances in zones.
 
         Args:
@@ -641,17 +667,17 @@ class Xml(wb.Base):
 
         m = self._get_max_nucleon_numbers()
 
-        result = np.zeros((len(zones), m['z'] + 1, m['n'] + 1))
+        result = np.zeros((len(zones), m["z"] + 1, m["n"] + 1))
 
         for i in range(len(zones)):
             sp = self._get_nuclide_data_for_zone(zones[i])
 
             for s in sp:
-                result[i, sp[s]['z'], sp[s]['n']] += sp[s]['x'] / sp[s]['a']
+                result[i, sp[s]["z"], sp[s]["n"]] += sp[s]["x"] / sp[s]["a"]
 
         return result
 
-    def get_abundances_vs_nucleon_number(self, nucleon='a', zone_xpath=' '):
+    def get_abundances_vs_nucleon_number(self, nucleon="a", zone_xpath=" "):
         """Method to retrieve abundances summed over nucleon number in zones.
 
         Args:
@@ -668,7 +694,7 @@ class Xml(wb.Base):
 
         """
 
-        if(nucleon != 'z' and nucleon != 'n' and nucleon != 'a'):
+        if nucleon != "z" and nucleon != "n" and nucleon != "a":
             print("nucleon must be 'z', 'n', or 'a'.")
             return
 
@@ -682,13 +708,19 @@ class Xml(wb.Base):
             sp = self._get_nuclide_data_for_zone(zones[i])
 
             for s in sp:
-                result[i, sp[s][nucleon]] += sp[s]['x'] / sp[s]['a']
+                result[i, sp[s][nucleon]] += sp[s]["x"] / sp[s]["a"]
 
         return result
 
     def plot_property_vs_property(
-        self, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        plotParams=None, **kwargs
+        self,
+        prop1,
+        prop2,
+        xfactor=1,
+        yfactor=1,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot a property vs. a property.
 
@@ -736,20 +768,26 @@ class Xml(wb.Base):
         else:
             plt.plot(x, y)
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop1)
 
-        if('ylabel' not in kwargs):
+        if "ylabel" not in kwargs:
             plt.ylabel(prop2)
 
         self.apply_class_methods(plt, kwargs)
 
         self.show_or_close(plt, kwargs)
 
-    def plot_mass_fractions_vs_property(self, prop, species, xfactor=1,
-                                        use_latex_names=False, rcParams=None,
-                                        plotParams=None, **kwargs
-                                        ):
+    def plot_mass_fractions_vs_property(
+        self,
+        prop,
+        species,
+        xfactor=1,
+        use_latex_names=False,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
+    ):
         """Method to plot the mass fractions versus a property.
 
         Args:
@@ -789,8 +827,8 @@ class Xml(wb.Base):
         if plotParams:
             if len(plotParams) != len(species):
                 print(
-                    'Number of plotParam elements must equal number' +
-                    ' of species.'
+                    "Number of plotParam elements must equal number"
+                    + " of species."
                 )
                 return
 
@@ -808,25 +846,25 @@ class Xml(wb.Base):
                 p = {}
             else:
                 p = plotParams[i]
-            if 'label' not in p:
+            if "label" not in p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {'label': latex_names[sp]})
+                    p = self._merge_dicts(p, {"label": latex_names[sp]})
                 else:
-                    p = self._merge_dicts(p, {'label': sp})
+                    p = self._merge_dicts(p, {"label": sp})
             plots.append(plt.plot(x, y[sp], **p))
 
-        if len(species) > 1 and 'legend' not in kwargs:
+        if len(species) > 1 and "legend" not in kwargs:
             plt.legend()
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
-        if('ylabel' not in kwargs):
+        if "ylabel" not in kwargs:
             if len(species) > 1:
-                plt.ylabel('Mass Fraction')
+                plt.ylabel("Mass Fraction")
             else:
                 if use_latex_names:
-                    s = '$X(' + latex_names[species[0]][1:-1] + ')$'
+                    s = "$X(" + latex_names[species[0]][1:-1] + ")$"
                 else:
                     s = species[0]
                 plt.ylabel(s)
@@ -836,8 +874,12 @@ class Xml(wb.Base):
         self.show_or_close(plt, kwargs)
 
     def plot_abundances_vs_nucleon_number(
-        self, nucleon='a', zone_xpath='[last()]', rcParams=None,
-        plotParams=None, **kwargs
+        self,
+        nucleon="a",
+        zone_xpath="[last()]",
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot abundances summed by nucleon number.
 
@@ -870,14 +912,12 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        y = (
-            self.get_abundances_vs_nucleon_number(nucleon, zone_xpath)
-        )
+        y = self.get_abundances_vs_nucleon_number(nucleon, zone_xpath)
 
         if plotParams:
             if y.shape[0] != len(plotParams):
                 print(
-                    'Number of plotParam elements must equal number of plots.'
+                    "Number of plotParam elements must equal number of plots."
                 )
                 return
 
@@ -887,16 +927,16 @@ class Xml(wb.Base):
             else:
                 plt.plot(y[i, :])
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(nucleon)
 
-        if('ylabel' not in kwargs):
-            s = 'Y(' + nucleon + ')'
+        if "ylabel" not in kwargs:
+            s = "Y(" + nucleon + ")"
             plt.ylabel(s)
 
-        if 'legend' not in kwargs:
+        if "legend" not in kwargs:
             if plotParams:
-                if 'label' in plotParams[0]:
+                if "label" in plotParams[0]:
                     plt.legend()
 
         self.apply_class_methods(plt, kwargs)
@@ -904,8 +944,14 @@ class Xml(wb.Base):
         self.show_or_close(plt, kwargs)
 
     def make_abundances_vs_nucleon_number_movie(
-        self, movie_name, nucleon='a', zone_xpath=' ', fps=15,
-        title_func=None, rcParams=None, plotParams=None,
+        self,
+        movie_name,
+        nucleon="a",
+        zone_xpath=" ",
+        fps=15,
+        title_func=None,
+        rcParams=None,
+        plotParams=None,
         **kwargs
     ):
         """Method to make of movie of abundances summed by nucleon number.
@@ -962,7 +1008,7 @@ class Xml(wb.Base):
             nucleon=nucleon, zone_xpath=zone_xpath
         )
         props = self.get_properties_as_floats(
-            ['time', 't9', 'rho'], zone_xpath=zone_xpath
+            ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
 
         def updatefig(i):
@@ -983,10 +1029,10 @@ class Xml(wb.Base):
                         return
             else:
                 plt.title(self.make_time_t9_rho_title_str(props, i))
-            if 'xlabel' not in kwargs:
+            if "xlabel" not in kwargs:
                 plt.xlabel(nucleon)
-            if 'ylabel' not in kwargs:
-                plt.ylabel('Y(' + nucleon + ')')
+            if "ylabel" not in kwargs:
+                plt.ylabel("Y(" + nucleon + ")")
             self.apply_class_methods(plt, kwargs)
             plt.draw()
 
@@ -994,9 +1040,16 @@ class Xml(wb.Base):
         anim.save(movie_name, fps=fps)
 
     def make_network_abundances_movie(
-        self, movie_name, zone_xpath=' ', fps=15, title_func=None,
-        rcParams=None, imParams={},
-        show_limits=True, plotParams={'color': 'black'}, **kwargs
+        self,
+        movie_name,
+        zone_xpath=" ",
+        fps=15,
+        title_func=None,
+        rcParams=None,
+        imParams={},
+        show_limits=True,
+        plotParams={"color": "black"},
+        **kwargs
     ):
         """Method to make of movie of network abundances.
 
@@ -1058,39 +1111,39 @@ class Xml(wb.Base):
 
         abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
         props = self.get_properties_as_floats(
-            ['time', 't9', 'rho'], zone_xpath=zone_xpath
+            ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
         lim = self.get_network_limits()
 
         xr = [0, abunds.shape[2]]
         yr = [0, abunds.shape[1]]
-        if 'xlim' in kwargs:
-            xr = [kwargs['xlim'][0], kwargs['xlim'][1]]
-        if 'ylim' in kwargs:
-            yr = [kwargs['ylim'][0], kwargs['ylim'][1]]
+        if "xlim" in kwargs:
+            xr = [kwargs["xlim"][0], kwargs["xlim"][1]]
+        if "ylim" in kwargs:
+            yr = [kwargs["ylim"][0], kwargs["ylim"][1]]
 
-        if 'origin' not in imParams:
-            imParams = self._merge_dicts({'origin': 'lower'}, imParams)
-        if 'cmap' not in imParams:
-            imParams = self._merge_dicts({'cmap': cm.BuPu}, imParams)
-        if 'norm' not in imParams:
-            imParams = self._merge_dicts({'norm': LogNorm()}, imParams)
-        if 'vmin' not in imParams:
-            imParams = self._merge_dicts({'vmin': 1.e-10}, imParams)
-        if 'vmax' not in imParams:
-            imParams = self._merge_dicts({'vmax': 1.}, imParams)
+        if "origin" not in imParams:
+            imParams = self._merge_dicts({"origin": "lower"}, imParams)
+        if "cmap" not in imParams:
+            imParams = self._merge_dicts({"cmap": cm.BuPu}, imParams)
+        if "norm" not in imParams:
+            imParams = self._merge_dicts({"norm": LogNorm()}, imParams)
+        if "vmin" not in imParams:
+            imParams = self._merge_dicts({"vmin": 1.0e-10}, imParams)
+        if "vmax" not in imParams:
+            imParams = self._merge_dicts({"vmax": 1.0}, imParams)
 
         def updatefig(i):
             fig.clear()
-            z = abunds[i, yr[0]:yr[1], xr[0]:xr[1]]
+            z = abunds[i, yr[0] : yr[1], xr[0] : xr[1]]
             plt.imshow(z, **imParams)
             if show_limits:
                 if plotParams:
-                    plt.plot(lim['n_min'], lim['z'], **plotParams)
-                    plt.plot(lim['n_max'], lim['z'], **plotParams)
+                    plt.plot(lim["n_min"], lim["z"], **plotParams)
+                    plt.plot(lim["n_max"], lim["z"], **plotParams)
                 else:
-                    plt.plot(lim['n_min'], lim['z'])
-                    plt.plot(lim['n_max'], lim['z'])
+                    plt.plot(lim["n_min"], lim["z"])
+                    plt.plot(lim["n_max"], lim["z"])
             if title_func:
                 tf = title_func(i)
                 if type(tf) is str:
@@ -1098,14 +1151,14 @@ class Xml(wb.Base):
                 elif type(tf) is tuple:
                     plt.title(tf[0], tf[1])
                 else:
-                    print('Invalid return from title function.')
+                    print("Invalid return from title function.")
                     return
             else:
                 plt.title(self.make_time_t9_rho_title_str(props, i))
-            if 'xlabel' not in kwargs:
-                plt.xlabel('N, Neutron Number')
-            if 'ylabel' not in kwargs:
-                plt.ylabel('Z, Atomic Number')
+            if "xlabel" not in kwargs:
+                plt.xlabel("N, Neutron Number")
+            if "ylabel" not in kwargs:
+                plt.ylabel("Z, Atomic Number")
             self.apply_class_methods(plt, kwargs)
             plt.draw()
 

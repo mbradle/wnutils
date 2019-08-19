@@ -2,7 +2,6 @@ import wnutils.base as wb
 import wnutils.h5 as w5
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 class Multi_H5(wb.Base):
@@ -42,8 +41,15 @@ class Multi_H5(wb.Base):
         return self._h5
 
     def plot_zone_property_vs_property(
-        self, zone, prop1, prop2, xfactor=1, yfactor=1, rcParams=None,
-        plotParams=None, **kwargs
+        self,
+        zone,
+        prop1,
+        prop2,
+        xfactor=1,
+        yfactor=1,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
     ):
         """Method to plot a property vs. a property in the files.
 
@@ -90,7 +96,7 @@ class Multi_H5(wb.Base):
 
         if plotParams:
             if len(h5s) != len(plotParams):
-                print('Number of plot args must equal number of plots.')
+                print("Number of plot args must equal number of plots.")
                 return
 
         for i, h5 in enumerate(h5s):
@@ -104,26 +110,32 @@ class Multi_H5(wb.Base):
             else:
                 plt.plot(x, y)
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop1)
 
-        if('ylabel' not in kwargs):
+        if "ylabel" not in kwargs:
             plt.ylabel(prop2)
 
-        if 'legend' not in kwargs:
+        if "legend" not in kwargs:
             if plotParams:
-                if 'label' in plotParams[0]:
+                if "label" in plotParams[0]:
                     plt.legend()
 
         self.apply_class_methods(plt, kwargs)
 
         self.show_or_close(plt, kwargs)
 
-    def plot_zone_mass_fraction_vs_property(self, zone, prop, species,
-                                            xfactor=1, use_latex_names=False,
-                                            rcParams=None, plotParams=None,
-                                            **kwargs
-                                            ):
+    def plot_zone_mass_fraction_vs_property(
+        self,
+        zone,
+        prop,
+        species,
+        xfactor=1,
+        use_latex_names=False,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
+    ):
         """Method to plot a mass fraction versus a property.
 
         Args:
@@ -173,33 +185,34 @@ class Multi_H5(wb.Base):
         if plotParams:
             if len(h5s) != len(plotParams):
                 print(
-                    'Number of plotParam elements must equal number of plots.'
+                    "Number of plotParam elements must equal number of plots."
                 )
                 return
 
         for i, h5 in enumerate(h5s):
-            x = h5.get_zone_properties_in_groups_as_floats(
-                zone, [prop]
-            )[prop] / xfactor
+            x = (
+                h5.get_zone_properties_in_groups_as_floats(zone, [prop])[prop]
+                / xfactor
+            )
             y = h5.get_zone_mass_fractions_in_groups(zone, [species])
             if plotParams:
                 plt.plot(x, y[species], **plotParams[i])
             else:
                 plt.plot(x, y[species])
 
-        if('xlabel' not in kwargs):
+        if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
-        if('ylabel' not in kwargs):
+        if "ylabel" not in kwargs:
             if use_latex_names:
-                s = '$X(' + latex_names[species][1:-1] + ')$'
+                s = "$X(" + latex_names[species][1:-1] + ")$"
             else:
                 s = species
             plt.ylabel(s)
 
-        if 'legend' not in kwargs:
+        if "legend" not in kwargs:
             if plotParams:
-                if 'label' in plotParams[0]:
+                if "label" in plotParams[0]:
                     plt.legend()
 
         self.apply_class_methods(plt, kwargs)
