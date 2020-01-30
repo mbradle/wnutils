@@ -739,7 +739,7 @@ class H5(wnb.Base):
         plotParams=None,
         **kwargs
     ):
-        """Method to make of movie of mass fractions in the zones.
+        """Method to make a movie of mass fractions in the zones.
 
         Args:
 
