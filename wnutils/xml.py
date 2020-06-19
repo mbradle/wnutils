@@ -659,7 +659,10 @@ class Xml(wb.Base):
             :obj:`numpy.array`: A three-dimensional array in which the first
             index gives the zone, the second gives the atomic number,
             and the third gives the neutron number.  The array value
-            is the abundance.
+            is the abundance in the zone given by the first index of the
+            species with atomic number and neutron number given by the second
+            and third indices, respectively.  The abundance of the species is
+            the sum of the abundances of all states of that species.
 
         """
 
@@ -1135,7 +1138,7 @@ class Xml(wb.Base):
 
         def updatefig(i):
             fig.clear()
-            z = abunds[i, yr[0] : yr[1], xr[0] : xr[1]]
+            z = abunds[i, yr[0]: yr[1], xr[0]: xr[1]]
             plt.imshow(z, **imParams)
             if show_limits:
                 if plotParams:

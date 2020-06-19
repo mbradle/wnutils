@@ -114,6 +114,23 @@ class Base:
 
         print(my_mpl.rcParams.keys())
 
+    def _get_species_name_substrings(self, str):
+        b_read_elem = False
+        b_read_mass = False
+        elem = ""
+        mass = ""
+        state = ""
+        for i in range(len(str)): 
+            if str[i].isalpha() and not b_read_elem:
+                elem += str[i]
+            elif str[i].isdigit() and not b_read_mass:
+                mass += str[i]
+                b_read_elem = True
+            else:
+                b_read_mass = True
+                state += str[i]
+        return (elem, mass, state)
+
     def _create_latex_string(self, str):
         l_hash = {
             "gamma": "\\gamma",
@@ -130,17 +147,14 @@ class Base:
         if str in l_hash:
             return l_hash[str]
         else:
-            if len(str) != 1 or str[0] != "n":
-                letters = str[0].upper()
+            str_T = self._get_species_name_substrings(str)
+            elem = str_T[0]
+            if str_T[1]:
+                elem = str_T[0].title()
+            if str_T[2]:
+                return r"^{%s}\rm{%s}_{\rm{%s}}" % (str_T[1], elem, str_T[2])
             else:
-                letters = str[0]
-            numbers = ""
-            for i in range(1, len(str)):
-                if str[i].isalpha():
-                    letters += str[i]
-                if str[i].isdigit():
-                    numbers += str[i]
-            return r"^{%s}\rm{%s}" % (numbers, letters)
+                return r"^{%s}\rm{%s}" % (str_T[1], elem)
 
     def get_latex_names(self, nuclides):
         """Method to get latex strings of nuclides' names.
@@ -160,24 +174,7 @@ class Base:
 
         return latex_names
 
-    def create_nuclide_name(self, z, a, state):
-        """Method to create the name of a nuclide.
-
-        Args:
-            ``z`` (:obj:`int`): An integer giving the nuclide's atomic
-            number.
-
-            ``a`` (:obj:`int`): An integer giving the nuclide's mass
-            number.
-
-            ``state`` (:obj:`str`): A string giving the nuclide's state
-            suffix.
-
-        Returns:
-            :obj:`str`: The nuclide's name.
-
-        """
-
+    def _create_element_name(self, z):
         # Special cases
 
         if z == 0 and a == 1:
@@ -321,7 +318,27 @@ class Base:
                 elem_name = ex_name[i] + elem_name
                 z_tmp //= 10
 
-        name = elem_name + str(a) + state
+        return elem_name
+
+    def create_nuclide_name(self, z, a, state):
+        """Method to create the name of a nuclide.
+
+        Args:
+            ``z`` (:obj:`int`): An integer giving the nuclide's atomic
+            number.
+
+            ``a`` (:obj:`int`): An integer giving the nuclide's mass
+            number.
+
+            ``state`` (:obj:`str`): A string giving the nuclide's state
+            suffix.
+
+        Returns:
+            :obj:`str`: The nuclide's name.
+
+        """
+
+        name = self._create_element_name(z) + str(a) + state
 
         return name
 
