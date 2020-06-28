@@ -51,7 +51,7 @@ setup(
 
     author_email='mbradle@clemson.edu',  # Optional
 
-    license='GNU General Public License v3 or later (GPLv3+)',
+    license='GPLv3+',
 
     # For a list of valid classifiers, see https://pypi.org/classifiers/
     classifiers=[  # Optional
