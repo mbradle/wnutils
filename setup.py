@@ -51,6 +51,8 @@ setup(
 
     author_email='mbradle@clemson.edu',  # Optional
 
+    license='GNU General Public License v3 or later (GPLv3+)',
+
     # For a list of valid classifiers, see https://pypi.org/classifiers/
     classifiers=[  # Optional
         # How mature is this project? Common values are
@@ -64,7 +66,8 @@ setup(
         'Topic :: Scientific/Engineering :: Astronomy',
 
         # Pick your license as you wish
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+        'License :: OSI Approved :: GNU General Public License v3 or later \
+           (GPLv3+)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.

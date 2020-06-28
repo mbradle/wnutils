@@ -120,7 +120,7 @@ class Base:
         elem = ""
         mass = ""
         state = ""
-        for i in range(len(str)): 
+        for i in range(len(str)):
             if str[i].isalpha() and not b_read_elem:
                 elem += str[i]
             elif str[i].isdigit() and not b_read_mass:
