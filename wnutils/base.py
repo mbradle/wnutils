@@ -175,14 +175,6 @@ class Base:
         return latex_names
 
     def _create_element_name(self, z):
-        # Special cases
-
-        if z == 0 and a == 1:
-            return "n"
-        elif z == 0 and a == 2:
-            return "nn"
-
-        # Normal cases
 
         s_zname = [
             "n",
@@ -337,6 +329,15 @@ class Base:
             :obj:`str`: The nuclide's name.
 
         """
+
+        # Special cases
+
+        if z == 0 and a == 1:
+            return "n"
+        elif z == 0 and a == 2:
+            return "nn"
+
+        # Normal cases
 
         name = self._create_element_name(z) + str(a) + state
 
