@@ -205,7 +205,7 @@ To add a title giving the conditions at that step, type::
 Recall that the property arrays are
 `zero-indexed <https://en.wikipedia.org/wiki/Zero-based_numbering>`_.
 
-You can plot more that one time step (zone) by using an XPath expression.
+You can plot more than one time step (zone) by using an XPath expression.
 For example, to plot the first and last time steps, type::
 
     >>> my_xml.plot_abundances_vs_nucleon_number(zone_xpath='[(position() = 1) or (position() = last())]', yscale = 'log', ylim = [1.e-10,1])
