@@ -317,7 +317,8 @@ class Xml(wb.Base):
        """
 
     def __init__(self, file):
-        self._root = etree.parse(file).getroot()
+        self._xml = etree.parse(file)
+        self._root = self._xml.getroot()
 
     def _get_nuclide_data_array(self, nuc_xpath):
         result = []
@@ -1167,3 +1168,25 @@ class Xml(wb.Base):
 
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
+
+    def validate(self):
+        """Method to validate the xml
+
+        Returns:
+            An error message if invalid and nothing if valid.
+
+        """
+
+        url_prefix = "http://libnucnet.sourceforge.net/xsd_pub/2019-01-15/"
+
+        xsd_dict = {\
+            "nuclear_data": url_prefix + "libnucnet__nuc.xsd", \
+            "reaction_data": url_prefix + "libnucnet__reac.xsd", \
+            "nuclear_network": url_prefix + "libnucnet__net.xsd", \
+            "zone_data": url_prefix + "zone_data.xsd", \
+            "libnucnet_input": url_prefix + "libnucnet__input.xsd"}
+
+        xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
+        xml_validator.assert_(self._xml)
+
+
