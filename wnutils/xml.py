@@ -1184,7 +1184,7 @@ class Xml(wb.Base):
             "reaction_data": url_prefix + "libnucnet__reac.xsd",
             "nuclear_network": url_prefix + "libnucnet__net.xsd",
             "zone_data": url_prefix + "zone_data.xsd",
-            "libnucnet_input": url_prefix + "libnucnet__input.xsd"}
+            "libnucnet_input": url_prefix + "libnucnet.xsd"}
 
         xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
         xml_validator.assert_(self._xml)
