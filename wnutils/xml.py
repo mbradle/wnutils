@@ -320,6 +320,32 @@ class Xml(wb.Base):
         self._xml = etree.parse(file)
         self._root = self._xml.getroot()
 
+    def _get_state_data(self, state_data, node):
+        data = {}
+        if node.xpath("@id"):
+            data["state"] = (node.xpath("@id"))[0]
+        else:
+            data["state"] = ""
+        if node.xpath("source"):
+            data["source"] = (node.xpath("source"))[0].text
+        else:
+            data["source"] = ""
+        data["mass excess"] = float((node.xpath("mass_excess"))[0].text)
+        data["spin"] = float((node.xpath("spin"))[0].text)
+        partf = node.xpath("partf_table/point")
+        data["t9"] = np.zeros(len(partf))
+        data["partf"] = np.zeros(len(partf))
+        for i, elem in enumerate(partf):
+            data["t9"][i] = float((elem.xpath("t9")[0].text).strip())
+            data["partf"][i] = np.power(
+                10.0, float((elem.xpath("log10_partf")[0].text).strip())
+            ) * (2.0 * data["spin"] + 1.0)
+        ind = data["t9"].argsort()
+        data["t9"] = data["t9"][ind]
+        data["partf"] = data["partf"][ind]
+
+        state_data.update(data)
+
     def _get_nuclide_data_array(self, nuc_xpath):
         result = []
 
@@ -330,25 +356,15 @@ class Xml(wb.Base):
             data["z"] = int((nuc.xpath("z"))[0].text)
             data["a"] = int((nuc.xpath("a"))[0].text)
             data["n"] = data["a"] - data["z"]
-            data["source"] = (nuc.xpath("source"))[0].text
-            data["spin"] = float((nuc.xpath("spin"))[0].text)
-            if nuc.xpath("state"):
-                data["state"] = (nuc.xpath("state"))[0].text
+            if nuc.xpath("states"):
+                for state in nuc.xpath("states/state"):
+                    state_data = {}
+                    state_data.update(data)
+                    self._get_state_data(state_data, state)
+                    result.append(state_data)
             else:
-                data["state"] = ""
-            data["mass excess"] = float((nuc.xpath("mass_excess"))[0].text)
-            partf = nuc.xpath("partf_table/point")
-            data["t9"] = np.zeros(len(partf))
-            data["partf"] = np.zeros(len(partf))
-            for i, elem in enumerate(partf):
-                data["t9"][i] = float((elem.xpath("t9")[0].text).strip())
-                data["partf"][i] = np.power(
-                    10.0, float((elem.xpath("log10_partf")[0].text).strip())
-                ) * (2.0 * data["spin"] + 1.0)
-            ind = data["t9"].argsort()
-            data["t9"] = data["t9"][ind]
-            data["partf"] = data["partf"][ind]
-            result.append(data)
+                self._get_state_data(data, nuc)
+                result.append(data)
 
         return result
 
