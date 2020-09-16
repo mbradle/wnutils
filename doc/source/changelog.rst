@@ -11,6 +11,10 @@ New:
 
   * A method to validate the XML against libnucnet schmeas has been added.
 
+Fix:
+
+  * State data is now parsed from XML correctly.
+
 Version 1.5.2
 -------------
 
