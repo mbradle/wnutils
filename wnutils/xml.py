@@ -317,7 +317,8 @@ class Xml(wb.Base):
        """
 
     def __init__(self, file):
-        self._xml = etree.parse(file)
+        parser = etree.XMLParser(remove_blank_text=True)
+        self._xml = etree.parse(file, parser)
         self._root = self._xml.getroot()
 
     def _get_state_data(self, state_data, node):
@@ -1272,13 +1273,16 @@ class Xml(wb.Base):
         xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
         xml_validator.assert_(self._xml)
 
-    def write(self, file):
+    def write(self, file, pretty_print = True):
         """Method to write the xml
 
         Args:
 
             ``file`` (:obj:`str`): A string giving the name of output
             xml file.
+
+           ``pretty_print`` (:obj:`bool`, optional): If set to True,
+           routine outputs the xml in nice indented format.
 
         Returns:
             On successful return, the underlying xml has been written
@@ -1287,4 +1291,4 @@ class Xml(wb.Base):
         """
 
 
-        self._xml.write(file)
+        self._xml.write(file, pretty_print=pretty_print)
