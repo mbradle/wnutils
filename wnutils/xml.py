@@ -1185,6 +1185,73 @@ class Xml(wb.Base):
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
 
+    def _update_element_data(self, my_element, xml_id, value,
+                             previous_element_name = "",
+                             next_element_name = ""):
+        child = my_element.xpath(xml_id)
+        if len(child) > 0:
+            child[0].text = str(value)
+        else:
+            if previous_element_name:
+                prev_element = my_element.xpath(previous_element_name)
+                new_element = etree.Element(xml_id)
+                new_element.text = str(value)
+                prev_element[0].addnext(new_element)
+            elif next_element_name:
+                next_element = my_element.xpath(next_element_name)
+                new_element = etree.Element(xml_id)
+                new_element.text = str(value)
+                next_element[0].addprevious(new_element)
+            else:
+                etree.SubElement(my_element, xml_id).text = str(value)
+
+    def _update_xml_data_for_nuclide(self, nuclide_element, nuclide):
+        self._update_element_data(nuclide_element, "z", nuclide["z"])
+        self._update_element_data(nuclide_element, "a", nuclide["a"])
+        self._update_element_data(nuclide_element, "source",
+                                  nuclide["source"],
+                                  next_element_name = "mass_excess")
+        self._update_element_data(nuclide_element, "mass_excess",
+                                  nuclide["mass excess"])
+        self._update_element_data(nuclide_element, "spin", nuclide["spin"])
+
+        partf_xpath = nuclide_element.xpath("partf_table")
+        for partf_point in partf_xpath[0].xpath("point"):
+            partf_xpath[0].remove(partf_point)
+
+        t9 = nuclide['t9']
+        partf = nuclide['partf']
+
+        for i in range(len(t9)):
+            point = etree.SubElement(partf_xpath[0], "point")
+            self._update_element_data(point, "t9", t9[i])
+            log10_partf = np.log10( partf[i] / (2. * nuclide["spin"] + 1))
+            self._update_element_data(point, "log10_partf", log10_partf)
+        
+    def update_nuclide_data(self, nuclides):
+        """Method to validate the xml
+
+        Args:
+
+            ``nuclides`` (:obj:`dict`): A dictionary containing the nuclides
+            to be updated and their data.
+
+        Returns:
+            On successful return, the underlying xml has been updated with
+            the data in ``nuclides``.
+
+        """
+
+        xpath_base = "//nuclear_data/nuclide"
+
+        for nuc in nuclides:
+            z = nuclides[nuc]['z']
+            a = nuclides[nuc]['a']
+            nuc_xpath = self._root.xpath(
+                xpath_base + "[z = " + str(z) + " and a = " + str(a) + "]")
+            if nuc_xpath:
+                self._update_xml_data_for_nuclide(nuc_xpath[0], nuclides[nuc])
+
     def validate(self):
         """Method to validate the xml
 
@@ -1204,3 +1271,20 @@ class Xml(wb.Base):
 
         xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
         xml_validator.assert_(self._xml)
+
+    def write(self, file):
+        """Method to write the xml
+
+        Args:
+
+            ``file`` (:obj:`str`): A string giving the name of output
+            xml file.
+
+        Returns:
+            On successful return, the underlying xml has been written
+            to ``file``.
+
+        """
+
+
+        self._xml.write(file)
