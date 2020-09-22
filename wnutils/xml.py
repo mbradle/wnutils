@@ -321,6 +321,29 @@ class Xml(wb.Base):
         self._xml = etree.parse(file, parser)
         self._root = self._xml.getroot()
 
+    @classmethod
+    def new_nuc(cls):
+        obj = cls.__new__(cls)
+        obj._root = etree.Element("nuclear_data")
+        obj._xml = etree.ElementTree(obj._root)
+        return obj
+
+    @classmethod
+    def new_reac(cls):
+        obj = cls.__new__(cls)
+        obj._root = etree.Element("reaction_data")
+        obj._xml = etree.ElementTree(obj._root)
+        return obj
+
+    @classmethod
+    def new_net(cls):
+        obj = cls.__new__(cls)
+        obj._root = etree.Element("nuclear_network")
+        etree.SubElement(obj._root, "nuclear_data")
+        etree.SubElement(obj._root, "reaction_data")
+        obj._xml = etree.ElementTree(obj._root)
+        return obj
+
     def _get_state_data(self, state_data, node):
         data = {}
         if node.xpath("@id"):
@@ -1186,25 +1209,25 @@ class Xml(wb.Base):
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
 
-    def _update_element_data(self, my_element, xml_id, value,
+    def _update_element_data(self, my_element, xml_str, value,
                              previous_element_name = "",
                              next_element_name = ""):
-        child = my_element.xpath(xml_id)
+        child = my_element.xpath(xml_str)
         if len(child) > 0:
             child[0].text = str(value)
         else:
             if previous_element_name:
                 prev_element = my_element.xpath(previous_element_name)
-                new_element = etree.Element(xml_id)
+                new_element = etree.Element(xml_str)
                 new_element.text = str(value)
                 prev_element[0].addnext(new_element)
             elif next_element_name:
                 next_element = my_element.xpath(next_element_name)
-                new_element = etree.Element(xml_id)
+                new_element = etree.Element(xml_str)
                 new_element.text = str(value)
                 next_element[0].addprevious(new_element)
             else:
-                etree.SubElement(my_element, xml_id).text = str(value)
+                etree.SubElement(my_element, xml_str).text = str(value)
 
     def _update_xml_data_for_nuclide(self, nuclide_element, nuclide):
         self._update_element_data(nuclide_element, "z", nuclide["z"])

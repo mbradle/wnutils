@@ -174,9 +174,9 @@ class Base:
 
         return latex_names
 
-    def _create_element_name(self, z):
+    def _create_zname_array(self):
 
-        s_zname = [
+        return [
             "n",
             "h",
             "he",
@@ -298,7 +298,26 @@ class Base:
             "og",
         ]
 
-        ex_name = ["n", "u", "b", "t", "q", "p", "h", "s", "o", "e"]
+    def _create_ex_name_array(self):
+        return ["n", "u", "b", "t", "q", "p", "h", "s", "o", "e"]
+
+    def _get_z_from_element_name(self, elem_str):
+        s_zname = self._create_zname_array()
+
+        if elem_str in s_zname:
+            return s_zname.index(elem_str)
+        else:
+            ex_name = self._create_ex_name_array()
+            result = ""
+            for elem_char in elem_str:
+                result += str(ex_name.index(elem_char))
+            return int(result)
+
+    def _create_element_name(self, z):
+
+        s_zname = self._create_zname_array()
+
+        ex_name = self._create_ex_name_array()
 
         elem_name = ""
         if z <= len(s_zname):
