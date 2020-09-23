@@ -1209,6 +1209,51 @@ class Xml(wb.Base):
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
 
+    def remove_from_nuclide_data(self, nuclide_str):
+        """Method to remove a species from the nuclide data.
+
+        Args:
+
+            ``nuclide_str`` (:obj:`str`): A string containing the nuclide
+            to be removed.
+
+        Returns:
+            On successful return, the nuclide has been removed from the
+            underlying xml.
+
+        """
+        nuclear_data_str = "//nuclear_data"
+        nuclide_data_str = nuclear_data_str + "/nuclide"
+        nuclear_data = self._xml.xpath(nuclear_data_str)[0]
+
+        name_data = self._get_species_name_substrings(nuclide_str)
+
+        z_str = str(self._get_z_from_element_name(name_data[0]))
+        a_str = name_data[1]
+        za_xpath_str = "[z = " + z_str + " and a = " + a_str + "]"
+        nuclide_xpath_str = nuclide_data_str + za_xpath_str
+        my_nuclide = self._xml.xpath(nuclide_xpath_str)
+
+        if len(my_nuclide) > 0:
+
+            if name_data[2]:
+                states = my_nuclide[0].xpath("//states")
+                if len(states) > 0:
+                    state_xpath_str = "//state[@id = \'" + name_data[2] + "\']"
+                    state = states[0].xpath(state_xpath_str)
+                    if len(state) > 0:
+                        states[0].remove(state[0])
+            
+            else:
+                base_name = name_data[0] + name_data[1]
+                comments = self._xml.xpath("//nuclear_data/comment()")
+
+                for comment in comments:
+                    if comment.text == base_name:
+                        nuclear_data.remove(comment)
+
+                nuclear_data.remove(my_nuclide[0])
+
     def _update_element_data(self, my_element, xml_str, value,
                              previous_element_name = "",
                              next_element_name = ""):
@@ -1234,26 +1279,31 @@ class Xml(wb.Base):
         self._update_element_data(nuclide_element, "a", nuclide["a"])
         self._update_element_data(nuclide_element, "source",
                                   nuclide["source"],
-                                  next_element_name = "mass_excess")
+                                  previous_element_name = "a")
         self._update_element_data(nuclide_element, "mass_excess",
                                   nuclide["mass excess"])
         self._update_element_data(nuclide_element, "spin", nuclide["spin"])
 
         partf_xpath = nuclide_element.xpath("partf_table")
-        for partf_point in partf_xpath[0].xpath("point"):
-            partf_xpath[0].remove(partf_point)
+
+        if len(partf_xpath) > 0:
+            for partf_point in partf_xpath[0].xpath("point"):
+                partf_xpath[0].remove(partf_point)
+            partf_element = partf_xpath[0]
+        else:
+            partf_element = etree.SubElement(nuclide_element, "partf_table")
 
         t9 = nuclide['t9']
         partf = nuclide['partf']
 
         for i in range(len(t9)):
-            point = etree.SubElement(partf_xpath[0], "point")
+            point = etree.SubElement(partf_element, "point")
             self._update_element_data(point, "t9", t9[i])
-            log10_partf = np.log10( partf[i] / (2. * nuclide["spin"] + 1))
+            log10_partf = np.log10(partf[i] / (2. * nuclide["spin"] + 1))
             self._update_element_data(point, "log10_partf", log10_partf)
         
     def update_nuclide_data(self, nuclides):
-        """Method to validate the xml
+        """Method to update the nuclide data.
 
         Args:
 
@@ -1273,8 +1323,15 @@ class Xml(wb.Base):
             a = nuclides[nuc]['a']
             nuc_xpath = self._root.xpath(
                 xpath_base + "[z = " + str(z) + " and a = " + str(a) + "]")
-            if nuc_xpath:
+            if len(nuc_xpath) > 0:
                 self._update_xml_data_for_nuclide(nuc_xpath[0], nuclides[nuc])
+            else:
+                nuclear_data = self._xml.xpath("//nuclear_data")
+                nuclear_data[0].append(etree.Comment(
+                   self.create_nuclide_name(z, a, "")
+                ))
+                new_nuclide = etree.SubElement(nuclear_data[0], "nuclide")
+                self._update_xml_data_for_nuclide(new_nuclide, nuclides[nuc])
 
     def validate(self):
         """Method to validate the xml
