@@ -14,6 +14,7 @@ New:
 Fix:
 
   * State data is now parsed from XML correctly.
+  * An error in creating IUPAC element names has been fixed.
 
 Version 1.5.2
 -------------

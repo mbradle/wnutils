@@ -301,7 +301,7 @@ class Base:
         ex_name = ["n", "u", "b", "t", "q", "p", "h", "s", "o", "e"]
 
         elem_name = ""
-        if z <= len(s_zname):
+        if z < len(s_zname):
             elem_name = s_zname[z]
         else:
             z_tmp = z
