@@ -320,7 +320,7 @@ class Base:
         ex_name = self._create_ex_name_array()
 
         elem_name = ""
-        if z <= len(s_zname):
+        if z < len(s_zname):
             elem_name = s_zname[z]
         else:
             z_tmp = z

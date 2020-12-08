@@ -1277,21 +1277,42 @@ class Xml(wb.Base):
     def _update_xml_data_for_nuclide(self, nuclide_element, nuclide):
         self._update_element_data(nuclide_element, "z", nuclide["z"])
         self._update_element_data(nuclide_element, "a", nuclide["a"])
-        self._update_element_data(nuclide_element, "source",
-                                  nuclide["source"],
-                                  previous_element_name = "a")
-        self._update_element_data(nuclide_element, "mass_excess",
-                                  nuclide["mass excess"])
-        self._update_element_data(nuclide_element, "spin", nuclide["spin"])
 
-        partf_xpath = nuclide_element.xpath("partf_table")
+        state_element = nuclide_element
+
+        if nuclide['state']:
+            states = nuclide_element.xpath("states")
+            if len(states) > 0:
+                states_element = states[0]
+            else:
+                states_element = etree.SubElement(nuclide_element, "states")
+            state_id_str = "state[@id = " + nuclide['state'] + "]"
+            state_id = states_element.xpath(state_id_str)
+            if len(state_id) > 0:
+                state_element = state_id[0]
+            else:
+                state_element = etree.SubElement(states_element, "state")
+                state_element.set('id', nuclide['state'])
+                
+        if state_element == nuclide_element:
+            self._update_element_data(state_element, "source",
+                                      nuclide["source"],
+                                      previous_element_name = "a")
+        else:
+            self._update_element_data(state_element, "source",
+                                      nuclide["source"])
+        self._update_element_data(state_element, "mass_excess",
+                                  nuclide["mass excess"])
+        self._update_element_data(state_element, "spin", nuclide["spin"])
+
+        partf_xpath = state_element.xpath("partf_table")
 
         if len(partf_xpath) > 0:
             for partf_point in partf_xpath[0].xpath("point"):
                 partf_xpath[0].remove(partf_point)
             partf_element = partf_xpath[0]
         else:
-            partf_element = etree.SubElement(nuclide_element, "partf_table")
+            partf_element = etree.SubElement(state_element, "partf_table")
 
         t9 = nuclide['t9']
         partf = nuclide['partf']
