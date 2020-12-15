@@ -231,55 +231,20 @@ class Reaction(wb.Base):
             print("No such reaction type")
             return None
 
-    def get_reactants(self):
-        """Method to return the reactants for a reaction.
-
-        Returns:
-            :obj:`list`: A list of :obj:`str` giving the reactants.
-
-        """
-        return self.reactants
-
-    def get_products(self):
-        """Method to return the products for a reaction.
-
-        Returns:
-            :obj:`list`: A list of :obj:`str` giving the products.
-
-        """
-        return self.products
-
-    def get_source(self):
-        """Method to return the data source for a reaction.
-
-        Returns:
-            :obj:`str`: The source.
-
-        """
-        return self.source
-
-    def get_data(self):
-        """Method to return the data for a reaction.
-
-        Returns:
-            :obj:`dict`: A dictionary containing the rate data for the
-            reaction.
-
-        """
-        return self.data
-
-    def get_string(self):
-        """Method to return the string for a reaction.
-
-        Returns:
-            :obj:`str`: The reaction string.
-
-        """
-
-        s = " + ".join(self.reactants)
-        s += " -> "
-        s += " + ".join(self.products)
-        return s
+    def _get_reactant_and_product_xpath(self):
+        reactants = []
+        for r in self.reactants:
+            reactants.append(r)
+        products = []
+        for p in self.products:
+            products.append(p)
+        result = "[reactant = \'" + reactants[0] + "\'"
+        for i in range(1, len(reactants)):
+            result += " and reactant = \'" + reactants[i] + "\'"
+        for p in products:
+            result += " and product = \'" + p + "\'"
+        result += "]"
+        return result
 
     def get_latex_string(self):
         """Method to return the latex string for a reaction.
@@ -302,6 +267,29 @@ class Reaction(wb.Base):
         s += " \\to "
         s += " + ".join(l_products)
         s += "$"
+        return s
+
+    def get_data(self):
+        """Method to return the data for a reaction.
+
+        Returns:
+            :obj:`dict`: A dictionary containing the rate data for the
+            reaction.
+
+        """
+        return self.data
+
+    def get_string(self):
+        """Method to return the string for a reaction.
+
+        Returns:
+            :obj:`str`: The reaction string.
+
+        """
+
+        s = " + ".join(self.reactants)
+        s += " -> "
+        s += " + ".join(self.products)
         return s
 
 
@@ -1243,7 +1231,7 @@ class Xml(wb.Base):
                     state = states[0].xpath(state_xpath_str)
                     if len(state) > 0:
                         states[0].remove(state[0])
-            
+           
             else:
                 base_name = name_data[0] + name_data[1]
                 comments = self._xml.xpath("//nuclear_data/comment()")
@@ -1253,6 +1241,43 @@ class Xml(wb.Base):
                         nuclear_data.remove(comment)
 
                 nuclear_data.remove(my_nuclide[0])
+
+    def remove_from_reaction_data(self, reaction_str):
+        """Method to remove a species from the nuclide data.
+
+        Args:
+
+            ``reaction_str`` (:obj:`str`): A string containing the reaction
+            to be removed.
+
+        Returns:
+            On successful return, the reaction has been removed from the
+            underlying xml.
+
+        """
+
+        reac_data = self._xml.xpath("//reaction_data")
+ 
+        if len(reac_data) == 0:
+            return
+
+        r = reaction_str.split('->')
+        reactants = r[0].split('+') 
+        products = r[1].split('+') 
+
+        xpath = "[reactant = \'" + reactants[0].strip() + "\'"
+        for i in range(1, len(reactants)):
+            xpath += " and reactant = \'" + reactants[i].strip() + "\'"
+
+        for product in products:
+            xpath += " and product = \'" + product.strip() + "\'"
+
+        xpath += "]"
+
+        reaction_data_str = "//reaction_data/reaction" + xpath
+        reaction_data = self._xml.xpath(reaction_data_str)
+
+        reac_data[0].remove(reaction_data[0])
 
     def _update_element_data(self, my_element, xml_str, value,
                              previous_element_name = "",
@@ -1353,6 +1378,74 @@ class Xml(wb.Base):
                 ))
                 new_nuclide = etree.SubElement(nuclear_data[0], "nuclide")
                 self._update_xml_data_for_nuclide(new_nuclide, nuclides[nuc])
+
+    def _update_xml_data_for_reaction(self, reaction_element, reaction):
+        self._update_element_data(reaction_element, "source",
+                                  reaction.source)
+
+        reactant_xpath = reaction_element.xpath("reactant")
+
+        for r in reactant_xpath:
+            reaction_element.remove(r)
+
+        for reactant in reaction.reactants:
+            reactant_element = etree.SubElement(reaction_element, "reactant")
+            reactant_element.text = reactant
+
+        product_xpath = reaction_element.xpath("product")
+
+        for p in product_xpath:
+            reaction_element.remove(p)
+
+        for product in reaction.products:
+            product_element = etree.SubElement(reaction_element, "product")
+            product_element.text = product
+
+        rate_expressions = ['single_rate', 'non_smoker_fit', 'rate_table',
+                            'user_rate']
+
+        for expression in rate_expressions:
+            expression_xpath = reaction_element.xpath(expression)
+            if len(expression_xpath) > 0:
+                reaction_element.remove(expression_xpath[0])
+
+        if reaction.data["type"] == "single_rate":
+            single_rate_element = etree.SubElement(reaction_element, "single_rate")
+            single_rate_element.text = str(reaction.data["rate"])
+
+    def update_reaction_data(self, reactions):
+        """Method to update the reaction data.
+
+        Args:
+
+            ``nuclides`` (:obj:`dict`): A dictionary containing the reactions
+            to be updated and their data.
+
+        Returns:
+            On successful return, the underlying xml has been updated with
+            the data in ``reactions``.
+
+        """
+
+        xpath_base = "//reaction_data/reaction"
+
+        for reaction in reactions:
+            xpath = xpath_base
+            xpath += reactions[reaction]._get_reactant_and_product_xpath()
+            reaction_xpath = self._xml.xpath(xpath)
+            if len(reaction_xpath) > 0:
+                self._update_xml_data_for_reaction(
+                    reaction_xpath[0], reactions[reaction]
+                )
+            else:
+                reaction_data = self._xml.xpath("//reaction_data")
+                reaction_data[0].append(etree.Comment(
+                    reactions[reaction].get_string()
+                ))
+                new_reaction = etree.SubElement(reaction_data[0], "reaction")
+                self._update_xml_data_for_reaction(
+                    new_reaction, reactions[reaction]
+                )
 
     def validate(self):
         """Method to validate the xml
