@@ -1410,8 +1410,41 @@ class Xml(wb.Base):
                 reaction_element.remove(expression_xpath[0])
 
         if reaction.data["type"] == "single_rate":
-            single_rate_element = etree.SubElement(reaction_element, "single_rate")
-            single_rate_element.text = str(reaction.data["rate"])
+            self._update_element_data(
+                reaction_element, "single_rate", reaction.data["rate"])
+        elif reaction.data["type"] == "rate_table":
+            rate_table_element = etree.SubElement(reaction_element, "rate_table")
+            t9 = reaction.data["t9"]
+            rate = reaction.data["rate"]
+            sef = reaction.data["sef"]
+            for i in range(len(t9)):
+                point = etree.SubElement(rate_table_element, "point")
+                self._update_element_data(point, "t9", t9[i])
+                self._update_element_data(point, "rate", rate[i])
+                self._update_element_data(point, "sef", sef[i])
+        elif reaction.data["type"] == "non_smoker_fit":
+            nsf_element = etree.SubElement(reaction_element, "non_smoker_fit")
+            fits = reaction.data["fits"]
+            if len(fits) > 1:
+                fits_element = etree.SubElement(nsf_element, "fits")
+                for fit in fits:
+                    fit_element = etree.SubElement(fits_element, "fit")
+                    for d in fit:
+                        self._update_element_data(fit_element, d, fit[d])
+            else:
+                for fit in fits:
+                    for d in fit:
+                        self._update_element_data(nsf_element, d, fit[d])
+        else:
+            user_element = etree.SubElement(reaction_element, "user_rate")
+            properties = etree.SubElement(user_element, "properties")
+            for d in reaction.data:
+                if d != "type" and d != "key":
+                    property = etree.SubElement(properties, "properties")
+                    self._update_element_data(property, "property", reaction.data[d])
+                    if type(reaction.data[d]) is tuple:
+                        name = d[0]
+                    property = etree.SubElement(properties, property)
 
     def update_reaction_data(self, reactions):
         """Method to update the reaction data.
