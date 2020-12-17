@@ -1197,289 +1197,6 @@ class Xml(wb.Base):
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
         anim.save(movie_name, fps=fps)
 
-    def remove_from_nuclide_data(self, nuclide_str):
-        """Method to remove a species from the nuclide data.
-
-        Args:
-
-            ``nuclide_str`` (:obj:`str`): A string containing the nuclide
-            to be removed.
-
-        Returns:
-            On successful return, the nuclide has been removed from the
-            underlying xml.
-
-        """
-        nuclear_data_str = "//nuclear_data"
-        nuclide_data_str = nuclear_data_str + "/nuclide"
-        nuclear_data = self._xml.xpath(nuclear_data_str)[0]
-
-        name_data = self._get_species_name_substrings(nuclide_str)
-
-        z_str = str(self._get_z_from_element_name(name_data[0]))
-        a_str = name_data[1]
-        za_xpath_str = "[z = " + z_str + " and a = " + a_str + "]"
-        nuclide_xpath_str = nuclide_data_str + za_xpath_str
-        my_nuclide = self._xml.xpath(nuclide_xpath_str)
-
-        if len(my_nuclide) > 0:
-
-            if name_data[2]:
-                states = my_nuclide[0].xpath("//states")
-                if len(states) > 0:
-                    state_xpath_str = "//state[@id = \'" + name_data[2] + "\']"
-                    state = states[0].xpath(state_xpath_str)
-                    if len(state) > 0:
-                        states[0].remove(state[0])
-           
-            else:
-                base_name = name_data[0] + name_data[1]
-                comments = self._xml.xpath("//nuclear_data/comment()")
-
-                for comment in comments:
-                    if comment.text == base_name:
-                        nuclear_data.remove(comment)
-
-                nuclear_data.remove(my_nuclide[0])
-
-    def remove_from_reaction_data(self, reaction_str):
-        """Method to remove a species from the nuclide data.
-
-        Args:
-
-            ``reaction_str`` (:obj:`str`): A string containing the reaction
-            to be removed.
-
-        Returns:
-            On successful return, the reaction has been removed from the
-            underlying xml.
-
-        """
-
-        reac_data = self._xml.xpath("//reaction_data")
- 
-        if len(reac_data) == 0:
-            return
-
-        r = reaction_str.split('->')
-        reactants = r[0].split('+') 
-        products = r[1].split('+') 
-
-        xpath = "[reactant = \'" + reactants[0].strip() + "\'"
-        for i in range(1, len(reactants)):
-            xpath += " and reactant = \'" + reactants[i].strip() + "\'"
-
-        for product in products:
-            xpath += " and product = \'" + product.strip() + "\'"
-
-        xpath += "]"
-
-        reaction_data_str = "//reaction_data/reaction" + xpath
-        reaction_data = self._xml.xpath(reaction_data_str)
-
-        reac_data[0].remove(reaction_data[0])
-
-    def _update_element_data(self, my_element, xml_str, value,
-                             previous_element_name = "",
-                             next_element_name = ""):
-        child = my_element.xpath(xml_str)
-        if len(child) > 0:
-            child[0].text = str(value)
-        else:
-            if previous_element_name:
-                prev_element = my_element.xpath(previous_element_name)
-                new_element = etree.Element(xml_str)
-                new_element.text = str(value)
-                prev_element[0].addnext(new_element)
-            elif next_element_name:
-                next_element = my_element.xpath(next_element_name)
-                new_element = etree.Element(xml_str)
-                new_element.text = str(value)
-                next_element[0].addprevious(new_element)
-            else:
-                etree.SubElement(my_element, xml_str).text = str(value)
-
-    def _update_xml_data_for_nuclide(self, nuclide_element, nuclide):
-        self._update_element_data(nuclide_element, "z", nuclide["z"])
-        self._update_element_data(nuclide_element, "a", nuclide["a"])
-
-        state_element = nuclide_element
-
-        if nuclide['state']:
-            states = nuclide_element.xpath("states")
-            if len(states) > 0:
-                states_element = states[0]
-            else:
-                states_element = etree.SubElement(nuclide_element, "states")
-            state_id_str = "state[@id = " + nuclide['state'] + "]"
-            state_id = states_element.xpath(state_id_str)
-            if len(state_id) > 0:
-                state_element = state_id[0]
-            else:
-                state_element = etree.SubElement(states_element, "state")
-                state_element.set('id', nuclide['state'])
-                
-        if state_element == nuclide_element:
-            self._update_element_data(state_element, "source",
-                                      nuclide["source"],
-                                      previous_element_name = "a")
-        else:
-            self._update_element_data(state_element, "source",
-                                      nuclide["source"])
-        self._update_element_data(state_element, "mass_excess",
-                                  nuclide["mass excess"])
-        self._update_element_data(state_element, "spin", nuclide["spin"])
-
-        partf_xpath = state_element.xpath("partf_table")
-
-        if len(partf_xpath) > 0:
-            for partf_point in partf_xpath[0].xpath("point"):
-                partf_xpath[0].remove(partf_point)
-            partf_element = partf_xpath[0]
-        else:
-            partf_element = etree.SubElement(state_element, "partf_table")
-
-        t9 = nuclide['t9']
-        partf = nuclide['partf']
-
-        for i in range(len(t9)):
-            point = etree.SubElement(partf_element, "point")
-            self._update_element_data(point, "t9", t9[i])
-            log10_partf = np.log10(partf[i] / (2. * nuclide["spin"] + 1))
-            self._update_element_data(point, "log10_partf", log10_partf)
-        
-    def update_nuclide_data(self, nuclides):
-        """Method to update the nuclide data.
-
-        Args:
-
-            ``nuclides`` (:obj:`dict`): A dictionary containing the nuclides
-            to be updated and their data.
-
-        Returns:
-            On successful return, the underlying xml has been updated with
-            the data in ``nuclides``.
-
-        """
-
-        xpath_base = "//nuclear_data/nuclide"
-
-        for nuc in nuclides:
-            z = nuclides[nuc]['z']
-            a = nuclides[nuc]['a']
-            nuc_xpath = self._root.xpath(
-                xpath_base + "[z = " + str(z) + " and a = " + str(a) + "]")
-            if len(nuc_xpath) > 0:
-                self._update_xml_data_for_nuclide(nuc_xpath[0], nuclides[nuc])
-            else:
-                nuclear_data = self._xml.xpath("//nuclear_data")
-                nuclear_data[0].append(etree.Comment(
-                   self.create_nuclide_name(z, a, "")
-                ))
-                new_nuclide = etree.SubElement(nuclear_data[0], "nuclide")
-                self._update_xml_data_for_nuclide(new_nuclide, nuclides[nuc])
-
-    def _update_xml_data_for_reaction(self, reaction_element, reaction):
-        self._update_element_data(reaction_element, "source",
-                                  reaction.source)
-
-        reactant_xpath = reaction_element.xpath("reactant")
-
-        for r in reactant_xpath:
-            reaction_element.remove(r)
-
-        for reactant in reaction.reactants:
-            reactant_element = etree.SubElement(reaction_element, "reactant")
-            reactant_element.text = reactant
-
-        product_xpath = reaction_element.xpath("product")
-
-        for p in product_xpath:
-            reaction_element.remove(p)
-
-        for product in reaction.products:
-            product_element = etree.SubElement(reaction_element, "product")
-            product_element.text = product
-
-        rate_expressions = ['single_rate', 'non_smoker_fit', 'rate_table',
-                            'user_rate']
-
-        for expression in rate_expressions:
-            expression_xpath = reaction_element.xpath(expression)
-            if len(expression_xpath) > 0:
-                reaction_element.remove(expression_xpath[0])
-
-        if reaction.data["type"] == "single_rate":
-            self._update_element_data(
-                reaction_element, "single_rate", reaction.data["rate"])
-        elif reaction.data["type"] == "rate_table":
-            rate_table_element = etree.SubElement(reaction_element, "rate_table")
-            t9 = reaction.data["t9"]
-            rate = reaction.data["rate"]
-            sef = reaction.data["sef"]
-            for i in range(len(t9)):
-                point = etree.SubElement(rate_table_element, "point")
-                self._update_element_data(point, "t9", t9[i])
-                self._update_element_data(point, "rate", rate[i])
-                self._update_element_data(point, "sef", sef[i])
-        elif reaction.data["type"] == "non_smoker_fit":
-            nsf_element = etree.SubElement(reaction_element, "non_smoker_fit")
-            fits = reaction.data["fits"]
-            if len(fits) > 1:
-                fits_element = etree.SubElement(nsf_element, "fits")
-                for fit in fits:
-                    fit_element = etree.SubElement(fits_element, "fit")
-                    for d in fit:
-                        self._update_element_data(fit_element, d, fit[d])
-            else:
-                for fit in fits:
-                    for d in fit:
-                        self._update_element_data(nsf_element, d, fit[d])
-        else:
-            user_element = etree.SubElement(reaction_element, "user_rate")
-            properties = etree.SubElement(user_element, "properties")
-            for d in reaction.data:
-                if d != "type" and d != "key":
-                    property = etree.SubElement(properties, "properties")
-                    self._update_element_data(property, "property", reaction.data[d])
-                    if type(reaction.data[d]) is tuple:
-                        name = d[0]
-                    property = etree.SubElement(properties, property)
-
-    def update_reaction_data(self, reactions):
-        """Method to update the reaction data.
-
-        Args:
-
-            ``nuclides`` (:obj:`dict`): A dictionary containing the reactions
-            to be updated and their data.
-
-        Returns:
-            On successful return, the underlying xml has been updated with
-            the data in ``reactions``.
-
-        """
-
-        xpath_base = "//reaction_data/reaction"
-
-        for reaction in reactions:
-            xpath = xpath_base
-            xpath += reactions[reaction]._get_reactant_and_product_xpath()
-            reaction_xpath = self._xml.xpath(xpath)
-            if len(reaction_xpath) > 0:
-                self._update_xml_data_for_reaction(
-                    reaction_xpath[0], reactions[reaction]
-                )
-            else:
-                reaction_data = self._xml.xpath("//reaction_data")
-                reaction_data[0].append(etree.Comment(
-                    reactions[reaction].get_string()
-                ))
-                new_reaction = etree.SubElement(reaction_data[0], "reaction")
-                self._update_xml_data_for_reaction(
-                    new_reaction, reactions[reaction]
-                )
-
     def validate(self):
         """Method to validate the xml
 
@@ -1500,6 +1217,183 @@ class Xml(wb.Base):
         xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
         xml_validator.assert_(self._xml)
 
+class New_Xml(wb.Base):
+    """A class for creating webnucleo xml files.
+
+       Each instance corresponds to a new xml file.  Methods update
+       the nuclide, reaction, or zone data or write the xml to a file.
+
+       Args:
+           ``xml_type`` (:obj:`str`, optional): The type of xml file to
+           be created ("nuclear_data", "reaction_data", "nuclear_network",
+           "zone_data", or "libnucnet_input").  Defaults to "nuclear_network".
+
+       """
+
+    def __init__(self, xml_type = 'nuclear_network'):
+        if xml_type not in ["nuclear_data", "reaction_data", "nuclear_network",
+                            "zone_data", "libnucnet_input"]:
+            print("Invalid xml_type.")
+        self._root = etree.Element(xml_type)
+        self._xml = etree.ElementTree(self._root)
+        if xml_type == "nuclear_network":
+            etree.SubElement(self._root, "nuclear_data")
+            etree.SubElement(self._root, "reaction_data")
+
+    def _set_element_data(self, my_element, xml_str, value,
+                             previous_element_name = "",
+                             next_element_name = ""):
+        if previous_element_name:
+            prev_element = my_element.xpath(previous_element_name)
+            new_element = etree.Element(xml_str)
+            new_element.text = str(value)
+            prev_element[0].addnext(new_element)
+        elif next_element_name:
+            next_element = my_element.xpath(next_element_name)
+            new_element = etree.Element(xml_str)
+            new_element.text = str(value)
+            next_element[0].addprevious(new_element)
+        else:
+            etree.SubElement(my_element, xml_str).text = str(value)
+
+    def _set_xml_data_for_nuclide(self, nuclide_element, nuclide):
+        self._set_element_data(nuclide_element, "z", nuclide["z"])
+        self._set_element_data(nuclide_element, "a", nuclide["a"])
+
+        state_element = nuclide_element
+
+        if nuclide['state']:
+            states = nuclide_element.xpath("states")
+            if len(states) > 0:
+                states_element = states[0]
+            else:
+                states_element = etree.SubElement(nuclide_element, "states")
+            state_id_str = "state[@id = " + nuclide['state'] + "]"
+            state_id = states_element.xpath(state_id_str)
+            if len(state_id) > 0:
+                state_element = state_id[0]
+            else:
+                state_element = etree.SubElement(states_element, "state")
+                state_element.set('id', nuclide['state'])
+                
+        if state_element == nuclide_element:
+            self._set_element_data(state_element, "source",
+                                      nuclide["source"],
+                                      previous_element_name = "a")
+        else:
+            self._set_element_data(state_element, "source",
+                                      nuclide["source"])
+        self._set_element_data(state_element, "mass_excess",
+                                  nuclide["mass excess"])
+        self._set_element_data(state_element, "spin", nuclide["spin"])
+
+        partf_element = etree.SubElement(state_element, "partf_table")
+
+        t9 = nuclide['t9']
+        partf = nuclide['partf']
+
+        for i in range(len(t9)):
+            point = etree.SubElement(partf_element, "point")
+            self._set_element_data(point, "t9", t9[i])
+            log10_partf = np.log10(partf[i] / (2. * nuclide["spin"] + 1))
+            self._set_element_data(point, "log10_partf", log10_partf)
+        
+    def set_nuclide_data(self, nuclides):
+        """Method to set the nuclide data.
+
+        Args:
+
+            ``nuclides`` (:obj:`dict`): A dictionary containing the nuclides
+            to be created and their data.
+
+        Returns:
+            On successful return, the underlying xml has been created with
+            the data in ``nuclides``.
+
+        """
+
+        nuclear_data = self._xml.xpath("//nuclear_data")
+
+        for nuc in nuclides:
+            my_nuc = nuclides[nuc]
+            nuclear_data[0].append(etree.Comment(
+               self.create_nuclide_name(my_nuc['z'], my_nuc['a'], ""
+            )))
+            new_nuclide = etree.SubElement(nuclear_data[0], "nuclide")
+            self._set_xml_data_for_nuclide(new_nuclide, nuclides[nuc])
+
+    def _set_xml_data_for_reaction(self, reaction_element, reaction):
+        self._set_element_data(reaction_element, "source",
+                                  reaction.source)
+
+        for reactant in reaction.reactants:
+            self._set_element_data(reaction_element, "reactant", reactant)
+
+        for product in reaction.products:
+            self._set_element_data(reaction_element, "product", product)
+
+        if reaction.data["type"] == "single_rate":
+            self._set_element_data(
+                reaction_element, "single_rate", reaction.data["rate"])
+        elif reaction.data["type"] == "rate_table":
+            rate_table_element = etree.SubElement(reaction_element, "rate_table")
+            t9 = reaction.data["t9"]
+            rate = reaction.data["rate"]
+            sef = reaction.data["sef"]
+            for i in range(len(t9)):
+                point = etree.SubElement(rate_table_element, "point")
+                self._set_element_data(point, "t9", t9[i])
+                self._set_element_data(point, "rate", rate[i])
+                self._set_element_data(point, "sef", sef[i])
+        elif reaction.data["type"] == "non_smoker_fit":
+            nsf_element = etree.SubElement(reaction_element, "non_smoker_fit")
+            fits = reaction.data["fits"]
+            if len(fits) > 1:
+                fits_element = etree.SubElement(nsf_element, "fits")
+                for fit in fits:
+                    fit_element = etree.SubElement(fits_element, "fit")
+                    for d in fit:
+                        self._set_element_data(fit_element, d, fit[d])
+            else:
+                for fit in fits:
+                    for d in fit:
+                        self._set_element_data(nsf_element, d, fit[d])
+        else:
+            user_element = etree.SubElement(reaction_element, "user_rate")
+            properties = etree.SubElement(user_element, "properties")
+            for d in reaction.data:
+                if d != "type" and d != "key":
+                    property = etree.SubElement(properties, "properties")
+                    self._set_element_data(property, "property", reaction.data[d])
+                    if type(reaction.data[d]) is tuple:
+                        name = d[0]
+                    property = etree.SubElement(properties, property)
+
+    def set_reaction_data(self, reactions):
+        """Method to set the reaction data.
+
+        Args:
+
+            ``reactions`` (:obj:`dict`): A dictionary containing the reactions
+            to be set and their data.
+
+        Returns:
+            On successful return, the underlying xml has been created with
+            the data in ``reactions``.
+
+        """
+
+        reaction_data = self._xml.xpath("//reaction_data")
+
+        for reaction in reactions:
+            reaction_data[0].append(etree.Comment(
+                reactions[reaction].get_string()
+            ))
+            new_reaction = etree.SubElement(reaction_data[0], "reaction")
+            self._set_xml_data_for_reaction(
+                new_reaction, reactions[reaction]
+            )
+
     def write(self, file, pretty_print = True):
         """Method to write the xml
 
@@ -1519,3 +1413,4 @@ class Xml(wb.Base):
 
 
         self._xml.write(file, pretty_print=pretty_print)
+
