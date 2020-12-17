@@ -1220,7 +1220,7 @@ class Xml(wb.Base):
 class New_Xml(wb.Base):
     """A class for creating webnucleo xml files.
 
-       Each instance corresponds to a new xml file.  Methods update
+       Each instance corresponds to new xml.  Methods set
        the nuclide, reaction, or zone data or write the xml to a file.
 
        Args:
@@ -1239,35 +1239,27 @@ class New_Xml(wb.Base):
         if xml_type == "nuclear_network":
             etree.SubElement(self._root, "nuclear_data")
             etree.SubElement(self._root, "reaction_data")
-
-    def _set_element_data(self, my_element, xml_str, value,
-                             previous_element_name = "",
-                             next_element_name = ""):
-        if previous_element_name:
-            prev_element = my_element.xpath(previous_element_name)
-            new_element = etree.Element(xml_str)
-            new_element.text = str(value)
-            prev_element[0].addnext(new_element)
-        elif next_element_name:
-            next_element = my_element.xpath(next_element_name)
-            new_element = etree.Element(xml_str)
-            new_element.text = str(value)
-            next_element[0].addprevious(new_element)
-        else:
-            etree.SubElement(my_element, xml_str).text = str(value)
+        elif xml_type == "libnucnet_input":
+            nuclear_network = etree.SubElement(self._root, "nuclear_network")
+            etree.SubElement(nuclear_network, "nuclear_data")
+            etree.SubElement(nuclear_network, "reaction_data")
+            zone_data = etree.SubElement(self._root, "zone_data")
+            
+    def _set_element_data(self, my_element, xml_str, value):
+        etree.SubElement(my_element, xml_str).text = str(value)
 
     def _set_xml_data_for_nuclide(self, nuclide_element, nuclide):
-        self._set_element_data(nuclide_element, "z", nuclide["z"])
-        self._set_element_data(nuclide_element, "a", nuclide["a"])
+        states = nuclide_element.xpath("states")
 
-        state_element = nuclide_element
+        if len(states) > 0:
+             states_element = states[0]
+        else:
+            self._set_element_data(nuclide_element, "z", nuclide["z"])
+            self._set_element_data(nuclide_element, "a", nuclide["a"])
+            states_element = etree.SubElement(nuclide_element, "states")
+            state_element = nuclide_element
 
         if nuclide['state']:
-            states = nuclide_element.xpath("states")
-            if len(states) > 0:
-                states_element = states[0]
-            else:
-                states_element = etree.SubElement(nuclide_element, "states")
             state_id_str = "state[@id = " + nuclide['state'] + "]"
             state_id = states_element.xpath(state_id_str)
             if len(state_id) > 0:
@@ -1275,14 +1267,11 @@ class New_Xml(wb.Base):
             else:
                 state_element = etree.SubElement(states_element, "state")
                 state_element.set('id', nuclide['state'])
+            self._set_element_data(state_element, "source", nuclide["source"])
                 
         if state_element == nuclide_element:
-            self._set_element_data(state_element, "source",
-                                      nuclide["source"],
-                                      previous_element_name = "a")
-        else:
-            self._set_element_data(state_element, "source",
-                                      nuclide["source"])
+            self._set_element_data(state_element, "source", nuclide["source"])
+
         self._set_element_data(state_element, "mass_excess",
                                   nuclide["mass excess"])
         self._set_element_data(state_element, "spin", nuclide["spin"])
@@ -1314,13 +1303,23 @@ class New_Xml(wb.Base):
 
         nuclear_data = self._xml.xpath("//nuclear_data")
 
+        if len(nuclear_data) == 0:
+            print("Attempting to set non-existent nuclear_data.")
+            return
+
         for nuc in nuclides:
             my_nuc = nuclides[nuc]
-            nuclear_data[0].append(etree.Comment(
-               self.create_nuclide_name(my_nuc['z'], my_nuc['a'], ""
-            )))
-            new_nuclide = etree.SubElement(nuclear_data[0], "nuclide")
-            self._set_xml_data_for_nuclide(new_nuclide, nuclides[nuc])
+            my_xpath = self._xml.xpath("//nuclear_data/nuclide[ z = " +
+                                  str(my_nuc['z']) +
+                                  " and a = " + str(my_nuc['a']) + "]")
+            if len(my_xpath) == 0:
+                nuclear_data[0].append(etree.Comment(
+                   self.create_nuclide_name(my_nuc['z'], my_nuc['a'], ""
+                )))
+                nuclide = etree.SubElement(nuclear_data[0], "nuclide")
+            else:
+                nuclide = my_xpath[0]
+            self._set_xml_data_for_nuclide(nuclide, nuclides[nuc])
 
     def _set_xml_data_for_reaction(self, reaction_element, reaction):
         self._set_element_data(reaction_element, "source",
@@ -1384,6 +1383,10 @@ class New_Xml(wb.Base):
         """
 
         reaction_data = self._xml.xpath("//reaction_data")
+
+        if len(reaction_data) == 0:
+            print("Attempting to set non-existent reaction_data.")
+            return
 
         for reaction in reactions:
             reaction_data[0].append(etree.Comment(
