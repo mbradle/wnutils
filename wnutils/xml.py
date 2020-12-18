@@ -1245,36 +1245,28 @@ class New_Xml(wb.Base):
             etree.SubElement(nuclear_network, "reaction_data")
             zone_data = etree.SubElement(self._root, "zone_data")
             
-    def _set_element_data(self, my_element, xml_str, value):
-        etree.SubElement(my_element, xml_str).text = str(value)
-
     def _set_xml_data_for_nuclide(self, nuclide_element, nuclide):
         states = nuclide_element.xpath("states")
 
         if len(states) > 0:
              states_element = states[0]
         else:
-            self._set_element_data(nuclide_element, "z", nuclide["z"])
-            self._set_element_data(nuclide_element, "a", nuclide["a"])
-            states_element = etree.SubElement(nuclide_element, "states")
+            etree.SubElement(nuclide_element, "z").text = str(nuclide["z"])
+            etree.SubElement(nuclide_element, "a").text = str(nuclide["a"])
             state_element = nuclide_element
 
         if nuclide['state']:
-            state_id_str = "state[@id = " + nuclide['state'] + "]"
-            state_id = states_element.xpath(state_id_str)
-            if len(state_id) > 0:
-                state_element = state_id[0]
-            else:
-                state_element = etree.SubElement(states_element, "state")
-                state_element.set('id', nuclide['state'])
-            self._set_element_data(state_element, "source", nuclide["source"])
-                
-        if state_element == nuclide_element:
-            self._set_element_data(state_element, "source", nuclide["source"])
+            if len(states) == 0:
+                states_element = etree.SubElement(nuclide_element, "states")
+            state_element = etree.SubElement(states_element, "state")
+            state_element.set('id', nuclide['state'])
+            etree.SubElement(state_element, "source").text = str(nuclide["source"])
+        else:
+            etree.SubElement(state_element, "source").text = str(nuclide["source"])
 
-        self._set_element_data(state_element, "mass_excess",
-                                  nuclide["mass excess"])
-        self._set_element_data(state_element, "spin", nuclide["spin"])
+        etree.SubElement(state_element, "mass_excess").text = str(
+             nuclide["mass excess"])
+        etree.SubElement(state_element, "spin").text = str(nuclide["spin"])
 
         partf_element = etree.SubElement(state_element, "partf_table")
 
@@ -1283,9 +1275,9 @@ class New_Xml(wb.Base):
 
         for i in range(len(t9)):
             point = etree.SubElement(partf_element, "point")
-            self._set_element_data(point, "t9", t9[i])
+            etree.SubElement(point, "t9").text = str(t9[i])
             log10_partf = np.log10(partf[i] / (2. * nuclide["spin"] + 1))
-            self._set_element_data(point, "log10_partf", log10_partf)
+            etree.SubElement(point, "log10_partf").text = str(log10_partf)
         
     def set_nuclide_data(self, nuclides):
         """Method to set the nuclide data.
@@ -1322,18 +1314,17 @@ class New_Xml(wb.Base):
             self._set_xml_data_for_nuclide(nuclide, nuclides[nuc])
 
     def _set_xml_data_for_reaction(self, reaction_element, reaction):
-        self._set_element_data(reaction_element, "source",
-                                  reaction.source)
+        etree.SubElement(reaction_element, "source").text = str(reaction.source)
 
         for reactant in reaction.reactants:
-            self._set_element_data(reaction_element, "reactant", reactant)
+            etree.SubElement(reaction_element, "reactant").text = str(reactant)
 
         for product in reaction.products:
-            self._set_element_data(reaction_element, "product", product)
+            etree.SubElement(reaction_element, "product").text = str(product)
 
         if reaction.data["type"] == "single_rate":
-            self._set_element_data(
-                reaction_element, "single_rate", reaction.data["rate"])
+            etree.SubElement(reaction_element, "single_rate").text = \
+                str(reaction.data["rate"])
         elif reaction.data["type"] == "rate_table":
             rate_table_element = etree.SubElement(reaction_element, "rate_table")
             t9 = reaction.data["t9"]
@@ -1341,32 +1332,37 @@ class New_Xml(wb.Base):
             sef = reaction.data["sef"]
             for i in range(len(t9)):
                 point = etree.SubElement(rate_table_element, "point")
-                self._set_element_data(point, "t9", t9[i])
-                self._set_element_data(point, "rate", rate[i])
-                self._set_element_data(point, "sef", sef[i])
+                etree.SubElement(point, "t9").text = str(t9[i])
+                etree.SubElement(point, "rate").text = str(rate[i])
+                etree.SubElement(point, "sef").text = str(sef[i])
         elif reaction.data["type"] == "non_smoker_fit":
             nsf_element = etree.SubElement(reaction_element, "non_smoker_fit")
-            fits = reaction.data["fits"]
-            if len(fits) > 1:
-                fits_element = etree.SubElement(nsf_element, "fits")
-                for fit in fits:
-                    fit_element = etree.SubElement(fits_element, "fit")
-                    for d in fit:
-                        self._set_element_data(fit_element, d, fit[d])
-            else:
-                for fit in fits:
-                    for d in fit:
-                        self._set_element_data(nsf_element, d, fit[d])
+            for fit in reaction.data['fits']:
+                fit_element = etree.SubElement(nsf_element, "fit")
+                for d in fit:
+                    if d == "note":
+                        fit_element.set("note", fit[d])
+                    else:
+                        etree.SubElement(fit_element, d).text = str(fit[d])
         else:
             user_element = etree.SubElement(reaction_element, "user_rate")
+            user_element.set("key", reaction.data["key"])
             properties = etree.SubElement(user_element, "properties")
             for d in reaction.data:
                 if d != "type" and d != "key":
-                    property = etree.SubElement(properties, "properties")
-                    self._set_element_data(property, "property", reaction.data[d])
-                    if type(reaction.data[d]) is tuple:
-                        name = d[0]
-                    property = etree.SubElement(properties, property)
+                    property = etree.SubElement(properties, "property")
+                    property.text = str(reaction.data[d])
+                    if type(d) is tuple:
+                        property.set("name", d[0])
+                        if len(d) > 1:
+                            property.set("tag1", d[1])
+                            if len(d) > 2:
+                                property.set("tag2", d[2])
+                        if len(d) > 3:
+                            print("Improper number of property tags.")
+                            exit()
+                    else:
+                        property.set("name", d)
 
     def set_reaction_data(self, reactions):
         """Method to set the reaction data.
