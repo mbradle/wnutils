@@ -1393,6 +1393,65 @@ class New_Xml(wb.Base):
                 new_reaction, reactions[reaction]
             )
 
+    def _set_xml_data_for_zone(self, zone_element, zone):
+
+        if len(zone['properties']) > 0:
+            props = etree.SubElement(zone_element, "optional_properties")
+            for property in zone['properties']:
+                prop = etree.SubElement(props, "property")
+                prop.text = str(zone['properties'][property])
+                if type(property) is tuple:
+                    prop.set("name", property[0])
+                    if len(property) > 1:
+                        prop.set("tag1", property[1])
+                        if len(property) > 2:
+                            prop.set("tag2", property[2])
+                            if len(property) > 3:
+                                print("Improper number of property tags.")
+                                exit()
+                else:
+                    prop.set("name", property)
+
+        mass_fracs = etree.SubElement(zone_element, "mass_fractions")
+        for nuc in zone['mass fractions']:
+            nuclide = etree.SubElement(mass_fracs, "nuclide")
+            nuclide.set("name", nuc[0])
+            etree.SubElement(nuclide, "z").text = str(nuc[1])
+            etree.SubElement(nuclide, "a").text = str(nuc[2])
+            etree.SubElement(nuclide, "x").text = str(zone['mass fractions'][nuc])
+
+                
+    def set_zone_data(self, zones):
+        """Method to set the zone data.
+
+        Args:
+
+            ``zones`` (:obj:`dict`): A dictionary containing the zones
+            to be set and their data.
+
+        Returns:
+            On successful return, the underlying xml has been created with
+            the data in ``reactions``.
+
+        """
+
+        zone_data = self._xml.xpath("//zone_data")
+
+        if len(zone_data) == 0:
+            print("Attempting to set non-existent reaction_data.")
+            return
+
+        
+        for zone in zones:
+            new_zone = etree.SubElement(zone_data[0], "zone")
+            if type(zone) is tuple:
+                for i in range(len(zone)):
+                    label_str = "label" + str(i+1)
+                    new_zone.set(label_str, zone[i])
+            else:
+                new_zone.set("label1", zone)
+            self._set_xml_data_for_zone(new_zone, zones[zone])
+
     def write(self, file, pretty_print = True):
         """Method to write the xml
 
