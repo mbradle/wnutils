@@ -389,3 +389,100 @@ Confirm the new XML:
     ...     print(r, new_reactions[r].get_data())
     ...
 
+Network XML Data
+----------------
+
+For webnucleo codes, a nuclear network is a collection of nuclides and
+the reactions among them.  If you have already created or updated
+nuclide data *nuclides* and reaction data *reactions* according to the
+steps described above, you can create a network XML file.  To do so,
+type
+
+    >>> network_xml = wx.New_Xml(xml_type='nuclear_network')
+
+or, simply,
+
+    >>> network_xml = wx.New_Xml()
+
+since the default new XML is of the *nuclear_network* type.  Now
+set the data:
+
+    >>> network_xml.set_nuclide_data(nuclides)
+    >>> network_xml.set_reaction_data(reactions)
+
+and write the file:
+
+    >>> network_xml.write('new_nuclear_network.xml')
+
+Confirm the new file has the nuclide and reaction data:
+
+    >>> xml = wx.Xml('new_nuclear_network.xml')
+    >>> new_nuclides = xml.get_nuclide_data()
+    >>> new_reactions = xml.get_reaction_data()
+    >>> for nuc in new_nuclides:
+    ...     print(nuc)
+    ...
+    >>> for reaction in new_reactions:
+    ...     print(reaction)
+    ...
+
+Zone XML Data
+-------------
+
+Zone data in webnucleo codes represent mutable data in a calculation.
+Zones are denoted by up to three labels (*label1*, *label2*, *label3*),
+and each zone can contain *optional_properties* and mass fractions of
+nuclear species.  To create zone XML data, first create a dictionary
+of zones:
+
+    >>> zones = {}
+
+Now create property dictionaries for the zones:
+
+    >>> props1 = {'width': 5}
+    >>> props2 = {'note': 'This is a note.', ('breadth', 'length', 'width'): 7}
+
+Each dictionary key is either a :obj:`str` or a :obj:`tuple` of strings.
+The property value can be any type--it will be converted to a string.
+Now create dictionaries of mass fractions:
+
+    >>> mass_frac1 = {('he4', 2, 4): 1}
+    >>> mass_frac2 = {('mn53', 25, 53): 0.7, ('fe56', 26, 56): 0.3}
+
+The key for each mass fraction entry is a tuple giving the species *name*,
+*Z*, and *A*.  Now create the zones:
+
+    >>> zones["0"] = {'properties': props1, 'mass fractions': mass_frac1}
+    >>> zones[("Ringo", "Starr")] = {'properties': {}, 'mass fractions': mass_frac2}
+    >>> zones[("John", "Winston", "Lennon")] = {'properties': props2, 'mass fractions': mass_frac2}
+
+Now create the zone data XML, set the data, and write the file:
+
+    >>> zone_xml = wx.New_Xml('zone_data')
+    >>> zone_xml.set_zone_data(zones)
+    >>> zone_xml.write('new_zone_data.xml')
+
+The file *new_zone_data.xml* contains the data you created.
+You can validate it to ensure the data are the right XML format:
+
+    >>> xml = wx.Xml('new_zone_data.xml')
+    >>> xml.validate()
+
+Libnucnet XML Data
+------------------
+
+Full libnucnet data comprises nuclear network and zone data.  If you
+have create nuclide data (*nuclides*), reaction data (*reactions*),
+and zone data (*zones*), you can create full libnucnet data by typing:
+
+    >>> libnucnet_xml = wx.New_Xml('libnucnet_input')
+    >>> libnucnet_xml.set_nuclide_data(nuclides)
+    >>> libnucnet_xml.set_reaction_data(reactions)
+    >>> libnucnet_xml.set_zone_data(zones)
+
+Write out the data by typing:
+
+    >>> libnucnet_xml.write('new_libnucnet.xml')
+
+
+
