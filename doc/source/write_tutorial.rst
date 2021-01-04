@@ -278,6 +278,15 @@ Now confirm that the data have been updated by typing
 
     >>> print(reactions['n + f19 -> f20 + gamma'].source)
     >>> print(reactions['n + f19 -> f20 + gamma'].get_data())
+    >>> print(reactions['n + f20 -> f21 + gamma'].data)
+
+Notice that the last command simply directly accessed the
+Reaction class member *data* instead of using the *get_data()* method.
+Either is valid--the *get_data()* method
+is simply a legacy convenience method
+that returns the class member *data*.  Confirm the actions are the
+same by typing
+
     >>> print(reactions['n + f20 -> f21 + gamma'].get_data())
 
 Now create new XML and write the updated data:
