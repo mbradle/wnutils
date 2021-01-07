@@ -157,10 +157,15 @@ class Reaction(wb.Base):
 
         self.data = self._get_reaction_data(reaction_node)
 
-    def _compute_rate_table_rate(self, t9):
+    def _compute_rate_table_rate_interpolation(self, t9):
         t = self.data["t9"]
         lr = np.log10(self.data["rate"])
         sef = self.data["sef"]
+
+        if t9 < t[0]:
+            return np.power(10.0, lr[0]) * sef[0]
+        elif t9 > t[len(t)-1]:
+            return np.power(10.0, lr[len(t)-1]) * sef[len(t)-1]
 
         if len(t) <= 2:
             f1 = interp1d(t, lr, kind="linear")
@@ -170,6 +175,14 @@ class Reaction(wb.Base):
             f1 = interp1d(t, lr, kind="cubic")
             f2 = interp1d(t, sef, kind="cubic")
             return np.power(10.0, f1(t9)) * f2(t9)
+
+    def _compute_rate_table_rate(self, t9):
+        if type(t9) is float:
+            return self._compute_rate_table_rate_interpolation(t9)
+        else:
+            return np.array(
+                [self._compute_rate_table_rate_interpolation(x)
+                      for x in t9])
 
     def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
         def non_smoker_function(fit, t9):
