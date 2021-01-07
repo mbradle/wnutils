@@ -267,7 +267,7 @@ Change the *n + f20 -> f21 + gamma* from *non_smoker_fit* type to a
     >>> t9 = [0.1,1,2,10]
     >>> rate = [200, 150, 125, 100]
     >>> sef = [1,1,1,1]
-    >>> reactions['n + f20 -> f21 + gamma'].data = {'type': 'rate_table', 'rt9': t9, 'rate': rate, 'sef': sef}
+    >>> reactions['n + f20 -> f21 + gamma'].data = {'type': 'rate_table', 't9': t9, 'rate': rate, 'sef': sef}
 
 The *t9* array gives the temperatures (in billions of K) at which the
 rates (*rate* array) are given.  The *sef* is the *stellar enhancement
@@ -481,7 +481,7 @@ Libnucnet XML Data
 ------------------
 
 Full libnucnet data comprises nuclear network and zone data.  If you
-have create nuclide data (*nuclides*), reaction data (*reactions*),
+have created nuclide data (*nuclides*), reaction data (*reactions*),
 and zone data (*zones*), you can create full libnucnet data by typing:
 
     >>> libnucnet_xml = wx.New_Xml('libnucnet_input')
