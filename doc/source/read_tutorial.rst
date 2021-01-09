@@ -156,10 +156,10 @@ It is then possible to retrieve the `reactants`, `products`, the reaction
 string, and code giving
 the source by typing::
 
-    >>> print(reac.get_reactants())
-    >>> print(reac.get_products())
+    >>> print(reac.reactants)
+    >>> print(reac.products)
     >>> print(reac.get_string())
-    >>> print(reac.get_source())
+    >>> print(reac.source)
 
 You can also compute the rate for the reaction (among interacting multiplets
 and assuming one of the standard rate forms `single_rate`, `rate_table`,

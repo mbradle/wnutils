@@ -4,6 +4,17 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.7.1
+-------------
+
+New:
+
+  * A link to the tutorials in Jupyter notebook form has been added.
+
+New:
+
+  * Some tutorial typos have been fixed.
+
 Version 1.7.0
 -------------
 
