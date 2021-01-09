@@ -15,10 +15,10 @@ New:
 Fix:
 
   * The reaction rate calculator now computes the reaction rate from
-    rate table data by not extrapolating from lowest and highest temperatur
+    rate table data by not extrapolating from lowest and highest temperature
     values.  This means that, for temperatures below the lowest temperature
     in the table, the rate is computed at the lowest table temperature.
-    Similarly, for temperatures above the highet temperature in the
+    Similarly, for temperatures above the highest temperature in the
     table, the rate is computed at the highest table temperature.  This
     treatment is in agreement with how libnucnet computes rates from rate
     tables.
