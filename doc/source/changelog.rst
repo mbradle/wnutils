@@ -28,7 +28,7 @@ Version 1.6.0
 
 New:
 
-  * A method to validate the XML against libnucnet schmeas has been added.
+  * A method to validate the XML against libnucnet schemas has been added.
 
 Fix:
 
