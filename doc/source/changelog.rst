@@ -4,6 +4,13 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.8.0
+-------------
+
+New:
+
+  * A method to retrieve zone data has been added.
+
 Version 1.7.1
 -------------
 

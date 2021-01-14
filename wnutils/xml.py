@@ -393,20 +393,6 @@ class Xml(wb.Base):
 
         return result
 
-    def _get_max_nucleon_numbers(self):
-        nd = self._get_nuclide_data_array("")
-
-        z = np.zeros(len(nd), dtype=np.int_)
-        n = np.zeros(len(nd), dtype=np.int_)
-        a = np.zeros(len(nd), dtype=np.int_)
-
-        for i in range(len(nd)):
-            z[i] = nd[i]["z"]
-            n[i] = nd[i]["n"]
-            a[i] = nd[i]["a"]
-
-        return {"z": np.amax(z), "n": np.amax(n), "a": np.amax(a)}
-
     def get_nuclide_data(self, nuc_xpath=" "):
         """Method to retrieve nuclear data from webnucleo XML.
 
@@ -483,12 +469,10 @@ class Xml(wb.Base):
         species = zone.xpath("mass_fractions/nuclide")
 
         for sp in species:
-            data = {}
-            data["z"] = int((sp.xpath("z"))[0].text)
-            data["a"] = int((sp.xpath("a"))[0].text)
-            data["n"] = data["a"] - data["z"]
-            data["x"] = float((sp.xpath("x"))[0].text)
-            result[sp.xpath("@name")[0]] = data
+            name = sp.xpath("@name")[0]
+            z = int((sp.xpath("z"))[0].text)
+            a = int((sp.xpath("a"))[0].text)
+            result[(name, z, a)] = float((sp.xpath("x"))[0].text)
 
         return result
 
@@ -629,6 +613,27 @@ class Xml(wb.Base):
 
         return dict
 
+    def _get_all_zone_properties(self, zone):
+        result = {}
+
+        props = zone.xpath("optional_properties/property")
+
+        for property in props:
+            p_name = ""
+            name = property.xpath("@name")
+            tag1 = property.xpath("@tag1")
+            tag2 = property.xpath("@tag2")
+            if tag1:
+                p_name = (name[0], tag1[0])
+                if tag2:
+                    p_name += (tag2[0],)
+            else:
+                p_name = name[0]
+            result[p_name] = property.text
+
+        return result
+
+
     def get_all_properties_for_zone(self, zone_xpath):
         """Method to retrieve all properties in a zone in an xml file
 
@@ -650,22 +655,7 @@ class Xml(wb.Base):
             print("Incorrect number of zones.")
             return
 
-        props = zones[0].xpath("optional_properties/property")
-
-        for property in props:
-            p_name = ""
-            name = property.xpath("@name")
-            tag1 = property.xpath("@tag1")
-            tag2 = property.xpath("@tag2")
-            if tag1:
-                p_name = (name[0], tag1[0])
-                if tag2:
-                    p_name += (tag2[0],)
-            else:
-                p_name = name[0]
-            result[p_name] = property.text
-
-        return result
+        return self._get_all_zone_properties(zones[0])
 
     def get_properties_as_floats(self, properties, zone_xpath=" "):
         """Method to retrieve properties in zones in an xml file as floats.
@@ -710,15 +700,25 @@ class Xml(wb.Base):
 
         zones = self._get_zones(zone_xpath)
 
-        m = self._get_max_nucleon_numbers()
+        z_max = 0
+        n_max = 0
 
-        result = np.zeros((len(zones), m["z"] + 1, m["n"] + 1))
-
-        for i in range(len(zones)):
-            sp = self._get_nuclide_data_for_zone(zones[i])
-
+        zone_array = []
+        for zone in zones:
+            sp = self._get_nuclide_data_for_zone(zone)
             for s in sp:
-                result[i, sp[s]["z"], sp[s]["n"]] += sp[s]["x"] / sp[s]["a"]
+                if s[1] > z_max:
+                    z_max = s[1]
+                if s[2] - s[1] > n_max:
+                    n_max = s[2] - s[1]
+            zone_array.append(sp) 
+            
+        result = np.zeros((len(zones), z_max + 1, n_max + 1))
+
+        for i in range(len(zone_array)):
+
+            for s in zone_array[i]:
+                result[i, s[1], s[2] - s[1]] += zone_array[i][s] / s[2]
 
         return result
 
@@ -743,17 +743,20 @@ class Xml(wb.Base):
             print("nucleon must be 'z', 'n', or 'a'.")
             return
 
-        zones = self._get_zones(zone_xpath)
+        y = self.get_all_abundances_in_zones(zone_xpath)
 
-        m = self._get_max_nucleon_numbers()
-
-        result = np.zeros((len(zones), m[nucleon] + 1))
-
-        for i in range(len(zones)):
-            sp = self._get_nuclide_data_for_zone(zones[i])
-
-            for s in sp:
-                result[i, sp[s][nucleon]] += sp[s]["x"] / sp[s]["a"]
+        if nucleon == "z":
+            result = np.sum(y, axis=2)
+        elif nucleon == "n":
+            result = np.sum(y, axis=1)
+        else:
+            yz = np.sum(y, axis=2)
+            yn = np.sum(y, axis=1)
+            result = np.zeros(y.shape[0], y.shape[1] + y.shape[2] + 2)
+            for i in range(y.shape[0]):
+                for i_z in range(y.shape[1]):
+                    for i_n in range(y.shape[2]):
+                        result[i, i_z + i_n] += y[i, i_z, i_n]
 
         return result
 
@@ -1229,6 +1232,43 @@ class Xml(wb.Base):
 
         xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
         xml_validator.assert_(self._xml)
+
+    def get_zone_data(self, zone_xpath = ""):
+        """Method to retrieve zone data from webnucleo XML.
+
+        Args:
+            ``zone_xpath`` (:obj:`str`, optional): XPath expression to select
+            zones.  Defaults to all zones.
+
+        Returns:
+            :obj:`dict`: A dictionary of zone data.  The data for each
+            zone are themselves two :obj:`dict`, one containing properties
+            and one containing mass fractions.
+
+        """
+
+        
+        zones = self._get_zones(zone_xpath)
+
+        result = {}
+
+        for zone in zones:
+            label = "0"
+            label_1 = zone.xpath("@label1")
+            if label_1:
+                label = label_1[0]
+            label_2 = zone.xpath("@label2")
+            if label_2:
+                label = (label, label_2[0])
+            label_3 = zone.xpath("@label3")
+            if label_3:
+                label = (label[0], label[1], label_3[0])
+            result[label] = {
+                'properties': self._get_all_zone_properties(zone),
+                'mass fractions': self._get_nuclide_data_for_zone(zone)}
+
+        return result
+
 
 class New_Xml(wb.Base):
     """A class for creating webnucleo xml files.

@@ -439,10 +439,58 @@ Zone XML Data
 -------------
 
 Zone data in webnucleo codes represent mutable data in a calculation.
-Zones are denoted by up to three labels (*label1*, *label2*, *label3*),
-and each zone can contain *optional_properties* and mass fractions of
-nuclear species.  To create zone XML data, first create a dictionary
-of zones:
+As with nuclide and reaction data, wnutils routines allow you to update
+and create new zone data XML.
+
+Update existing zone data.
+..........................
+
+To update zone data, first retrieve the existing data:
+
+    >>> zone_data = old_xml.get_zone_data()
+
+Zones are denoted by up to three labels (*label1*, *label2*, *label3*) given
+as either a string or a tuple of strings.,
+Each zone can contain *optional_properties* and mass fractions of
+nuclear species. To see the available zones, type:
+
+    >>> for zone in zone_data:
+    ...     print(zone)
+    ,..
+
+Create a new zone that is a copy of the last zone:
+
+    >>> new_zone = zone_data["164"].copy()
+
+Modify a property and a mass fraction in the new zone:
+
+    >>> new_zone['properties']['rho'] = -10
+    >>> new_zone['mass fractions'][('he4', 2, 4)] = 0.1
+
+Update the zone data with the new zone:
+
+    >>> zone_data[('165', 'added')] = new_zone
+
+Now write the data to an XML file:
+
+    >>> updated_zone_xml = wx.New_Xml(xml_type='zone_data')
+    >>> updated_zone_xml.set_zone_data(zone_data)
+    >>> updated_zone_xml.write('updated_zone_data.xml')
+
+Confirm that the new file has the new zone and the updated data:
+
+    >>> xml = wx.Xml('updated_zone_data.xml')
+    >>> updated_zone_data = xml.get_zone_data()
+    >>> for zone in updated_zone_data:
+    ...     print(zone)
+    ...
+    >>> print(updated_zone_data[('165', 'added')]['properties']['rho'])
+    >>> print(updated_zone_data[('165', 'added')]['mass fractions'][('he4', 2, 4)])
+
+Create new zone data.
+.....................
+
+To create zone XML data, first create a dictionary of zones:
 
     >>> zones = {}
 
