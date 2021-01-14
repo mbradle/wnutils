@@ -18,7 +18,7 @@ New:
 
   * A link to the tutorials in Jupyter notebook form has been added.
 
-New:
+Fix:
 
   * Some tutorial typos have been fixed.
 
