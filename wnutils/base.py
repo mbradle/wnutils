@@ -331,6 +331,23 @@ class Base:
 
         return elem_name
 
+    def get_z_a_state_from_nuclide_name(self, name):
+        """Method to get the Z, A, and state from the name of a nuclide.
+
+        Args:
+            ``name`` (:obj:`str`): The nuclide's name.
+
+        Returns:
+            A :obj:`tuple` containing the Z, A, and state label
+            corresponding to the name.
+
+        """
+
+        
+        elem, mass, state = self._get_species_name_substrings(name)
+
+        return (int(self._get_z_from_element_name(elem)), int(mass), state)
+
     def create_nuclide_name(self, z, a, state):
         """Method to create the name of a nuclide.
 
