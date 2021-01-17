@@ -752,7 +752,7 @@ class Xml(wb.Base):
         else:
             yz = np.sum(y, axis=2)
             yn = np.sum(y, axis=1)
-            result = np.zeros(y.shape[0], y.shape[1] + y.shape[2] + 2)
+            result = np.zeros((y.shape[0], y.shape[1] + y.shape[2] + 2))
             for i in range(y.shape[0]):
                 for i_z in range(y.shape[1]):
                     for i_n in range(y.shape[2]):
