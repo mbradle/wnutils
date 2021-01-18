@@ -322,29 +322,6 @@ class Xml(wb.Base):
         self._xml = etree.parse(file, parser)
         self._root = self._xml.getroot()
 
-    @classmethod
-    def new_nuc(cls):
-        obj = cls.__new__(cls)
-        obj._root = etree.Element("nuclear_data")
-        obj._xml = etree.ElementTree(obj._root)
-        return obj
-
-    @classmethod
-    def new_reac(cls):
-        obj = cls.__new__(cls)
-        obj._root = etree.Element("reaction_data")
-        obj._xml = etree.ElementTree(obj._root)
-        return obj
-
-    @classmethod
-    def new_net(cls):
-        obj = cls.__new__(cls)
-        obj._root = etree.Element("nuclear_network")
-        etree.SubElement(obj._root, "nuclear_data")
-        etree.SubElement(obj._root, "reaction_data")
-        obj._xml = etree.ElementTree(obj._root)
-        return obj
-
     def _get_state_data(self, state_data, node):
         data = {}
         if node.xpath("@id"):
@@ -392,6 +369,18 @@ class Xml(wb.Base):
                 result.append(data)
 
         return result
+
+    def get_type(self):
+        """Method to retrieve the root type of the webnucleo XML.
+
+        Returns:
+            :obj:`str`: One of `nuclear_data`, `reaction_data`,
+            `nuclear_network`, `zone_data`, `libnucnet_input` indicating
+            the root type of the XML.
+
+        """
+
+        return self._root.tag
 
     def get_nuclide_data(self, nuc_xpath=" "):
         """Method to retrieve nuclear data from webnucleo XML.

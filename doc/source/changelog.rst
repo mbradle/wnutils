@@ -9,6 +9,7 @@ Version 1.8.0
 
 New:
 
+  * A method to retrieve the root type of an Xml object has been added.
   * A method to retrieve zone data has been added.
   * A method to retrieve Z, A, and state label from a nuclide name
     has been added.
