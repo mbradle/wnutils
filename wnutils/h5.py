@@ -837,9 +837,9 @@ class H5(wnb.Base):
             if title_func:
                 tf = title_func(i)
                 if tf:
-                    if type(tf) is tuple:
+                    if isinstance(tf, tuple):
                         plt.title(tf[0], **tf[1])
-                    elif type(tf) is str:
+                    elif isinstance(tf, str):
                         plt.title(tf)
                     else:
                         print("Invalid return from title function.")

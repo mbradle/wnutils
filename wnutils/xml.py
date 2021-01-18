@@ -164,8 +164,8 @@ class Reaction(wb.Base):
 
         if t9 < t[0]:
             return np.power(10.0, lr[0]) * sef[0]
-        elif t9 > t[len(t)-1]:
-            return np.power(10.0, lr[len(t)-1]) * sef[len(t)-1]
+        elif t9 > t[len(t) - 1]:
+            return np.power(10.0, lr[len(t) - 1]) * sef[len(t) - 1]
 
         if len(t) <= 2:
             f1 = interp1d(t, lr, kind="linear")
@@ -177,7 +177,7 @@ class Reaction(wb.Base):
             return np.power(10.0, f1(t9)) * f2(t9)
 
     def _compute_rate_table_rate(self, t9):
-        if type(t9) is float:
+        if isinstance(t9, float):
             return self._compute_rate_table_rate_interpolation(t9)
         else:
             return np.array(
@@ -553,7 +553,7 @@ class Xml(wb.Base):
         properties_t = {}
 
         for property in properties:
-            if type(property) is str:
+            if isinstance(property, str):
                 properties_t[property] = (property,)
             else:
                 properties_t[property] = property
@@ -1056,9 +1056,9 @@ class Xml(wb.Base):
             if title_func:
                 tf = title_func(i)
                 if tf:
-                    if type(tf) is tuple:
+                    if isinstance(tf, tuple):
                         plt.title(tf[0], **tf[1])
-                    elif type(tf) is str:
+                    elif isinstance(tf, str):
                         plt.title(tf)
                     else:
                         print("Invalid return from title function.")
@@ -1182,9 +1182,9 @@ class Xml(wb.Base):
                     plt.plot(lim["n_max"], lim["z"])
             if title_func:
                 tf = title_func(i)
-                if type(tf) is str:
+                if isinstance(tf, str):
                     plt.title(tf)
-                elif type(tf) is tuple:
+                elif isinstance(tf, tuple):
                     plt.title(tf[0], tf[1])
                 else:
                     print("Invalid return from title function.")
@@ -1396,7 +1396,7 @@ class New_Xml(wb.Base):
                 if d != "type" and d != "key":
                     property = etree.SubElement(properties, "property")
                     property.text = str(reaction.data[d])
-                    if type(d) is tuple:
+                    if isinstance(d, tuple):
                         property.set("name", d[0])
                         if len(d) > 1:
                             property.set("tag1", d[1])
@@ -1444,7 +1444,7 @@ class New_Xml(wb.Base):
             for property in zone['properties']:
                 prop = etree.SubElement(props, "property")
                 prop.text = str(zone['properties'][property])
-                if type(property) is tuple:
+                if isinstance(property, tuple):
                     prop.set("name", property[0])
                     if len(property) > 1:
                         prop.set("tag1", property[1])
@@ -1487,9 +1487,9 @@ class New_Xml(wb.Base):
 
         for zone in zones:
             new_zone = etree.SubElement(zone_data[0], "zone")
-            if type(zone) is tuple:
+            if isinstance(zone, tuple):
                 for i in range(len(zone)):
-                    label_str = "label" + str(i+1)
+                    label_str = "label" + str(i + 1)
                     new_zone.set(label_str, zone[i])
             else:
                 new_zone.set("label1", zone)
