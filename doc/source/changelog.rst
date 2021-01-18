@@ -13,6 +13,7 @@ New:
   * A method to retrieve zone data has been added.
   * A method to retrieve Z, A, and state label from a nuclide name
     has been added.
+  * A link to code samples has been added.
 
 Version 1.7.1
 -------------
