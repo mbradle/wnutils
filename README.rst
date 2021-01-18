@@ -34,4 +34,4 @@ Usage
 
 The best way to get started using wnutils is to follow the
 `tutorials <http://wnutils.readthedocs.io/en/latest/tutorials.html>`_.
-You may also want to visit our `galleries <https://github.com/mbradle/wnutils/wiki/Galleries>`_ or check out our `Jupyter Notebooks <https://github.com/mbradle/wnutils/wiki/Jupyter-Notebooks>`_.
+You may also want to visit our `galleries <https://github.com/mbradle/wnutils/wiki/Galleries>`_ or check out our `Jupyter Notebooks <https://github.com/mbradle/wnutils/wiki/Jupyter-Notebooks>`_ or our `Code Samples <https://github.com/mbradle/wnutils/wiki/Code-Samples>`_.
