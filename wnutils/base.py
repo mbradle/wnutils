@@ -343,7 +343,6 @@ class Base:
 
         """
 
-        
         elem, mass, state = self._get_species_name_substrings(name)
 
         return (int(self._get_z_from_element_name(elem)), int(mass), state)
