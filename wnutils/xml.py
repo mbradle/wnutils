@@ -181,8 +181,8 @@ class Reaction(wb.Base):
             return self._compute_rate_table_rate_interpolation(t9)
         else:
             return np.array(
-                [self._compute_rate_table_rate_interpolation(x)
-                 for x in t9])
+                [self._compute_rate_table_rate_interpolation(x) for x in t9]
+            )
 
     def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
         def non_smoker_function(fit, t9):
@@ -251,11 +251,11 @@ class Reaction(wb.Base):
         products = []
         for p in self.products:
             products.append(p)
-        result = "[reactant = \'" + reactants[0] + "\'"
+        result = "[reactant = '" + reactants[0] + "'"
         for i in range(1, len(reactants)):
-            result += " and reactant = \'" + reactants[i] + "\'"
+            result += " and reactant = '" + reactants[i] + "'"
         for p in products:
-            result += " and product = \'" + p + "\'"
+            result += " and product = '" + p + "'"
         result += "]"
         return result
 
@@ -526,9 +526,7 @@ class Xml(wb.Base):
 
         for i in range(len(zones)):
             for sp in species:
-                data = zones[i].xpath(
-                    'mass_fractions/nuclide[@name="%s"]/x' % sp
-                )
+                data = zones[i].xpath('mass_fractions/nuclide[@name="%s"]/x' % sp)
                 if len(data) == 1:
                     result[sp][i] = float(data[0].text)
 
@@ -593,9 +591,7 @@ class Xml(wb.Base):
                 data = zone.xpath(path)
 
                 if len(data) == 0:
-                    print(
-                        "Property", self._get_property_name(tup), "not found."
-                    )
+                    print("Property", self._get_property_name(tup), "not found.")
                     return
 
                 dict[property].append(data[0].text)
@@ -862,10 +858,7 @@ class Xml(wb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print(
-                    "Number of plotParam elements must equal number"
-                    + " of species."
-                )
+                print("Number of plotParam elements must equal number" + " of species.")
                 return
 
         plots = []
@@ -952,9 +945,7 @@ class Xml(wb.Base):
 
         if plotParams:
             if y.shape[0] != len(plotParams):
-                print(
-                    "Number of plotParam elements must equal number of plots."
-                )
+                print("Number of plotParam elements must equal number of plots.")
                 return
 
         for i in range(y.shape[0]):
@@ -981,8 +972,8 @@ class Xml(wb.Base):
 
     def make_abundance_chain_movie(
         self,
-        movie_name = "",
-        nucleon=('z', 26),
+        movie_name="",
+        nucleon=("z", 26),
         zone_xpath="",
         plot_vs_A=False,
         fps=15,
@@ -1045,7 +1036,7 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        abunds = self.get_all_abundances_in_zones( zone_xpath=zone_xpath )
+        abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
         props = self.get_properties_as_floats(
             ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
@@ -1055,9 +1046,9 @@ class Xml(wb.Base):
             x = range(abunds.shape[2] + 1)
             if plot_vs_A:
                 x = [xx + nucleon[1] for xx in x]
-            if nucleon[0] == 'z':
+            if nucleon[0] == "z":
                 y = abunds[i, nucleon[1], :]
-            elif nucleon[0] == 'n':
+            elif nucleon[0] == "n":
                 y = abunds[i, :, nucleon[1]]
             else:
                 print("Invalid nucleon")
@@ -1077,20 +1068,20 @@ class Xml(wb.Base):
                         print("Invalid return from title function.")
                         return
             else:
-                if nucleon[0] == 'z':
-                    pre_str = 'Z = {0:d}, '.format(nucleon[1])
+                if nucleon[0] == "z":
+                    pre_str = "Z = {0:d}, ".format(nucleon[1])
                 else:
-                    pre_str = 'N = {0:d}, '.format(nucleon[1])
+                    pre_str = "N = {0:d}, ".format(nucleon[1])
                 title_str = pre_str + self.make_time_t9_rho_title_str(props, i)
                 plt.title(title_str)
             if "xlabel" not in kwargs:
                 if not plot_vs_A:
-                    if nucleon[0] == 'z':
-                        plt.xlabel('N')
+                    if nucleon[0] == "z":
+                        plt.xlabel("N")
                     else:
-                        plt.xlabel('Z')
+                        plt.xlabel("Z")
                 else:
-                    plt.xlabel('A')
+                    plt.xlabel("A")
             if "ylabel" not in kwargs:
                 plt.ylabel("Abundance per nucleon")
             self.apply_class_methods(plt, kwargs)
@@ -1104,7 +1095,7 @@ class Xml(wb.Base):
 
     def make_abundances_vs_nucleon_number_movie(
         self,
-        movie_name = "",
+        movie_name="",
         nucleon="a",
         zone_xpath="",
         fps=15,
@@ -1203,7 +1194,7 @@ class Xml(wb.Base):
 
     def make_network_abundances_movie(
         self,
-        movie_name = "",
+        movie_name="",
         zone_xpath="",
         fps=15,
         title_func=None,
@@ -1297,7 +1288,7 @@ class Xml(wb.Base):
 
         def updatefig(i):
             fig.clear()
-            z = abunds[i, yr[0]: yr[1], xr[0]: xr[1]]
+            z = abunds[i, yr[0] : yr[1], xr[0] : xr[1]]
             plt.imshow(z, **imParams)
             if show_limits:
                 if plotParams:
@@ -1345,7 +1336,8 @@ class Xml(wb.Base):
             "reaction_data": url_prefix + "libnucnet__reac.xsd",
             "nuclear_network": url_prefix + "libnucnet__net.xsd",
             "zone_data": url_prefix + "zone_data.xsd",
-            "libnucnet_input": url_prefix + "libnucnet.xsd"}
+            "libnucnet_input": url_prefix + "libnucnet.xsd",
+        }
 
         xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
         xml_validator.assert_(self._xml)
@@ -1380,8 +1372,9 @@ class Xml(wb.Base):
             if label_3:
                 label = (label[0], label[1], label_3[0])
             result[label] = {
-                'properties': self._get_all_zone_properties(zone),
-                'mass fractions': self._get_nuclide_data_for_zone(zone)}
+                "properties": self._get_all_zone_properties(zone),
+                "mass fractions": self._get_nuclide_data_for_zone(zone),
+            }
 
         return result
 
@@ -1399,9 +1392,14 @@ class New_Xml(wb.Base):
 
        """
 
-    def __init__(self, xml_type='nuclear_network'):
-        if xml_type not in ["nuclear_data", "reaction_data", "nuclear_network",
-                            "zone_data", "libnucnet_input"]:
+    def __init__(self, xml_type="nuclear_network"):
+        if xml_type not in [
+            "nuclear_data",
+            "reaction_data",
+            "nuclear_network",
+            "zone_data",
+            "libnucnet_input",
+        ]:
             print("Invalid xml_type.")
         self._root = etree.Element(xml_type)
         self._xml = etree.ElementTree(self._root)
@@ -1424,30 +1422,29 @@ class New_Xml(wb.Base):
             etree.SubElement(nuclide_element, "a").text = str(nuclide["a"])
             state_element = nuclide_element
 
-        if nuclide['state']:
+        if nuclide["state"]:
             if len(states) == 0:
                 states_element = etree.SubElement(nuclide_element, "states")
             state_element = etree.SubElement(states_element, "state")
-            state_element.set('id', nuclide['state'])
-            etree.SubElement(state_element, "source").text = str(
-                nuclide["source"])
+            state_element.set("id", nuclide["state"])
+            etree.SubElement(state_element, "source").text = str(nuclide["source"])
         else:
-            etree.SubElement(state_element, "source").text = str(
-                nuclide["source"])
+            etree.SubElement(state_element, "source").text = str(nuclide["source"])
 
         etree.SubElement(state_element, "mass_excess").text = str(
-            nuclide["mass excess"])
+            nuclide["mass excess"]
+        )
         etree.SubElement(state_element, "spin").text = str(nuclide["spin"])
 
         partf_element = etree.SubElement(state_element, "partf_table")
 
-        t9 = nuclide['t9']
-        partf = nuclide['partf']
+        t9 = nuclide["t9"]
+        partf = nuclide["partf"]
 
         for i in range(len(t9)):
             point = etree.SubElement(partf_element, "point")
             etree.SubElement(point, "t9").text = str(t9[i])
-            log10_partf = np.log10(partf[i] / (2. * nuclide["spin"] + 1))
+            log10_partf = np.log10(partf[i] / (2.0 * nuclide["spin"] + 1))
             etree.SubElement(point, "log10_partf").text = str(log10_partf)
 
     def set_nuclide_data(self, nuclides):
@@ -1472,21 +1469,26 @@ class New_Xml(wb.Base):
 
         for nuc in nuclides:
             my_nuc = nuclides[nuc]
-            my_xpath = self._xml.xpath("//nuclear_data/nuclide[ z = " +
-                                       str(my_nuc['z']) +
-                                       " and a = " + str(my_nuc['a']) + "]")
+            my_xpath = self._xml.xpath(
+                "//nuclear_data/nuclide[ z = "
+                + str(my_nuc["z"])
+                + " and a = "
+                + str(my_nuc["a"])
+                + "]"
+            )
             if len(my_xpath) == 0:
-                nuclear_data[0].append(etree.Comment(
-                    self.create_nuclide_name(my_nuc['z'], my_nuc['a'], ""
-                                             )))
+                nuclear_data[0].append(
+                    etree.Comment(
+                        self.create_nuclide_name(my_nuc["z"], my_nuc["a"], "")
+                    )
+                )
                 nuclide = etree.SubElement(nuclear_data[0], "nuclide")
             else:
                 nuclide = my_xpath[0]
             self._set_xml_data_for_nuclide(nuclide, nuclides[nuc])
 
     def _set_xml_data_for_reaction(self, reaction_element, reaction):
-        etree.SubElement(reaction_element, "source").text = str(
-            reaction.source)
+        etree.SubElement(reaction_element, "source").text = str(reaction.source)
 
         for reactant in reaction.reactants:
             etree.SubElement(reaction_element, "reactant").text = str(reactant)
@@ -1495,11 +1497,11 @@ class New_Xml(wb.Base):
             etree.SubElement(reaction_element, "product").text = str(product)
 
         if reaction.data["type"] == "single_rate":
-            etree.SubElement(reaction_element, "single_rate").text = \
-                str(reaction.data["rate"])
+            etree.SubElement(reaction_element, "single_rate").text = str(
+                reaction.data["rate"]
+            )
         elif reaction.data["type"] == "rate_table":
-            rate_table_element = etree.SubElement(
-                reaction_element, "rate_table")
+            rate_table_element = etree.SubElement(reaction_element, "rate_table")
             t9 = reaction.data["t9"]
             rate = reaction.data["rate"]
             sef = reaction.data["sef"]
@@ -1510,7 +1512,7 @@ class New_Xml(wb.Base):
                 etree.SubElement(point, "sef").text = str(sef[i])
         elif reaction.data["type"] == "non_smoker_fit":
             nsf_element = etree.SubElement(reaction_element, "non_smoker_fit")
-            for fit in reaction.data['fits']:
+            for fit in reaction.data["fits"]:
                 fit_element = etree.SubElement(nsf_element, "fit")
                 for d in fit:
                     if d == "note":
@@ -1558,21 +1560,17 @@ class New_Xml(wb.Base):
             return
 
         for reaction in reactions:
-            reaction_data[0].append(etree.Comment(
-                reactions[reaction].get_string()
-            ))
+            reaction_data[0].append(etree.Comment(reactions[reaction].get_string()))
             new_reaction = etree.SubElement(reaction_data[0], "reaction")
-            self._set_xml_data_for_reaction(
-                new_reaction, reactions[reaction]
-            )
+            self._set_xml_data_for_reaction(new_reaction, reactions[reaction])
 
     def _set_xml_data_for_zone(self, zone_element, zone):
 
-        if len(zone['properties']) > 0:
+        if len(zone["properties"]) > 0:
             props = etree.SubElement(zone_element, "optional_properties")
-            for property in zone['properties']:
+            for property in zone["properties"]:
                 prop = etree.SubElement(props, "property")
-                prop.text = str(zone['properties'][property])
+                prop.text = str(zone["properties"][property])
                 if isinstance(property, tuple):
                     prop.set("name", property[0])
                     if len(property) > 1:
@@ -1586,13 +1584,12 @@ class New_Xml(wb.Base):
                     prop.set("name", property)
 
         mass_fracs = etree.SubElement(zone_element, "mass_fractions")
-        for nuc in zone['mass fractions']:
+        for nuc in zone["mass fractions"]:
             nuclide = etree.SubElement(mass_fracs, "nuclide")
             nuclide.set("name", nuc[0])
             etree.SubElement(nuclide, "z").text = str(nuc[1])
             etree.SubElement(nuclide, "a").text = str(nuc[2])
-            etree.SubElement(nuclide, "x").text = str(
-                zone['mass fractions'][nuc])
+            etree.SubElement(nuclide, "x").text = str(zone["mass fractions"][nuc])
 
     def set_zone_data(self, zones):
         """Method to set the zone data.

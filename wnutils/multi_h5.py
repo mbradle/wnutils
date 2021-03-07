@@ -100,9 +100,7 @@ class Multi_H5(wb.Base):
                 return
 
         for i, h5 in enumerate(h5s):
-            result = h5.get_zone_properties_in_groups_as_floats(
-                zone, [prop1, prop2]
-            )
+            result = h5.get_zone_properties_in_groups_as_floats(zone, [prop1, prop2])
             x = result[prop1] / xfactor
             y = result[prop2] / yfactor
             if plotParams:
@@ -184,16 +182,11 @@ class Multi_H5(wb.Base):
 
         if plotParams:
             if len(h5s) != len(plotParams):
-                print(
-                    "Number of plotParam elements must equal number of plots."
-                )
+                print("Number of plotParam elements must equal number of plots.")
                 return
 
         for i, h5 in enumerate(h5s):
-            x = (
-                h5.get_zone_properties_in_groups_as_floats(zone, [prop])[prop]
-                / xfactor
-            )
+            x = h5.get_zone_properties_in_groups_as_floats(zone, [prop])[prop] / xfactor
             y = h5.get_zone_mass_fractions_in_groups(zone, [species])
             if plotParams:
                 plt.plot(x, y[species], **plotParams[i])
