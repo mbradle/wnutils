@@ -115,8 +115,8 @@ class H5(wnb.Base):
             data["n"] = data["a"] - data["z"]
             data["source"] = nuclide_data[i][4].decode("ascii")
             data["state"] = nuclide_data[i][5].decode("ascii")
-            data["spin"] = nuclide_data[i][6]
-            data["mass excess"] = nuclide_data[i][7]
+            data["mass excess"] = nuclide_data[i][6]
+            data["spin"] = nuclide_data[i][7]
             result.append(data)
 
         return result
@@ -729,7 +729,7 @@ class H5(wnb.Base):
     def make_mass_fractions_movie(
         self,
         species,
-        movie_name,
+        movie_name="",
         property=None,
         fps=15,
         xfactor=1,
@@ -747,7 +747,7 @@ class H5(wnb.Base):
             in the movie.
 
             ``movie_name`` (:obj:`str`): A string giving the name of the
-            movie to be made.
+            resultin movie file.
 
             ``property`` (:obj:`str`, optional): A string giving property
             to be the x axis.  Defaults to zone index.
@@ -787,7 +787,7 @@ class H5(wnb.Base):
             Include directly, as a :obj:`dict`, or both.
 
         Returns:
-            A matplotlib plot.
+            The animation.
 
         """
         if plotParams:
@@ -857,4 +857,7 @@ class H5(wnb.Base):
             plt.draw()
 
         anim = animation.FuncAnimation(fig, updatefig, len(groups))
-        anim.save(movie_name, fps=fps)
+        if movie_name:
+            anim.save(movie_name, fps=fps)
+
+        return anim

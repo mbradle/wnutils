@@ -4,6 +4,15 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.9.0
+-------------
+
+New:
+
+  * A method to create an abundance chain movie has been added.
+  * Movie routines now return the animation, and the movie file name is now an optional
+    keyword. 
+
 Version 1.8.0
 -------------
 

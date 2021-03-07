@@ -979,29 +979,34 @@ class Xml(wb.Base):
 
         self.show_or_close(plt, kwargs)
 
-    def make_abundances_vs_nucleon_number_movie(
+    def make_abundance_chain_movie(
         self,
-        movie_name,
-        nucleon="a",
-        zone_xpath=" ",
+        movie_name = "",
+        nucleon=('z', 26),
+        zone_xpath="",
+        plot_vs_A=False,
         fps=15,
         title_func=None,
         rcParams=None,
         plotParams=None,
         **kwargs
     ):
-        """Method to make of movie of abundances summed by nucleon number.
+        """Method to make of movie of abundances in a chain (fixed Z or N).
 
         Args:
 
-            ``movie_name`` (:obj:`str`): A string giving the name of the
-            movie to be made.
+            ``movie_name`` (:obj:`str`, optional): A string giving the name of
+            resulting movie file.
 
-            ``nucleon`` (:obj:`str`, optional): A string giving the nucleon
-            (must be 'z', 'n', or 'a').  Defaults to 'a'.
+            ``nucleon`` (:obj:`tup`, optional): A tuple giving the nucleon.
+            The first entry must be the nucleon type (must be 'z' or 'n') while
+            the second entry must be the value.
 
             ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
             expression to select the zones. Defaults to all zones.
+
+            ``plot_vs_A`` (:obj:`bool`, optional): A boolean to select whether
+            abscissa should be mass number.
 
             ``fps`` (:obj:`float`, optional): A float giving the frames
             per second in the resulting movie.
@@ -1033,7 +1038,125 @@ class Xml(wb.Base):
             Include directly, as a :obj:`dict`, or both.
 
         Returns:
-            A matplotlib plot.
+            The animation.
+
+        """
+        fig = plt.figure()
+
+        self.set_plot_params(mpl, rcParams)
+
+        abunds = self.get_all_abundances_in_zones( zone_xpath=zone_xpath )
+        props = self.get_properties_as_floats(
+            ["time", "t9", "rho"], zone_xpath=zone_xpath
+        )
+
+        def updatefig(i):
+            fig.clear()
+            x = range(abunds.shape[2] + 1)
+            if plot_vs_A:
+                x = [xx + nucleon[1] for xx in x]
+            if nucleon[0] == 'z':
+                y = abunds[i, nucleon[1], :]
+            elif nucleon[0] == 'n':
+                y = abunds[i, :, nucleon[1]]
+            else:
+                print("Invalid nucleon")
+                return
+            if plotParams:
+                plt.plot(y, **plotParams)
+            else:
+                plt.plot(y)
+            if title_func:
+                tf = title_func(i)
+                if tf:
+                    if isinstance(tf, tuple):
+                        plt.title(tf[0], **tf[1])
+                    elif isinstance(tf, str):
+                        plt.title(tf)
+                    else:
+                        print("Invalid return from title function.")
+                        return
+            else:
+                if nucleon[0] == 'z':
+                    pre_str = 'Z = {0:d}, '.format(nucleon[1])
+                else:
+                    pre_str = 'N = {0:d}, '.format(nucleon[1])
+                title_str = pre_str + self.make_time_t9_rho_title_str(props, i)
+                plt.title(title_str)
+            if "xlabel" not in kwargs:
+                if not plot_vs_A:
+                    if nucleon[0] == 'z':
+                        plt.xlabel('N')
+                    else:
+                        plt.xlabel('Z')
+                else:
+                    plt.xlabel('A')
+            if "ylabel" not in kwargs:
+                plt.ylabel("Abundance per nucleon")
+            self.apply_class_methods(plt, kwargs)
+            plt.draw()
+
+        anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
+        if movie_name:
+            anim.save(movie_name, fps=fps)
+
+        return anim
+
+    def make_abundances_vs_nucleon_number_movie(
+        self,
+        movie_name = "",
+        nucleon="a",
+        zone_xpath="",
+        fps=15,
+        title_func=None,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
+    ):
+        """Method to make of movie of abundances summed by nucleon number.
+
+        Args:
+
+            ``movie_name`` (:obj:`str`, optional): A string giving the name of
+            resulting movie file.
+
+            ``nucleon`` (:obj:`str`, optional): A string giving the nucleon
+            (must be 'z', 'n', or 'a').  Defaults to 'a'.
+
+            ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
+            expression to select the zones. Defaults to all zones.
+
+            ``fps`` (:obj:`float`, optional): A float giving the frames
+            per second in the resulting movie file.
+
+            ``title_func`` (optional):
+            A
+            `function \
+            <https://docs.python.org/3/library/stdtypes.html#functions>`_
+            that applies the title to each frame of the movie.  The function
+            must take a single argument, an :obj:`int` giving the index of the
+            frame to which the title will be applied.  Other data can be bound
+            to the function.  The function must return either a :obj:`str`
+            giving the title or a two-element :obj:`tuple` in which the
+            first element is a string giving the title and the second element
+            is a :obj:`dict` with optional :obj:`matplotlib.pyplot.title`
+            keyword arguments.  The default is a title giving the time in
+            seconds, the temperature in billions of Kelvins, and the
+            mass density in grams / cc.
+
+            ``rcParams`` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.rcParams` to be applied to the movie.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the lines in the movie.
+
+            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            Include directly, as a :obj:`dict`, or both.
+
+        Returns:
+            The animation.
 
         """
         fig = plt.figure()
@@ -1073,12 +1196,15 @@ class Xml(wb.Base):
             plt.draw()
 
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
-        anim.save(movie_name, fps=fps)
+        if movie_name:
+            anim.save(movie_name, fps=fps)
+
+        return anim
 
     def make_network_abundances_movie(
         self,
-        movie_name,
-        zone_xpath=" ",
+        movie_name = "",
+        zone_xpath="",
         fps=15,
         title_func=None,
         rcParams=None,
@@ -1091,14 +1217,14 @@ class Xml(wb.Base):
 
         Args:
 
-            ``movie_name`` (:obj:`str`): A string giving the name of the
-            movie to be made.
+            ``movie_name`` (:obj:`str`, optional): A string giving the name of
+            resulting movie file.
 
             ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
             expression to select the zones. Defaults to all zones.
 
             ``fps`` (:obj:`float`, optional): A float giving the frames
-            per second in the resulting movie.
+            per second in the resulting movie file.
 
             ``title_func`` (optional):
             A
@@ -1137,7 +1263,7 @@ class Xml(wb.Base):
             Include directly, as a :obj:`dict`, or both.
 
         Returns:
-            A matplotlib plot.
+            The animation.
 
         """
 
@@ -1199,7 +1325,10 @@ class Xml(wb.Base):
             plt.draw()
 
         anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
-        anim.save(movie_name, fps=fps)
+        if movie_name:
+            anim.save(movie_name, fps=fps)
+
+        return anim
 
     def validate(self):
         """Method to validate the xml
