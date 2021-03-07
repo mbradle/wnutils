@@ -13,6 +13,10 @@ New:
   * Movie routines now return the animation, and the movie file name is now an optional
     keyword. 
 
+Fix:
+
+  * Mis-assigments of spin and mass excess in the H5 class have been fixed.
+
 Version 1.8.0
 -------------
 
