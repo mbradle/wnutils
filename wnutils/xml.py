@@ -971,16 +971,34 @@ class Xml(wb.Base):
 
         self.show_or_close(plt, kwargs)
 
+    def _get_chain_abundances(self, i, abunds, nucleon, plot_vs_A):
+        if nucleon[0] == "z":
+            x = range(abunds.shape[2])
+        elif nucleon[0] == "n":
+            x = range(abunds.shape[1])
+        else:
+            print("Invalid nucleon")
+            return None
+        if plot_vs_A:
+            x = [xx + nucleon[1] for xx in x]
+        if nucleon[0] == "z":
+            y = abunds[i, nucleon[1], :]
+        elif nucleon[0] == "n":
+            y = abunds[i, :, nucleon[1]]
+
+        return (x,y)
+
     def make_abundance_chain_movie(
         self,
-        movie_name="",
+        movie_name=None,
         nucleon=("z", 26),
-        zone_xpath="",
+        zone_xpath='',
         plot_vs_A=False,
         fps=15,
         title_func=None,
         rcParams=None,
         plotParams=None,
+        extraPlot=None,
         **kwargs
     ):
         """Method to make of movie of abundances in a chain (fixed Z or N).
@@ -1026,6 +1044,11 @@ class Xml(wb.Base):
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
             keyword arguments to be applied to the lines in the movie.
 
+            ``extraPlot`` (:obj:`dict`, optional): A dictionary with an XPath
+            expression as the key and :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments as the value to be used to create extra
+            lines in the movie.
+
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
 
@@ -1042,22 +1065,35 @@ class Xml(wb.Base):
             ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
 
+        extra_abunds = {}
+
+        if extraPlot:
+            for key in extraPlot:
+                extra_abunds[key] = self.get_all_abundances_in_zones(zone_xpath=key) 
+                if extra_abunds[key].shape[0] > 1:
+                    print("Extra plot zone XPath must select single zone.")
+                    return None
+
         def updatefig(i):
             fig.clear()
-            x = range(abunds.shape[2] + 1)
-            if plot_vs_A:
-                x = [xx + nucleon[1] for xx in x]
-            if nucleon[0] == "z":
-                y = abunds[i, nucleon[1], :]
-            elif nucleon[0] == "n":
-                y = abunds[i, :, nucleon[1]]
-            else:
-                print("Invalid nucleon")
-                return
+
+            x, y = self._get_chain_abundances(i, abunds, nucleon, plot_vs_A)
+
             if plotParams:
-                plt.plot(y, **plotParams)
+                plt.plot(x, y, **plotParams)
             else:
-                plt.plot(y)
+                plt.plot(x, y)
+
+            if extraPlot:
+                for key in extraPlot:
+                    x, y = self._get_chain_abundances(0, extra_abunds[key], nucleon,
+                                                      plot_vs_A)
+
+                    if extraPlot[key]:
+                        plt.plot(x, y, **extraPlot[key])
+                    else:
+                        plt.plot(x, y)
+
             if title_func:
                 tf = title_func(i)
                 if tf:
@@ -1103,6 +1139,7 @@ class Xml(wb.Base):
         title_func=None,
         rcParams=None,
         plotParams=None,
+        extraPlot=None,
         **kwargs
     ):
         """Method to make of movie of abundances summed by nucleon number.
@@ -1144,6 +1181,11 @@ class Xml(wb.Base):
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
             keyword arguments to be applied to the lines in the movie.
 
+            ``extraPlot`` (:obj:`dict`, optional): A dictionary with an XPath
+            expression as the key and :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments as the value to be used to create extra
+            lines in the movie.
+
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
 
@@ -1162,12 +1204,31 @@ class Xml(wb.Base):
             ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
 
+        extra_abunds = {}
+
+        if extraPlot:
+            for key in extraPlot:
+                extra_abunds[key] = self.get_abundances_vs_nucleon_number(
+                    nucleon=nucleon, zone_xpath=key) 
+                if extra_abunds[key].shape[0] > 1:
+                    print("Extra plot zone XPath must select single zone.")
+                    return None
+
         def updatefig(i):
             fig.clear()
+
             if plotParams:
                 plt.plot(abunds[i, :], **plotParams)
             else:
                 plt.plot(abunds[i, :])
+
+            if extraPlot:
+                for key in extraPlot:
+                    if extraPlot[key]:
+                        plt.plot(extra_abunds[key][0,:], **extraPlot[key])
+                    else:
+                        plt.plot(extra_abunds[key][0,:])
+
             if title_func:
                 tf = title_func(i)
                 if tf:

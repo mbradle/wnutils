@@ -136,6 +136,52 @@ title function.  For example, you could type::
 If you do not do this, you will have a mismatch between the frames and their
 titles.
 
+You may also add extra curves to the movie that stay fixed in each frame.  To do so,
+create a dictionary that has as its key an XPath expression that
+selects a single zone and as its value a dictionary of plot parameters.  Pass this
+into the method as the keyword `extraPlot`.  For example, you could type::
+
+    >>> anim = my_xml.make_abundances_vs_nucleon_number_movie(extraPlot={"[position()=1]": {'lw': 0.3, 'color': 'blue', 'label': 'Initial'}}, yscale = 'log', ylim = [1.e-10,1], plotParams={'label': 'Current'}, legend={'loc': 'upper right'})
+
+This returns the animation.  You can the write a movie by typing::
+
+    >>> anim.save('abunds.mp4', fps = 15)
+
+Of course, you can also pass the movie name in as the first parameter or as a
+keyword to make the movie directly::
+
+    >>> my_xml.make_abundances_vs_nucleon_number_movie(movie_name = 'abunds.mp4', extraPlot={"[position()=1]": {'lw': 0.3, 'color': 'blue', 'label': 'Initial'}}, yscale = 'log', ylim = [1.e-10,1], plotParams={'label': 'Current'}, legend={'loc': 'upper right'})
+
+Animating an abundance chain
+............................
+
+An abundance chain is the collection of abundances along a fixed `Z` or `N`.
+To make a movie of an abundance chain, type::
+
+    >>> my_xml.make_abundance_chain_movie('abund_chain.mp4')
+
+The argument `abund_chain.mp4` is the name of the movie file that will be
+created.  The default is to plot along the fixed `Z = 26` chain.  To plot against
+a different `Z`, use the `nucleon` keyword to enter a tuple.  For example, to plot
+for `Z = 30`, type::
+
+    >>> my_xml.make_abundance_chain_movie(movie_name = 'abund_chain.mp4', nucleon=('z', 30), plot_vs_A=True)
+
+The `plot_vs_A` keyword causes the abscissa to be mass number instead of neutron
+number.  To plot for `N = 30`, type::
+
+    >>> my_xml.make_abundance_chain_movie('abund_chain.mp4', nucleon=('n', 30), plot_vs_A=True)
+
+As with the abundances versus nucleon number movie,
+you can add appropriate keyword arguments and extra curves to adjust the movie
+to your taste.  For example, you can type::
+
+    >>> extra_plot = {"[last()]": {'lw': 0.5, 'label': 'Final', 'color': 'red'}}
+    >>> my_xml.make_abundance_chain_movie('abund_chain.mp4', nucleon = ('z', 28), xlim = [20, 50], ylim = [1.e-10,1], yscale = 'log', xlabel = 'N, Neutron Number', ylabel = 'Abundance', extraPlot = extra_plot, plotParams = {'label': 'Current'}, legend={'loc': 'upper right'})
+
+You may also adjust the title by defining a title function and binding, as with the
+nucleon number movie.
+
 Animating the network abundances
 ................................
 

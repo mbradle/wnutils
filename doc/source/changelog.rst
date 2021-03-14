@@ -4,13 +4,21 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
-Version 1.9.1
--------------
+Version 1.10.0
+--------------
+
+New:
+
+  * It is now possible to add extra curves to the XML nucleon number and abundance
+    chain movies.
+  * The animation tutorial has been updated to include information on the abundance
+    chain movie and on adding extra curves.
 
 Fix:
 
   * Parser now treats the reaction source as optional in the input XML file,
     as expected from the schema.
+  * The assignment of mass number for abundance chain movies has been fixed.
 
 Version 1.9.0
 -------------
