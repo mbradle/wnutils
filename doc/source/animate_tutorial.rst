@@ -6,7 +6,7 @@ if you have read in the various data from a webnucleo file, you can
 animate them using `matplotlib <https://matplotlib.org>`_.
 We have found, however, that it is convenient to have a handful of movie
 methods in the `wnutils` API.  This tutorial demonstrates how to use these
-methods.  Interested users may, if desired, build their own movie routines
+methods.  Interested users can, if desired, build their own movie routines
 based on the source code of the `wnutils` routines.
 
 Animation writers
@@ -136,7 +136,7 @@ title function.  For example, you could type::
 If you do not do this, you will have a mismatch between the frames and their
 titles.
 
-You may also add extra curves to the movie that stay fixed in each frame.  To do so,
+You can also add extra curves to the movie that stay fixed in each frame.  To do so,
 create a dictionary that has as its key an XPath expression that
 selects a single zone and as its value a dictionary of plot parameters.  Pass this
 into the method as the keyword `extraPlot`.  For example, you could type::
@@ -179,7 +179,7 @@ to your taste.  For example, you can type::
     >>> extra_plot = {"[last()]": {'lw': 0.5, 'label': 'Final', 'color': 'red'}}
     >>> my_xml.make_abundance_chain_movie('abund_chain.mp4', nucleon = ('z', 28), xlim = [20, 50], ylim = [1.e-10,1], yscale = 'log', xlabel = 'N, Neutron Number', ylabel = 'Abundance', extraPlot = extra_plot, plotParams = {'label': 'Current'}, legend={'loc': 'upper right'})
 
-You may also adjust the title by defining a title function and binding, as with the
+You can also adjust the title by defining a title function and binding, as with the
 nucleon number movie.
 
 Animating the network abundances
