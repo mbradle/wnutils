@@ -145,7 +145,8 @@ class Reaction(wb.Base):
             return self._get_user_rate_data(user_rate[0])
 
     def _set_data(self, reaction_node):
-        self.source = reaction_node.xpath("source")[0].text
+        if reaction_node.xpath("source"):
+            self.source = reaction_node.xpath("source")[0].text
 
         reactants = reaction_node.xpath("reactant")
         for reactant in reactants:
