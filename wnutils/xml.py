@@ -986,13 +986,13 @@ class Xml(wb.Base):
         elif nucleon[0] == "n":
             y = abunds[i, :, nucleon[1]]
 
-        return (x,y)
+        return (x, y)
 
     def make_abundance_chain_movie(
         self,
         movie_name=None,
         nucleon=("z", 26),
-        zone_xpath='',
+        zone_xpath="",
         plot_vs_A=False,
         fps=15,
         title_func=None,
@@ -1069,7 +1069,7 @@ class Xml(wb.Base):
 
         if extraPlot:
             for key in extraPlot:
-                extra_abunds[key] = self.get_all_abundances_in_zones(zone_xpath=key) 
+                extra_abunds[key] = self.get_all_abundances_in_zones(zone_xpath=key)
                 if extra_abunds[key].shape[0] > 1:
                     print("Extra plot zone XPath must select single zone.")
                     return None
@@ -1086,8 +1086,9 @@ class Xml(wb.Base):
 
             if extraPlot:
                 for key in extraPlot:
-                    x, y = self._get_chain_abundances(0, extra_abunds[key], nucleon,
-                                                      plot_vs_A)
+                    x, y = self._get_chain_abundances(
+                        0, extra_abunds[key], nucleon, plot_vs_A
+                    )
 
                     if extraPlot[key]:
                         plt.plot(x, y, **extraPlot[key])
@@ -1209,7 +1210,8 @@ class Xml(wb.Base):
         if extraPlot:
             for key in extraPlot:
                 extra_abunds[key] = self.get_abundances_vs_nucleon_number(
-                    nucleon=nucleon, zone_xpath=key) 
+                    nucleon=nucleon, zone_xpath=key
+                )
                 if extra_abunds[key].shape[0] > 1:
                     print("Extra plot zone XPath must select single zone.")
                     return None
@@ -1225,9 +1227,9 @@ class Xml(wb.Base):
             if extraPlot:
                 for key in extraPlot:
                     if extraPlot[key]:
-                        plt.plot(extra_abunds[key][0,:], **extraPlot[key])
+                        plt.plot(extra_abunds[key][0, :], **extraPlot[key])
                     else:
-                        plt.plot(extra_abunds[key][0,:])
+                        plt.plot(extra_abunds[key][0, :])
 
             if title_func:
                 tf = title_func(i)
