@@ -463,7 +463,7 @@ class Xml(wb.Base):
             a = int((sp.xpath("a"))[0].text)
             name_array = sp.xpath("@name")
             if len(name_array) == 0:
-                name = self.create_nuclide_name(z, a, "" )
+                name = self.create_nuclide_name(z, a, "")
             else:
                 name = name_array[0].text
             result[(name, z, a)] = float((sp.xpath("x"))[0].text)
