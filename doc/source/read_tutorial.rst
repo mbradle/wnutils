@@ -388,7 +388,7 @@ last 10 zones, use an XPath expression::
 Retrieve abundances for a chain of species.
 ...........................................
 
-To retrieve the abundances a for set of isotopes or isotones, use the method
+To retrieve the abundances for a set of isotopes or isotones, use the method
 to get chain abundances.  For example, to retrieve the isotopic abundances for
 `Z = 30` for all timesteps, type::
 
