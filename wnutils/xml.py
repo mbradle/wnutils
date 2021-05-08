@@ -690,8 +690,8 @@ class Xml(wb.Base):
         zones = self._get_zones(zone_xpath)
 
         lim = self.get_network_limits()
-        z_max = np.max(lim['z'])
-        n_max = np.max(lim['n_max'])
+        z_max = np.max(lim["z"])
+        n_max = np.max(lim["n_max"])
 
         result = np.zeros((len(zones), z_max + 1, n_max + 1))
 
