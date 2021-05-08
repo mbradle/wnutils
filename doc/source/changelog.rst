@@ -4,7 +4,7 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
-Version 1.11.0
+Version 2.0.0
 --------------
 
 New:
@@ -13,6 +13,7 @@ New:
   * The method to return chain abundances has been promoted to the API.
 
 Fix:
+
   * The XML method to return all abundances in zones now returns the abundances for all species.
 
 Version 1.10.2
