@@ -396,7 +396,7 @@ class Base:
 
         """
 
-        title_str = "time (s) = %8.2e, $T_9$ = %4.2f, rho (g/cc) = %8.2e" % (
+        title_str = "time (s) = %8.2e, $T_9$ = %5.2f, rho (g/cc) = %8.2e" % (
             props["time"][i],
             props["t9"][i],
             props["rho"][i],

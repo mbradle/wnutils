@@ -136,12 +136,17 @@ title function.  For example, you could type::
 If you do not do this, you will have a mismatch between the frames and their
 titles.
 
-You can also add extra curves to the movie that stay fixed in each frame.  To do so,
-create a dictionary that has as its key an XPath expression that
-selects a single zone and as its value a dictionary of plot parameters.  Pass this
-into the method as the keyword `extraPlot`.  For example, you could type::
+You can also add extra curves to the movie that either stay fixed in each frame or vary.  To do so for a fixed curve,
+create an array of tuples.  The first element of the tuple gives the array
+of abscissa values, the second element gives the array of ordinate values,
+and the third element, if provided, gives a dictionary of valid matplotlib
+plot options.  Pass the array of tuples into the methods as the keyword
+parameter `extraFixedCurves`.  For example, you could type::
 
-    >>> anim = my_xml.make_abundances_vs_nucleon_number_movie(extraPlot={"[position()=1]": {'lw': 0.3, 'color': 'blue', 'label': 'Initial'}}, yscale = 'log', ylim = [1.e-10,1], plotParams={'label': 'Current'}, legend={'loc': 'upper right'})
+    >>> import numpy as np
+    >>> ya = my_xml.get_abundances_vs_nucleon_number(zone_xpath = "[position() = 1]")
+    >>> my_extra = [(np.arange(len(ya[0])), ya[0], {'lw': 0.3, 'color': 'blue', 'label': 'Initial'})]
+    >>> anim = my_xml.make_abundances_vs_nucleon_number_movie(extraFixedCurves=my_extra, yscale = 'log', ylim = [1.e-10,1], plotParams={'label': 'Current'}, legend={'loc': 'upper right'})
 
 This returns the animation.  You can the write a movie by typing::
 
@@ -150,7 +155,7 @@ This returns the animation.  You can the write a movie by typing::
 Of course, you can also pass the movie name in as the first parameter or as a
 keyword to make the movie directly::
 
-    >>> my_xml.make_abundances_vs_nucleon_number_movie(movie_name = 'abunds.mp4', extraPlot={"[position()=1]": {'lw': 0.3, 'color': 'blue', 'label': 'Initial'}}, yscale = 'log', ylim = [1.e-10,1], plotParams={'label': 'Current'}, legend={'loc': 'upper right'})
+    >>> my_xml.make_abundances_vs_nucleon_number_movie(movie_name = 'abunds.mp4', extraFixedCurves=my_extra, yscale = 'log', ylim = [1.e-10,1], plotParams={'label': 'Current'}, legend={'loc': 'upper right'})
 
 Animating an abundance chain
 ............................
@@ -176,8 +181,10 @@ As with the abundances versus nucleon number movie,
 you can add appropriate keyword arguments and extra curves to adjust the movie
 to your taste.  For example, you can type::
 
-    >>> extra_plot = {"[last()]": {'lw': 0.5, 'label': 'Final', 'color': 'red'}}
-    >>> my_xml.make_abundance_chain_movie('abund_chain.mp4', nucleon = ('z', 28), xlim = [20, 50], ylim = [1.e-10,1], yscale = 'log', xlabel = 'N, Neutron Number', ylabel = 'Abundance', extraPlot = extra_plot, plotParams = {'label': 'Current'}, legend={'loc': 'upper right'})
+    >>> my_nucleon = ('z', 28)
+    >>> x, y = my_xml.get_chain_abundances(my_nucleon, zone_xpath="[last()]")
+    >>> extra_curve = [(x, y[0], {'lw': 0.5, 'label': 'Final', 'color': 'red'})]
+    >>> my_xml.make_abundance_chain_movie('abund_chain.mp4', nucleon = my_nucleon, xlim = [20, 50], ylim = [1.e-10,1], yscale = 'log', xlabel = 'N, Neutron Number', ylabel = 'Abundance', extraFixedCurves = extra_curve, plotParams = {'label': 'Current'}, legend={'loc': 'upper right'})
 
 You can also adjust the title by defining a title function and binding, as with the
 nucleon number movie.

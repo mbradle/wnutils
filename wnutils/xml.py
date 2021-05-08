@@ -689,25 +689,16 @@ class Xml(wb.Base):
 
         zones = self._get_zones(zone_xpath)
 
-        z_max = 0
-        n_max = 0
-
-        zone_array = []
-        for zone in zones:
-            sp = self._get_nuclide_data_for_zone(zone)
-            for s in sp:
-                if s[1] > z_max:
-                    z_max = s[1]
-                if s[2] - s[1] > n_max:
-                    n_max = s[2] - s[1]
-            zone_array.append(sp)
+        lim = self.get_network_limits()
+        z_max = np.max(lim['z'])
+        n_max = np.max(lim['n_max'])
 
         result = np.zeros((len(zones), z_max + 1, n_max + 1))
 
-        for i in range(len(zone_array)):
-
-            for s in zone_array[i]:
-                result[i, s[1], s[2] - s[1]] += zone_array[i][s] / s[2]
+        for i in range(len(zones)):
+            sp = self._get_nuclide_data_for_zone(zones[i])
+            for s in sp:
+                result[i, s[1], s[2] - s[1]] += sp[s] / s[2]
 
         return result
 
@@ -975,7 +966,30 @@ class Xml(wb.Base):
 
         self.show_or_close(plt, kwargs)
 
-    def _get_chain_abundances(self, i, abunds, nucleon, plot_vs_A):
+    def get_chain_abundances(self, nucleon, zone_xpath="", vs_A=False):
+        """Method to retrieve the abundances in a chain (fixed Z or N).
+
+        Args:
+
+            ``nucleon`` (:obj:`tuple`, optional): A tuple giving the nucleon.
+            The first entry must be the nucleon type (must be 'z' or 'n') while
+            the second entry must be the value.
+
+            ``zone_xpath`` (:obj:`str`, optional): A string giving the XPath
+            expression to select the zones. Defaults to all zones.
+
+            ``vs_A`` (:obj:`bool`, optional): A boolean to select whether
+            abscissa data should be mass number.
+
+        Returns:
+            A :obj:`tuple` containing an array of the nucleon values as the
+            first element and a two-d :obj:`numpy.array` as the second element.
+            The first index of the two-d array indicates the step and the
+            second the abundance of the species with the corresponding nucleon
+            number in the first element with the same index.
+
+        """
+        abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
         if nucleon[0] == "z":
             x = range(abunds.shape[2])
         elif nucleon[0] == "n":
@@ -983,12 +997,12 @@ class Xml(wb.Base):
         else:
             print("Invalid nucleon")
             return None
-        if plot_vs_A:
+        if vs_A:
             x = [xx + nucleon[1] for xx in x]
         if nucleon[0] == "z":
-            y = abunds[i, nucleon[1], :]
+            y = abunds[:, nucleon[1], :]
         elif nucleon[0] == "n":
-            y = abunds[i, :, nucleon[1]]
+            y = abunds[:, :, nucleon[1]]
 
         return (x, y)
 
@@ -1002,7 +1016,8 @@ class Xml(wb.Base):
         title_func=None,
         rcParams=None,
         plotParams=None,
-        extraPlot=None,
+        extraFixedCurves=None,
+        extraCurves=None,
         **kwargs
     ):
         """Method to make of movie of abundances in a chain (fixed Z or N).
@@ -1012,7 +1027,7 @@ class Xml(wb.Base):
             ``movie_name`` (:obj:`str`, optional): A string giving the name of
             resulting movie file.
 
-            ``nucleon`` (:obj:`tup`, optional): A tuple giving the nucleon.
+            ``nucleon`` (:obj:`tuple`, optional): A tuple giving the nucleon.
             The first entry must be the nucleon type (must be 'z' or 'n') while
             the second entry must be the value.
 
@@ -1048,10 +1063,25 @@ class Xml(wb.Base):
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
             keyword arguments to be applied to the lines in the movie.
 
-            ``extraPlot`` (:obj:`dict`, optional): A dictionary with an XPath
-            expression as the key and :obj:`matplotlib.pyplot.plot` optional
-            keyword arguments as the value to be used to create extra
-            lines in the movie.
+            ``extraFixedCurves`` (:obj:`list`, optional): A list of
+            :obj:`tuple` objects giving fixed curves to appear on each
+            frame of the animation.  The first element of the tuple is a
+            :obj:`list` giving the abscissa values for the curve, the second
+            element is the ordinate values for the curve, and the third
+            element, if present, is a :obj:`dict` of
+            :obj:`matplotlib.pyplot.plot` optional keyword arguments to be
+            applied to the extra fixed curves in the movie.
+
+            ``extraCurves`` (:obj:`list`, optional): A list of
+            :obj:`tuple` objects giving curves to appear on each
+            frame of the animation.  The first element of the tuple is a
+            :obj:`list` giving the abscissa values for the curve, the second
+            element is a two-d :obj:`numpy.array` giving the ordinate values
+            for the curve corresponding to each timestep in the animation,
+            and the third element, if present, is a :obj:`dict` of
+            :obj:`matplotlib.pyplot.plot` optional keyword arguments to be
+            applied to the extra fixed curves in the movie.
+
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -1064,40 +1094,40 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
+        x, y = self.get_chain_abundances(nucleon, zone_xpath=zone_xpath, vs_A=plot_vs_A)
         props = self.get_properties_as_floats(
             ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
 
-        extra_abunds = {}
+        # Check the array length against the number of steps
 
-        if extraPlot:
-            for key in extraPlot:
-                extra_abunds[key] = self.get_all_abundances_in_zones(zone_xpath=key)
-                if extra_abunds[key].shape[0] > 1:
-                    print("Extra plot zone XPath must select single zone.")
+        if extraCurves:
+            for tup in extraCurves:
+                if tup[1].shape[0] != y.shape[0]:
+                    print("Extra curve does not have the right length.")
                     return None
 
         def updatefig(i):
             fig.clear()
 
-            x, y = self._get_chain_abundances(i, abunds, nucleon, plot_vs_A)
-
             if plotParams:
-                plt.plot(x, y, **plotParams)
+                plt.plot(x, y[i], **plotParams)
             else:
-                plt.plot(x, y)
+                plt.plot(x, y[i])
 
-            if extraPlot:
-                for key in extraPlot:
-                    x, y = self._get_chain_abundances(
-                        0, extra_abunds[key], nucleon, plot_vs_A
-                    )
-
-                    if extraPlot[key]:
-                        plt.plot(x, y, **extraPlot[key])
+            if extraFixedCurves:
+                for tup in extraFixedCurves:
+                    if len(tup) == 2:
+                        plt.plot(tup[0], tup[1])
                     else:
-                        plt.plot(x, y)
+                        plt.plot(tup[0], tup[1], **tup[2])
+
+            if extraCurves:
+                for tup in extraCurves:
+                    if len(tup) == 2:
+                        plt.plot(tup[0], tup[1][i])
+                    else:
+                        plt.plot(tup[0], tup[1][i], **tup[2])
 
             if title_func:
                 tf = title_func(i)
@@ -1129,7 +1159,7 @@ class Xml(wb.Base):
             self.apply_class_methods(plt, kwargs)
             plt.draw()
 
-        anim = animation.FuncAnimation(fig, updatefig, abunds.shape[0])
+        anim = animation.FuncAnimation(fig, updatefig, y.shape[0])
         if movie_name:
             anim.save(movie_name, fps=fps)
 
@@ -1144,7 +1174,8 @@ class Xml(wb.Base):
         title_func=None,
         rcParams=None,
         plotParams=None,
-        extraPlot=None,
+        extraFixedCurves=None,
+        extraCurves=None,
         **kwargs
     ):
         """Method to make of movie of abundances summed by nucleon number.
@@ -1186,10 +1217,24 @@ class Xml(wb.Base):
             dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
             keyword arguments to be applied to the lines in the movie.
 
-            ``extraPlot`` (:obj:`dict`, optional): A dictionary with an XPath
-            expression as the key and :obj:`matplotlib.pyplot.plot` optional
-            keyword arguments as the value to be used to create extra
-            lines in the movie.
+            ``extraFixedCurves`` (:obj:`list`, optional): A list of
+            :obj:`tuple` objects giving fixed curves to appear on each
+            frame of the animation.  The first element of the tuple is a
+            :obj:`list` giving the abscissa values for the curve, the second
+            element is the ordinate values for the curve, and the third
+            element, if present, is a :obj:`dict` of
+            :obj:`matplotlib.pyplot.plot` optional keyword arguments to be
+            applied to the extra fixed curves in the movie.
+
+            ``extraCurves`` (:obj:`list`, optional): A list of
+            :obj:`tuple` objects giving curves to appear on each
+            frame of the animation.  The first element of the tuple is a
+            :obj:`list` giving the abscissa values for the curve, the second
+            element is a two-d :obj:`numpy.array` giving the ordinate values
+            for the curve corresponding to each timestep in the animation,
+            and the third element, if present, is a :obj:`dict` of
+            :obj:`matplotlib.pyplot.plot` optional keyword arguments to be
+            applied to the extra fixed curves in the movie.
 
             ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
             Include directly, as a :obj:`dict`, or both.
@@ -1209,15 +1254,12 @@ class Xml(wb.Base):
             ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
 
-        extra_abunds = {}
+        # Check the array length against the number of steps
 
-        if extraPlot:
-            for key in extraPlot:
-                extra_abunds[key] = self.get_abundances_vs_nucleon_number(
-                    nucleon=nucleon, zone_xpath=key
-                )
-                if extra_abunds[key].shape[0] > 1:
-                    print("Extra plot zone XPath must select single zone.")
+        if extraCurves:
+            for tup in extraCurves:
+                if tup[1].shape[0] != abunds.shape[0]:
+                    print("Extra curve does not have the right length.")
                     return None
 
         def updatefig(i):
@@ -1228,12 +1270,19 @@ class Xml(wb.Base):
             else:
                 plt.plot(abunds[i, :])
 
-            if extraPlot:
-                for key in extraPlot:
-                    if extraPlot[key]:
-                        plt.plot(extra_abunds[key][0, :], **extraPlot[key])
+            if extraFixedCurves:
+                for tup in extraFixedCurves:
+                    if len(tup) == 2:
+                        plt.plot(tup[0], tup[1])
                     else:
-                        plt.plot(extra_abunds[key][0, :])
+                        plt.plot(tup[0], tup[1], **tup[2])
+
+            if extraCurves:
+                for tup in extraCurves:
+                    if len(tup) == 2:
+                        plt.plot(tup[0], tup[1][i])
+                    else:
+                        plt.plot(tup[0], tup[1][i], **tup[2])
 
             if title_func:
                 tf = title_func(i)

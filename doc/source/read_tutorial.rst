@@ -385,6 +385,42 @@ last 10 zones, use an XPath expression::
 
     >>> y = my_xml.get_abundances_vs_nucleon_number(nucleon='n', zone_xpath='[position() > last() - 10]')
 
+Retrieve abundances for a chain of species.
+...........................................
+
+To retrieve the abundances a for set of isotopes or isotones, use the method
+to get chain abundances.  For example, to retrieve the isotopic abundances for
+`Z = 30` for all timesteps, type::
+
+    >>> n, y = my_xml.get_chain_abundances(('z', 30))
+
+The method returns a :obj:`tuple` with the first element being an array of
+neutron numbers for the isotopes and the second element being a two dimensional
+:obj:`numpy.array` with the abundances for each step.  To print the isotopic
+abundances in the final step, type::
+
+    >>> step = y.shape[0] - 1
+    >>> for i in range(y.shape[1]):
+    ...     print('N =', n[i], ', Y[N] =', y[step, i])
+    ...
+
+To return the isotonic abundances for `N = 25` in the first thirty timesteps,
+type::
+
+    >>> z, y = my_xml.get_chain_abundances(('n', 25), zone_xpath="[position() <= 30]")
+
+To return the same isotonic abundances, but as a function of the mass number,
+set the keyword variable `vs_A` to True::
+
+    >>> a, y = my_xml.get_chain_abundances(('n', 25), zone_xpath="[position() <= 30]", vs_A=True)
+
+To print these abundances in the thirtieth step, type::
+
+    >>> step = y.shape[0] - 1
+    >>> for i in range(y.shape[1]):
+    ...     print('A =', a[i], ', Y[A] =', y[step, i])
+    ...
+
 
 Multi_XML
 ---------

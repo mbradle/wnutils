@@ -4,6 +4,17 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 1.11.0
+--------------
+
+New:
+
+  * It is now possible to add fixed or time-dependent curves to the XML nucleon number and abundance chain movies.  The data are added via an array of tuples, which is a backwards incompatible change from the capability added in version 1.10.0.
+  * The method to return chain abundances has been promoted to the API.
+
+Fix:
+  * The XML method to return all abundances in zones now returns the abundances for all species.
+
 Version 1.10.2
 --------------
 
