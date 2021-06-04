@@ -1725,7 +1725,7 @@ class New_Xml(wb.Base):
         zone_data = self._xml.xpath("//zone_data")
 
         if len(zone_data) == 0:
-            print("Attempting to set non-existent reaction_data.")
+            print("Attempting to set non-existent zone_data.")
             return
 
         for zone in zones:
