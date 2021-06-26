@@ -321,6 +321,7 @@ class Xml(wb.Base):
     def __init__(self, file):
         parser = etree.XMLParser(remove_blank_text=True)
         self._xml = etree.parse(file, parser)
+        self._xml.xinclude()
         self._root = self._xml.getroot()
 
     def _get_state_data(self, state_data, node):
