@@ -4,6 +4,20 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.2.0
+--------------
+
+New:
+
+  * It is now possible to print out newly created XML files to the standard
+    output.
+  * The link to webnucleo has been updated.
+
+Fix:
+
+  * An ambiguity in retrieving atomic number, mass number, and state data from
+    a nuclide with name 'n' (that is, neutron or nitrogen) has been fixed.
+
 Version 2.1.0
 --------------
 

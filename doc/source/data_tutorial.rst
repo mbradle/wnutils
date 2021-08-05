@@ -4,7 +4,7 @@ Getting the Data
 ================
 
 In general, you will be using `wnutils` with data you have generated with
-`webnucleo <https://sourceforge.net/u/mbradle/blog>`_ codes.  However,
+`webnucleo <https://webnucleo.org>`_ codes.  However,
 we have already generated some data you can use with these tutorials.
 You must download those data from the web.
 

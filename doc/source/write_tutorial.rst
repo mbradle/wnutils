@@ -3,7 +3,7 @@
 Creating and Writing XML Data
 =============================
 
-The preferred format for `webnucleo <http://sourceforge.net/u/mbradle/blog/>`_
+The preferred format for `webnucleo <http://webnucleo.org/>`_
 data input is `XML <https://www.w3.org/TR/REC-xml/>`_.
 `wnutils` routines allow users to create or update such XML.
 

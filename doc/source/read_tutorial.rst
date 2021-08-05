@@ -3,7 +3,7 @@
 Reading in the Data
 ===================
 
-`webnucleo <http://sourceforge.net/u/mbradle/blog/>`_ data files are
+`webnucleo <https://webnucleo.org/>`_ data files are
 in either in `XML <https://www.w3.org/TR/REC-xml/>`_ or
 `HDF5 <https://support.hdfgroup.org/HDF5/>`_ format.  `wnutils` routines
 can read either format.
@@ -181,7 +181,7 @@ the keyword `user_funcs`.
 Read all properties in a zone.
 ..............................
 
-In a `webnucleo <http://sourceforge.net/u/mbradle/blog/>`_ XML file,
+In a `webnucleo <http://webnucleo.org/>`_ XML file,
 a `zone` is a collection of the `mutable` quantities during a network
 calculation.  For a single-zone network calculation, a zone is often a
 time step in the calculation.  The zone will contain mass fractions of

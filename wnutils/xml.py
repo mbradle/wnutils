@@ -1496,7 +1496,22 @@ class Xml(wb.Base):
 
         return result
 
+    def print(self, pretty_print=True):
+        """Method to print the xml to standard output.
 
+        Args:
+
+           ``pretty_print`` (:obj:`bool`, optional): If set to True,
+           routine outputs the xml in nice indented format.
+
+        Returns:
+            On successful return, the underlying xml has been printed
+            to the standard output.
+
+        """
+
+        print(etree.tostring(self._xml,
+                             pretty_print=pretty_print).decode("utf-8"))
 class New_Xml(wb.Base):
     """A class for creating webnucleo xml files.
 
@@ -1740,7 +1755,7 @@ class New_Xml(wb.Base):
             self._set_xml_data_for_zone(new_zone, zones[zone])
 
     def write(self, file, pretty_print=True):
-        """Method to write the xml
+        """Method to write the xml to a file.
 
         Args:
 
@@ -1757,3 +1772,4 @@ class New_Xml(wb.Base):
         """
 
         self._xml.write(file, pretty_print=pretty_print)
+
