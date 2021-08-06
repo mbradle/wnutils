@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.2.1
+--------------
+
+Fix:
+
+  * An error in assigning the atomic number of species starting with 'n'
+    that was introduced in 2.2.0 has been fixed.
+
 Version 2.2.0
 --------------
 

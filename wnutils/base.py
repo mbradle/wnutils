@@ -349,7 +349,8 @@ class Base:
             if not mass:
                 return (0, len(elem), state)
             else:
-                return (7, int(mass), state)
+                if len(elem) == 1:
+                    return (7, int(mass), state)
 
         return (int(self._get_z_from_element_name(elem)), int(mass), state)
 
