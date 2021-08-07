@@ -5,7 +5,8 @@ Getting the Data
 
 In general, you will be using `wnutils` with data you have generated with
 `webnucleo <https://webnucleo.org>`_ codes.  However,
-we have already generated some data you can use with these tutorials.
+we have already generated some
+`data <https://osf.io/2a4kh/>`_ you can use with these tutorials.
 You must download those data from the web.
 
 First, begin by creating a directory in which to work on the wnutils tutorials.
@@ -15,11 +16,9 @@ You might create this off your home directory, so you could type::
     $ mkdir wnutils_tutorials
     $ cd wnutils_tutorials
 
-Next, download the data tarball
-`wnutils_tutorials_data.tar.gz <http://nucnet-tools.sourceforge.net/data_pub/tutorials/wnutils/2018-06-09/wnutils_tutorials_data.tar.gz>`_
-and move the file to your `wnutils_tutorials` directory.  Extract the
-data by typing::
+Next, download the data tarball and extract the data by typing::
 
+    $ curl -O -J -L https://osf.io/2a4kh/download
     $ gunzip wnutils_tutorials_data.tar.gz
     $ tar xvf wnutils_tutorials_data.tar
 
