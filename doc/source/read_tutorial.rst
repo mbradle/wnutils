@@ -181,7 +181,7 @@ the keyword `user_funcs`.
 Read all properties in a zone.
 ..............................
 
-In a `webnucleo <http://webnucleo.org/>`___ XML file,
+In a `webnucleo` XML file,
 a `zone` is a collection of the `mutable` quantities during a network
 calculation.  For a single-zone network calculation, a zone is often a
 time step in the calculation.  The zone will contain mass fractions of
