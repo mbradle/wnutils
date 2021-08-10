@@ -2,6 +2,6 @@ wnutils
 =======
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 4
 
    wnutils
