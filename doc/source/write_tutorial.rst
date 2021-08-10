@@ -24,7 +24,7 @@ Extract a subset of nuclide data.
 
 Begin by retrieving the data that you wish to update.
 For this tutorial, use the file `my_output1.xml` which you should have
-downloaded according to the :ref:`data` tutorial.  Read in the data by
+downloaded according to the :ref:data tutorial.  Read in the data by
 typing
 
     >>> old_xml = wx.Xml('my_output1.xml')

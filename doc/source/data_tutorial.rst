@@ -1,4 +1,4 @@
-.. _data:
+.. _my_data:
 
 Getting the Data
 ================

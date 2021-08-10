@@ -3,7 +3,7 @@
 Reading in the Data
 ===================
 
-`webnucleo <https://webnucleo.org/>`_ data files are
+`webnucleo <https://webnucleo.org/>`__ data files are
 in either in `XML <https://www.w3.org/TR/REC-xml/>`_ or
 `HDF5 <https://support.hdfgroup.org/HDF5/>`_ format.  `wnutils` routines
 can read either format.
@@ -39,7 +39,7 @@ To begin, import the namespace by typing::
 To illustrate the use of `wnutils.xml` routines, use the files
 `my_output1.xml` and `my_output2.xml`,
 which you should have downloaded according to the
-:ref:`data` tutorial.  For each file, create an Xml object.  For example,
+:ref:`data <my_data>` tutorial.  For each file, create an Xml object.  For example,
 type::
 
     >>> my_xml = wx.Xml('my_output1.xml')
@@ -181,7 +181,7 @@ the keyword `user_funcs`.
 Read all properties in a zone.
 ..............................
 
-In a `webnucleo <http://webnucleo.org/>`_ XML file,
+In a `webnucleo <http://webnucleo.org/>`___ XML file,
 a `zone` is a collection of the `mutable` quantities during a network
 calculation.  For a single-zone network calculation, a zone is often a
 time step in the calculation.  The zone will contain mass fractions of
@@ -470,7 +470,7 @@ Methods that read webnucleo HDF5 files are in the namespace
     >>> import wnutils.h5 as w5
 
 Then create an object for your file `my_output1.h5` (which you already
-downloaded according to the instructions in the :ref:`data` tutorial)
+downloaded according to the instructions in the :ref:`data <my_data>` tutorial)
 by typing::
 
     >>> my_h5 = w5.H5('my_output1.h5')
