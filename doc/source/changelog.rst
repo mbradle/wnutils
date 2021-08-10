@@ -9,7 +9,8 @@ Version 2.2.3
 
 Fix:
 
-  * Fix the depth on the modules documentation.
+  * Print method introduced in 2.2.0 removed since it caused documentation
+    errors.
 
 Version 2.2.2
 --------------
