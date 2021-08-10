@@ -5,7 +5,6 @@ wnutils package
    :members:
    :undoc-members:
    :show-inheritance:
-   :max-depth: 2
 
 Submodules
 ----------

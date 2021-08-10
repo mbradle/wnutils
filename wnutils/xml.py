@@ -1512,6 +1512,7 @@ class Xml(wb.Base):
 
         print(etree.tostring(self._xml,
                              pretty_print=pretty_print).decode("utf-8"))
+
 class New_Xml(wb.Base):
     """A class for creating webnucleo xml files.
 
