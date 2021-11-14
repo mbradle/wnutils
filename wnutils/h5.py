@@ -861,7 +861,7 @@ class New_H5(wnb.Base):
     def __del__(self):
         self.file.close()
 
-    def add_nuclide_data_to_hdf5(self, nucs):
+    def add_nuclide_data(self, nucs):
         """Method to add nuclie data to an hdf5 file.
 
         Args:
@@ -932,7 +932,7 @@ class New_H5(wnb.Base):
             gp.create_dataset(str(i), data = my_data)
             i += 1
     
-    def _add_zone_mass_fractions_to_group(g, nucs, zones):
+    def _add_zone_mass_fractions_to_group(self, g, nucs, zones):
         nuc_dict = {}
 
         i = 0
@@ -953,7 +953,7 @@ class New_H5(wnb.Base):
 
         g.create_dataset('Mass Fractions', data = my_data)
 
-    def add_group_to_hdf5(self, group, nucs, zones):
+    def add_group(self, group, nucs, zones):
         """Method to add a group to an hdf5 file.
 
         Args:
