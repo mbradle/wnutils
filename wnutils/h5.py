@@ -842,3 +842,137 @@ class H5(wnb.Base):
             anim.save(movie_name, fps=fps)
 
         return anim
+
+class New_H5(wnb.Base):
+    """A class for creating webnucleo hdf5 files.
+
+       Each instance corresponds to new hdf5.  Methods set
+       the nuclide and group data.
+
+       Args:
+           ``file`` (:obj:`str`): A string giving the name of the new h5py\
+            `file <https://docs.h5py.org/en/stable/high/file.html>`_.
+
+       """
+
+    def __init__(self, file):
+        self.file = h5py.File(file, 'w')
+
+    def __del__(self):
+        self.file.close()
+
+    def add_nuclide_data_to_hdf5(self, nucs):
+        """Method to add nuclie data to an hdf5 file.
+
+        Args:
+
+            ``nucs``` (:obj:`dict`): A dictionary of nuclide data.
+
+        Returns:
+            On successful return, the nuclide data have been added to the
+            hdf5 file.
+
+        """
+
+        dt = h5py.string_dtype()
+
+        my_type = [('Name', dt), ('index', 'int'), ('Z', 'int'), ('A', 'int'),
+                   ('State', dt), ('Source', dt), ('Mass Excess', 'float'),
+                   ('Spin', 'float')]
+        
+        my_data = np.array([], dtype = my_type)
+
+        i = 0
+        for nuc in nucs:
+            my_nuc = nucs[nuc]
+            my_data = np.append(my_data, np.array((nuc, i, my_nuc['z'],
+                                         my_nuc['a'], my_nuc['state'],
+                                         my_nuc['source'],
+                                         my_nuc['mass excess'], my_nuc['spin']),
+                                         dtype = my_type))
+            i += 1
+        
+        self.file.create_dataset("Nuclide Data", data = my_data)
+        
+
+    def _add_zone_labels_to_group(self, g, zones):
+
+        dt = h5py.string_dtype()
+
+        my_type = [('Label 1', dt), ('Label 2', dt), ('Label 3', dt)]
+
+        my_data = np.array([], dtype = my_type)
+
+        for zone in zones:
+            my_data = np.append(my_data, np.array((str(zone), str("0"),
+                                str("0")), dtype = my_type))
+
+        g.create_dataset("Zone Labels", data = my_data)
+
+    def _add_zone_properties_to_group(self, g, zones):
+        gp = g.create_group('Zone Properties')
+
+        dt = h5py.string_dtype()
+
+        my_type = [('Name', dt), ('Tag 1', dt), ('Tag 2', dt), ('Value', dt)]
+
+        i = 0
+        for zone in zones:
+            my_data = np.array([], dtype = my_type)
+            props = zones[zone]['properties']
+            for prop in props:
+                if type(prop) is tuple:
+                    if len(prop) == 2:
+                         tup = (prop[0], prop[1], "0", props[prop])
+                    else:
+                         tup = (prop[0], prop[1], prop[2], props[prop])
+                else:
+                    tup = (prop, "0", "0", props[prop])
+                my_data = np.append(my_data, np.array(tup, dtype = my_type))
+            gp.create_dataset(str(i), data = my_data)
+            i += 1
+    
+    def _add_zone_mass_fractions_to_group(g, nucs, zones):
+        nuc_dict = {}
+
+        i = 0
+        for nuc in nucs:
+            nuc_dict[nuc] = i
+            i += 1
+
+        dt = h5py.string_dtype()
+
+        my_data = np.zeros((len(zones), len(nucs)), dtype = float)
+
+        i = 0
+        for zone in zones:
+            mass_fracs = zones[zone]['mass fractions']
+            for key in mass_fracs:
+                my_data[i][nuc_dict[key[0]]] = mass_fracs[key]
+            i += 1
+
+        g.create_dataset('Mass Fractions', data = my_data)
+
+    def add_group_to_hdf5(self, group, nucs, zones):
+        """Method to add a group to an hdf5 file.
+
+        Args:
+
+            ``group``` (:obj:`str`): A string giving the group name.
+
+            ``nucs``` (:obj:`dict`): A dictionary of nuclide data.
+
+            ``zones``` (:obj:`dict`): A dictionary of zone data for the group.
+
+        Returns:
+            On successful return, the group has been added to the
+            hdf5 file.
+
+        """
+
+        g = self.file.create_group(group)
+
+        self._add_zone_labels_to_group(g, zones)
+        self._add_zone_properties_to_group(g, zones)
+        self._add_zone_mass_fractions_to_group(g, nucs, zones)
+

@@ -48,4 +48,3 @@ wnutils.xml module
    :members:
    :undoc-members:
    :show-inheritance:
-
