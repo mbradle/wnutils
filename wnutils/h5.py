@@ -846,34 +846,31 @@ class H5(wnb.Base):
 class New_H5(wnb.Base):
     """A class for creating webnucleo hdf5 files.
 
-       Each instance corresponds to new hdf5.  Methods set
-       the nuclide and group data.
+       Each instance corresponds to new hdf5.  Main method sets group data.
 
        Args:
            ``file`` (:obj:`str`): A string giving the name of the new h5py\
             `file <https://docs.h5py.org/en/stable/high/file.html>`_.
 
+           ``nucs`` (:obj:`dict`): A dictionary of nuclide data.
+
        """
 
-    def __init__(self, file):
+    def __init__(self, file, nucs):
         self.file = h5py.File(file, 'w')
+        self.nucs = nucs
+        self._add_nuclide_data(nucs)
+        self.nuc_dict = {}
+
+        i = 0
+        for nuc in self.nucs:
+            self.nuc_dict[nuc] = i
+            i += 1
 
     def __del__(self):
         self.file.close()
 
-    def add_nuclide_data(self, nucs):
-        """Method to add nuclie data to an hdf5 file.
-
-        Args:
-
-            ``nucs``` (:obj:`dict`): A dictionary of nuclide data.
-
-        Returns:
-            On successful return, the nuclide data have been added to the
-            hdf5 file.
-
-        """
-
+    def _add_nuclide_data(self, nucs):
         dt = h5py.string_dtype()
 
         my_type = [('Name', dt), ('index', 'int'), ('Z', 'int'), ('A', 'int'),
@@ -932,37 +929,28 @@ class New_H5(wnb.Base):
             gp.create_dataset(str(i), data = my_data)
             i += 1
     
-    def _add_zone_mass_fractions_to_group(self, g, nucs, zones):
-        nuc_dict = {}
-
-        i = 0
-        for nuc in nucs:
-            nuc_dict[nuc] = i
-            i += 1
-
+    def _add_zone_mass_fractions_to_group(self, g, zones):
         dt = h5py.string_dtype()
 
-        my_data = np.zeros((len(zones), len(nucs)), dtype = float)
+        my_data = np.zeros((len(zones), len(self.nucs)), dtype = float)
 
         i = 0
         for zone in zones:
             mass_fracs = zones[zone]['mass fractions']
             for key in mass_fracs:
-                my_data[i][nuc_dict[key[0]]] = mass_fracs[key]
+                my_data[i][self.nuc_dict[key[0]]] = mass_fracs[key]
             i += 1
 
         g.create_dataset('Mass Fractions', data = my_data)
 
-    def add_group(self, group, nucs, zones):
+    def add_group(self, group, zones):
         """Method to add a group to an hdf5 file.
 
         Args:
 
-            ``group``` (:obj:`str`): A string giving the group name.
+            ``group`` (:obj:`str`): A string giving the group name.
 
-            ``nucs``` (:obj:`dict`): A dictionary of nuclide data.
-
-            ``zones``` (:obj:`dict`): A dictionary of zone data for the group.
+            ``zones`` (:obj:`dict`): A dictionary of zone data for the group.
 
         Returns:
             On successful return, the group has been added to the
@@ -974,5 +962,5 @@ class New_H5(wnb.Base):
 
         self._add_zone_labels_to_group(g, zones)
         self._add_zone_properties_to_group(g, zones)
-        self._add_zone_mass_fractions_to_group(g, nucs, zones)
+        self._add_zone_mass_fractions_to_group(g, zones)
 
