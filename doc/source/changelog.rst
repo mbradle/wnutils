@@ -9,7 +9,7 @@ Version 2.3.0
 
 New:
 
-  * Capability to create new webnucleo hdf5 file has been added.
+  * The capability to create new webnucleo hdf5 has been added.
 
 Version 2.2.3
 --------------

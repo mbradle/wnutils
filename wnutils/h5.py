@@ -918,15 +918,20 @@ class New_H5(wnb.Base):
             my_data = np.array([], dtype = my_type)
             props = zones[zone]['properties']
             for prop in props:
+                name = str(prop[0])
+                tag1 = "0"
+                tag2 = "0"
+                value = str(props[prop])
                 if type(prop) is tuple:
-                    if len(prop) == 2:
-                         tup = (prop[0], prop[1], "0", props[prop])
-                    else:
-                         tup = (prop[0], prop[1], prop[2], props[prop])
+                    name = str(prop[0])
+                    tag1 = str(prop[1])
+                    if len(prop) == 3:
+                        tag2 = str(prop[2])
                 else:
-                    tup = (prop, "0", "0", props[prop])
-                my_data = np.append(my_data, np.array(tup, dtype = my_type))
-            gp.create_dataset(str(i), data = my_data)
+                    name = str(prop)
+                my_data = np.append(my_data, np.array((name, tag1, tag2,
+                                    value), dtype = my_type))
+            gp.create_dataset(str(i), data = my_data, dtype = my_type)
             i += 1
     
     def _add_zone_mass_fractions_to_group(self, g, zones):

@@ -1,7 +1,10 @@
 .. _writing:
 
-Creating and Writing XML Data
-=============================
+Creating and Writing Data
+=========================
+
+XML Data
+--------
 
 The preferred format for `webnucleo <http://webnucleo.org/>`_
 data input is `XML <https://www.w3.org/TR/REC-xml/>`_.
@@ -17,10 +20,10 @@ To begin, import the namespace by typing::
     >>> import wnutils.xml as wx
 
 Nuclide XML Data
-----------------
+................
 
 Extract a subset of nuclide data.
-.................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Begin by retrieving the data that you wish to update.
 For this tutorial, use the file `my_output1.xml` which you should have
@@ -70,7 +73,7 @@ The old XML file contains calcium and A=30 isotopes but the new XML file
 does not.
     
 Update existing nuclide data.
-.............................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To update existing data, retrieve the nuclide data by typing
 
@@ -124,7 +127,7 @@ the nuclide data and print out the o16 data:
 The data in the new file are those that you have updated.
 
 Add to existing nuclide data.
-.............................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To add to existing data, retrieve the nuclide data by typing
 
@@ -163,7 +166,7 @@ the new species has been added:
     ...
 
 Create new nuclide data.
-........................
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 To create new nuclide XML data, first create a nuclide data dictionary:
 
@@ -193,14 +196,14 @@ and print out the nuclide data::
 This shows the two species in the new XML file.
 
 Reaction XML Data
------------------
+.................
 
 Create new reaction XML analogously to creating new nuclide XML.
 Update an existing reaction data dictionary or create a new one, create
 a new reaction XML object, set the data in the object, and write to XML.
 
 Extract a subset of reaction data.
-..................................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To extract a subset of reaction data, first retrieve the data and get
 the data subset with XPath by typing
@@ -235,7 +238,7 @@ The old XML data file includes reactions involving *kr85* but the new one
 does not.
 
 Update existing reaction data.
-..............................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To update existing data, retrieve the reaction data by typing
 
@@ -305,7 +308,7 @@ Now confirm that the updated XML has the changes:
 
 
 Add to existing reaction data.
-..............................
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is possible to add to existing reaction data.  To try this,
 create the reaction *ni70 -> cu65 + n + n + n + n + n + electron +
@@ -340,7 +343,7 @@ Confirm that the new XML has the added data:
 
 
 Create new reaction data.
-.........................
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is also possible to create new reaction XML data.  One creates a
 new reaction data dictionary and then sets those data in new XML and
@@ -399,7 +402,7 @@ Confirm the new XML:
     ...
 
 Network XML Data
-----------------
+................
 
 For webnucleo codes, a nuclear network is a collection of nuclides and
 the reactions among them.  If you have already created or updated
@@ -436,14 +439,14 @@ Confirm the new file has the nuclide and reaction data:
     ...
 
 Zone XML Data
--------------
+.............
 
 Zone data in webnucleo codes represent mutable data in a calculation.
 As with nuclide and reaction data, wnutils routines allow you to update
 and create new zone data XML.
 
 Update existing zone data.
-..........................
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To update zone data, first retrieve the existing data:
 
@@ -488,7 +491,7 @@ Confirm that the new file has the new zone and the updated data:
     >>> print(updated_zone_data[('165', 'added')]['mass fractions'][('he4', 2, 4)])
 
 Create new zone data.
-.....................
+^^^^^^^^^^^^^^^^^^^^^
 
 To create zone XML data, first create a dictionary of zones:
 
@@ -526,7 +529,7 @@ You can validate it to ensure the data are the right XML format:
     >>> xml.validate()
 
 Libnucnet XML Data
-------------------
+..................
 
 Full libnucnet data comprises nuclear network and zone data.  If you
 have created nuclide data (*nuclides*), reaction data (*reactions*),
@@ -542,4 +545,42 @@ Write out the data by typing:
     >>> libnucnet_xml.write('new_libnucnet.xml')
 
 
+HDF5 Data
+---------
 
+`wnutils` routines exist to write
+`HDF5 <https://https://www.hdfgroup.org/>`_ data.  This tutorial will illustrate
+these routines by transferring data from `webnucleo` XML to HDF5.  It then
+adds another group.
+Begin by importing the two namespaces by typing:
+
+    >>> import wnutils.xml as wx
+    >>> import wnutils.h5 as w5
+
+Now retrieve the XML data by tying:
+
+    >>> xml = wx.Xml('my_output1.xml')
+    >>> nucs = xml.get_nuclide_data()
+    >>> zones = xml.get_zone_data()
+
+Create the output HDF5 file `out.h5` with the nuclide data by typing:
+
+    >>> h5 = w5.New_H5('out.h5', nucs)
+
+Add the zone data as a single group (called `Zone Data`) by typing:
+
+    >>> h5.add_group('Zone Data', zones)
+
+Now add another group with two more zones by typing:
+
+    >>> new_zones = {}
+    >>> props1 = {'length': 5, 'breadth': 10}
+    >>> props2 = {'height': 7, 'width': 20}
+    >>> x1 = {('he4', 2, 4): 1}
+    >>> x2 = {('h1', 1, 1): 0.5, ('n', 0, 1): 0.5}
+    >>> new_zones[('new', '0', '0')] = {'properties': props1, 'mass fractions': x1}
+    >>> new_zones[('new', '1', '0')] = {'properties': props2, 'mass fractions': x2}
+
+The output HDF5 will have the groups `Nuclide Data`, containing the nuclide
+data from the original XML file, `Zone Data`, zone data from the original
+XML file, and `New Zone Data`, the new zone data.
