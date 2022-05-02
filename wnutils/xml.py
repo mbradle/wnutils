@@ -1496,6 +1496,7 @@ class Xml(wb.Base):
 
         return result
 
+
 class New_Xml(wb.Base):
     """A class for creating webnucleo xml files.
 
@@ -1756,4 +1757,3 @@ class New_Xml(wb.Base):
         """
 
         self._xml.write(file, pretty_print=pretty_print)
-

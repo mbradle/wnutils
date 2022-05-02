@@ -843,6 +843,7 @@ class H5(wnb.Base):
 
         return anim
 
+
 class New_H5(wnb.Base):
     """A class for creating webnucleo hdf5 files.
 
@@ -857,7 +858,7 @@ class New_H5(wnb.Base):
        """
 
     def __init__(self, file, nucs):
-        self.file = h5py.File(file, 'w')
+        self.file = h5py.File(file, "w")
         self.nucs = nucs
         self._add_nuclide_data(nucs)
         self.nuc_dict = {}
@@ -873,50 +874,68 @@ class New_H5(wnb.Base):
     def _add_nuclide_data(self, nucs):
         dt = h5py.string_dtype()
 
-        my_type = [('Name', dt), ('index', 'int'), ('Z', 'int'), ('A', 'int'),
-                   ('State', dt), ('Source', dt), ('Mass Excess', 'float'),
-                   ('Spin', 'float')]
-        
-        my_data = np.array([], dtype = my_type)
+        my_type = [
+            ("Name", dt),
+            ("index", "int"),
+            ("Z", "int"),
+            ("A", "int"),
+            ("State", dt),
+            ("Source", dt),
+            ("Mass Excess", "float"),
+            ("Spin", "float"),
+        ]
+
+        my_data = np.array([], dtype=my_type)
 
         i = 0
         for nuc in nucs:
             my_nuc = nucs[nuc]
-            my_data = np.append(my_data, np.array((nuc, i, my_nuc['z'],
-                                         my_nuc['a'], my_nuc['state'],
-                                         my_nuc['source'],
-                                         my_nuc['mass excess'], my_nuc['spin']),
-                                         dtype = my_type))
+            my_data = np.append(
+                my_data,
+                np.array(
+                    (
+                        nuc,
+                        i,
+                        my_nuc["z"],
+                        my_nuc["a"],
+                        my_nuc["state"],
+                        my_nuc["source"],
+                        my_nuc["mass excess"],
+                        my_nuc["spin"],
+                    ),
+                    dtype=my_type,
+                ),
+            )
             i += 1
-        
-        self.file.create_dataset("Nuclide Data", data = my_data)
-        
+
+        self.file.create_dataset("Nuclide Data", data=my_data)
 
     def _add_zone_labels_to_group(self, g, zones):
 
         dt = h5py.string_dtype()
 
-        my_type = [('Label 1', dt), ('Label 2', dt), ('Label 3', dt)]
+        my_type = [("Label 1", dt), ("Label 2", dt), ("Label 3", dt)]
 
-        my_data = np.array([], dtype = my_type)
+        my_data = np.array([], dtype=my_type)
 
         for zone in zones:
-            my_data = np.append(my_data, np.array((str(zone), str("0"),
-                                str("0")), dtype = my_type))
+            my_data = np.append(
+                my_data, np.array((str(zone), str("0"), str("0")), dtype=my_type)
+            )
 
-        g.create_dataset("Zone Labels", data = my_data)
+        g.create_dataset("Zone Labels", data=my_data)
 
     def _add_zone_properties_to_group(self, g, zones):
-        gp = g.create_group('Zone Properties')
+        gp = g.create_group("Zone Properties")
 
         dt = h5py.string_dtype()
 
-        my_type = [('Name', dt), ('Tag 1', dt), ('Tag 2', dt), ('Value', dt)]
+        my_type = [("Name", dt), ("Tag 1", dt), ("Tag 2", dt), ("Value", dt)]
 
         i = 0
         for zone in zones:
-            my_data = np.array([], dtype = my_type)
-            props = zones[zone]['properties']
+            my_data = np.array([], dtype=my_type)
+            props = zones[zone]["properties"]
             for prop in props:
                 name = str(prop[0])
                 tag1 = "0"
@@ -929,24 +948,25 @@ class New_H5(wnb.Base):
                         tag2 = str(prop[2])
                 else:
                     name = str(prop)
-                my_data = np.append(my_data, np.array((name, tag1, tag2,
-                                    value), dtype = my_type))
-            gp.create_dataset(str(i), data = my_data, dtype = my_type)
+                my_data = np.append(
+                    my_data, np.array((name, tag1, tag2, value), dtype=my_type)
+                )
+            gp.create_dataset(str(i), data=my_data, dtype=my_type)
             i += 1
-    
+
     def _add_zone_mass_fractions_to_group(self, g, zones):
         dt = h5py.string_dtype()
 
-        my_data = np.zeros((len(zones), len(self.nucs)), dtype = float)
+        my_data = np.zeros((len(zones), len(self.nucs)), dtype=float)
 
         i = 0
         for zone in zones:
-            mass_fracs = zones[zone]['mass fractions']
+            mass_fracs = zones[zone]["mass fractions"]
             for key in mass_fracs:
                 my_data[i][self.nuc_dict[key[0]]] = mass_fracs[key]
             i += 1
 
-        g.create_dataset('Mass Fractions', data = my_data)
+        g.create_dataset("Mass Fractions", data=my_data)
 
     def add_group(self, group, zones):
         """Method to add a group to an hdf5 file.
@@ -968,4 +988,3 @@ class New_H5(wnb.Base):
         self._add_zone_labels_to_group(g, zones)
         self._add_zone_properties_to_group(g, zones)
         self._add_zone_mass_fractions_to_group(g, zones)
-

@@ -345,7 +345,7 @@ class Base:
 
         elem, mass, state = self._get_species_name_substrings(name)
 
-        if elem[0] == 'n':
+        if elem[0] == "n":
             if not mass:
                 return (0, len(elem), state)
             else:
@@ -428,4 +428,3 @@ class Base:
 
         title_str = "time (s) = %8.2e" % (time)
         return title_str
-
