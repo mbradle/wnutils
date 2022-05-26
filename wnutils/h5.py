@@ -919,8 +919,12 @@ class New_H5(wnb.Base):
         my_data = np.array([], dtype=my_type)
 
         for zone in zones:
+            if type(zone) is tuple:
+                tup = zone
+            else:
+                tup = (zone, '0', '0')
             my_data = np.append(
-                my_data, np.array((str(zone), str("0"), str("0")), dtype=my_type)
+                my_data, np.array((tup[0], tup[1], tup[2]), dtype=my_type)
             )
 
         g.create_dataset("Zone Labels", data=my_data)

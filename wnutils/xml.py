@@ -629,7 +629,7 @@ class Xml(wb.Base):
 
         Args:
             ``zone_xpath`` (:obj:`str`): XPath expression to select
-            zone.  Must be evaluate to a single zone.
+            zone.  Must evaluate to a single zone.
 
         Returns:
             :obj:`dict`: A dictionary containing all the properties in

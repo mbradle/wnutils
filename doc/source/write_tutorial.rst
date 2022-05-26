@@ -580,6 +580,7 @@ Now add another group with two more zones by typing:
     >>> x2 = {('h1', 1, 1): 0.5, ('n', 0, 1): 0.5}
     >>> new_zones[('new', '0', '0')] = {'properties': props1, 'mass fractions': x1}
     >>> new_zones[('new', '1', '0')] = {'properties': props2, 'mass fractions': x2}
+    >>> h5.add_group('New Zone Data', new_zones)
 
 The output HDF5 will have the groups `Nuclide Data`, containing the nuclide
 data from the original XML file, `Zone Data`, zone data from the original

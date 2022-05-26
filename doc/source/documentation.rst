@@ -3,5 +3,5 @@ Documentation
 
 .. toctree::
 
-   modules
+   wnutils
 

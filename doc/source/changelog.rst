@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.3.1
+--------------
+
+Fix:
+
+  * Zone labeling on output hdf5 has been fixed.
+  * Some documentation typos have been fixed.
+
 Version 2.3.0
 --------------
 
