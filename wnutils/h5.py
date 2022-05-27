@@ -922,7 +922,7 @@ class New_H5(wnb.Base):
             if type(zone) is tuple:
                 tup = zone
             else:
-                tup = (zone, '0', '0')
+                tup = (zone, "0", "0")
             my_data = np.append(
                 my_data, np.array((tup[0], tup[1], tup[2]), dtype=my_type)
             )
