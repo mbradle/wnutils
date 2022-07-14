@@ -3,3 +3,4 @@ lxml
 matplotlib
 numpy
 scipy
+sphinx
