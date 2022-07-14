@@ -4,6 +4,17 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.4.0
+--------------
+
+Internal:
+
+  * The documentation now uses a yaml file for readthedocs.
+
+New:
+
+  * It is now possible to plot zone properties versus a property for an HDF5 group.
+
 Version 2.3.1
 --------------
 

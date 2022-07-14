@@ -615,6 +615,93 @@ class H5(wnb.Base):
 
         self.show_or_close(plt, kwargs)
 
+    def plot_group_properties_vs_property(
+        self,
+        group,
+        prop,
+        props,
+        xfactor=1,
+        yfactor=None,
+        rcParams=None,
+        plotParams=None,
+        **kwargs
+    ):
+        """Method to plot group mass fractions vs. zone property.
+
+        Args:
+
+            ``group`` (:obj:`str`): A string giving the group.
+
+            ``prop`` (:obj:`str` or :obj:`tuple`): A string or tuple of
+            up to three strings giving the property (which will
+            serve as the plot abscissa).
+
+            ``props`` (:obj:`list`): A list of strings or tuples of
+            up to three strings giving the properties (which will
+            serve as the plot ordinates).
+
+            ``xfactor`` (:obj:`float`, optional): A float giving the scaling
+            for the abscissa values.  Defaults to 1.
+
+            ``yfactor`` (:obj:`float`, optional): A list of floats giving the scaling
+            for the ordinate values.  Defaults to 1.
+
+            ``rcParams``` (:obj:`dict`, optional): A dictionary of
+            :obj:`matplotlib.rcParams` to be applied to the plot.
+            Defaults to the default rcParams.
+
+            ``plotParams`` (:obj:`list`, optional): A list of
+            dictionaries of valid :obj:`matplotlib.pyplot.plot` optional
+            keyword arguments to be applied to the plot.  The list must
+            have the same number of elements as ``species``.
+
+            ``**kwargs``:  Acceptable :obj:`matplotlib.pyplot` functions.
+            Include directly, as a :obj:`dict`, or both.
+
+        Returns:
+            A matplotlib plot.
+
+        """
+
+        self.set_plot_params(mpl, rcParams)
+
+        if yfactor:
+            if len(yfactor) != len(props):
+                print("yfactor length must be the same as the number of y properties.")
+                return
+        else:
+            yfactor = np.full(len(props), 1.0)
+
+        if plotParams:
+            if len(plotParams) != len(props):
+                print("Number of plotParam elements must equal" + " number of properties.")
+                return
+
+        x = self.get_group_properties_in_zones_as_floats(group, [prop])[prop]
+        y = self.get_group_properties_in_zones_as_floats(group, props)
+
+        for i, pr in enumerate(props):
+            if plotParams is None:
+                p = {}
+            else:
+                p = plotParams[i]
+            if "label" not in p:
+                p = self._merge_dicts(p, {"label": pr})
+            plt.plot(x / xfactor, y[pr] / yfactor[i], **p)
+
+        if "xlabel" not in kwargs:
+            plt.xlabel(prop)
+
+        if "ylabel" not in kwargs and len(props) == 1:
+            plt.ylabel(props[0])
+
+        if len(props) > 1:
+            plt.legend()
+
+        self.apply_class_methods(plt, kwargs)
+
+        self.show_or_close(plt, kwargs)
+
     def plot_zone_mass_fractions_vs_property(
         self,
         zone,

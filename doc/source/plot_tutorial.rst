@@ -373,6 +373,27 @@ to the right, use the `xlim` keyword::
      ...     'Step 00125', 't9', ['he4', 'c12','o16'], use_latex_names=True, xlim = [0.3,0]
      ... )
 
+Plot group properties versus a property.
+............................................
+
+You may also plot zone properties versus a zone property for a group.
+For example,
+type::
+
+     >>> my_h5.plot_group_properties_vs_property(
+     ...     'Step 00125', 't9', ['rho', ('exposure', 'n')], xlim = [0.3,0],
+     ...     yscale = 'log'
+     ... )
+
+You can add parameters and a legend.  For example, type:
+
+     >>> p_params = [{'label':'$\\rho\ (g/cc)$', 'color':'black', 'linestyle':'-'}, {'label': '$\\tau_n\ (mb^{-1}$', 'color':'black', 'linestyle':':'}]
+
+     >>> my_h5.plot_group_properties_vs_property(
+     ...     'Step 00125', 't9', ['rho', ('exposure', 'n')], xlim = [0.3,0],
+     ...     yscale = 'log', xlabel = '$T_9$', plotParams = p_params
+     ... )
+
 Multi_H5
 ---------
 
