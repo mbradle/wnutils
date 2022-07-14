@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 class Multi_H5(wb.Base):
     """A class for reading and plotting webnucleo multiple HDF5 files.
 
-       Each instance corresponds to a set of HDF5 files.  Methods
-       plot data from the files.
+    Each instance corresponds to a set of HDF5 files.  Methods
+    plot data from the files.
 
-       Args:
-           ``files`` (:obj:`list`): The names of the HDF5 files.
+    Args:
+        ``files`` (:obj:`list`): The names of the HDF5 files.
 
-       """
+    """
 
     def __init__(self, files):
         self._files = files

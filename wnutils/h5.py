@@ -13,13 +13,13 @@ with warnings.catch_warnings():
 class H5(wnb.Base):
     """A class for reading and plotting webnucleo HDF5 files.
 
-       Each instance corresponds to an hdf5 file.  Methods extract
-       data and plot data from the file.
+    Each instance corresponds to an hdf5 file.  Methods extract
+    data and plot data from the file.
 
-       Args:
-           ``file`` (:obj:`str`): The name of the hdf5 file.
+    Args:
+        ``file`` (:obj:`str`): The name of the hdf5 file.
 
-       """
+    """
 
     def __init__(self, file):
         self._h5file = h5py.File(file, "r")
@@ -151,12 +151,12 @@ class H5(wnb.Base):
     def get_group_mass_fractions(self, group):
         """Method to return mass fractions from a group in an hdf5 file.
 
-            Args:
-                ``group`` (:obj:`str`): The name of the group.
+        Args:
+            ``group`` (:obj:`str`): The name of the group.
 
-            Returns:
-                :obj:`h5py:Dataset`: A 2d hdf5 dataset.  The first index
-                indicates the zone and the second the species.
+        Returns:
+            :obj:`h5py:Dataset`: A 2d hdf5 dataset.  The first index
+            indicates the zone and the second the species.
 
         """
 
@@ -674,7 +674,9 @@ class H5(wnb.Base):
 
         if plotParams:
             if len(plotParams) != len(props):
-                print("Number of plotParam elements must equal" + " number of properties.")
+                print(
+                    "Number of plotParam elements must equal" + " number of properties."
+                )
                 return
 
         x = self.get_group_properties_in_zones_as_floats(group, [prop])[prop]

@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 class Multi_Xml(wb.Base):
     """A class for reading and plotting webnucleo multiple xml files.
 
-       Each instance corresponds to a set of xml files.  Methods
-       plot data from the files.
+    Each instance corresponds to a set of xml files.  Methods
+    plot data from the files.
 
-       Args:
-           ``files`` (:obj:`list`): The names of the xml files.
+    Args:
+        ``files`` (:obj:`list`): The names of the xml files.
 
-       """
+    """
 
     def __init__(self, files):
         self._files = files

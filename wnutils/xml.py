@@ -10,9 +10,7 @@ from scipy.interpolate import interp1d
 
 
 class Reaction(wb.Base):
-    """A class for storing and retrieving data about reactions.
-
-       """
+    """A class for storing and retrieving data about reactions."""
 
     def __init__(self):
         self.reactants = []
@@ -310,13 +308,13 @@ class Reaction(wb.Base):
 class Xml(wb.Base):
     """A class for reading and plotting webnucleo xml files.
 
-       Each instance corresponds to an xml file.  Methods extract
-       data and plot data from the file.
+    Each instance corresponds to an xml file.  Methods extract
+    data and plot data from the file.
 
-       Args:
-           ``file`` (:obj:`str`): The name of the xml file.
+    Args:
+        ``file`` (:obj:`str`): The name of the xml file.
 
-       """
+    """
 
     def __init__(self, file):
         parser = etree.XMLParser(remove_blank_text=True)
@@ -1500,15 +1498,15 @@ class Xml(wb.Base):
 class New_Xml(wb.Base):
     """A class for creating webnucleo xml files.
 
-       Each instance corresponds to new xml.  Methods set
-       the nuclide, reaction, or zone data or write the xml to a file.
+    Each instance corresponds to new xml.  Methods set
+    the nuclide, reaction, or zone data or write the xml to a file.
 
-       Args:
-           ``xml_type`` (:obj:`str`, optional): The type of xml file to
-           be created ("nuclear_data", "reaction_data", "nuclear_network",
-           "zone_data", or "libnucnet_input").  Defaults to "nuclear_network".
+    Args:
+        ``xml_type`` (:obj:`str`, optional): The type of xml file to
+        be created ("nuclear_data", "reaction_data", "nuclear_network",
+        "zone_data", or "libnucnet_input").  Defaults to "nuclear_network".
 
-       """
+    """
 
     def __init__(self, xml_type="nuclear_network"):
         if xml_type not in [
