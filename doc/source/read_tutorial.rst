@@ -3,7 +3,7 @@
 Reading in the Data
 ===================
 
-`webnucleo <https://webnucleo.org/>`__ data files are
+`webnucleo <http://webnucleo.org/>`__ data files are
 in either in `XML <https://www.w3.org/TR/REC-xml/>`_ or
 `HDF5 <https://support.hdfgroup.org/HDF5/>`_ format.  `wnutils` routines
 can read either format.

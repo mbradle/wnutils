@@ -2,7 +2,7 @@ Overview
 ========
 
 wnutils is a python package for reading and plotting
-`webnucleo <https://webnucleo.org/>`_ files.
+`webnucleo <http://webnucleo.org/>`_ files.
 
 Installation
 ------------

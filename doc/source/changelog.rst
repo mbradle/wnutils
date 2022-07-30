@@ -4,6 +4,13 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.4.1
+--------------
+
+Internal:
+
+  * Some Webnucleo links have been updated.
+
 Version 2.4.0
 --------------
 

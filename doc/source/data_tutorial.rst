@@ -4,7 +4,7 @@ Getting the Data
 ================
 
 In general, you will be using `wnutils` with data you have generated with
-`webnucleo <https://webnucleo.org>`_ codes.  However,
+`webnucleo <http://webnucleo.org>`_ codes.  However,
 we have already generated some
 `data <https://osf.io/2a4kh/>`_ you can use with these tutorials.
 You must download those data from the web.
