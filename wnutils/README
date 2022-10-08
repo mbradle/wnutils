@@ -1,0 +1,4 @@
+This package expects schema data for XML validation.  Prior to building the
+package, run
+
+$ git clone https://bitbucket.org/mbradle/libnucnet_xsd.git xsd_pub
