@@ -173,8 +173,6 @@ texinfo_documents = [
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://docs.scipy.org/doc/numpy/", None),
-    "matplolib": ("https://matplotlib.org", None),
-    "h5py": ("http://docs.h5py.org/en/latest/", None),
 }
 
 # -- Options for todo extension ----------------------------------------------

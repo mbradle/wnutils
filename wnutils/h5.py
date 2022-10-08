@@ -155,8 +155,9 @@ class H5(wnb.Base):
             ``group`` (:obj:`str`): The name of the group.
 
         Returns:
-            :obj:`h5py:Dataset`: A 2d hdf5 dataset.  The first index
-            indicates the zone and the second the species.
+            A 2d hdf5
+            `dataset <https://docs.h5py.org/en/stable/high/dataset.html>`_.
+            The first index indicates the zone and the second the species.
 
         """
 
