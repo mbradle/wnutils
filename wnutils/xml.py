@@ -1,3 +1,4 @@
+import os
 import wnutils.base as wb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -1445,17 +1446,19 @@ class Xml(wb.Base):
 
         """
 
-        url_prefix = "http://libnucnet.sourceforge.net/xsd_pub/2019-01-15/"
-
         xsd_dict = {
-            "nuclear_data": url_prefix + "libnucnet__nuc.xsd",
-            "reaction_data": url_prefix + "libnucnet__reac.xsd",
-            "nuclear_network": url_prefix + "libnucnet__net.xsd",
-            "zone_data": url_prefix + "zone_data.xsd",
-            "libnucnet_input": url_prefix + "libnucnet.xsd",
+            "nuclear_data": "libnucnet__nuc.xsd",
+            "reaction_data": "libnucnet__reac.xsd",
+            "nuclear_network": "libnucnet__net.xsd",
+            "zone_data": "zone_data.xsd",
+            "libnucnet_input": "libnucnet.xsd",
         }
 
-        xml_validator = etree.XMLSchema(file=xsd_dict[self._root.tag])
+        schema_file = os.path.join(
+            os.path.dirname(__file__), "xsd_pub", xsd_dict[self._root.tag]
+        )
+
+        xml_validator = etree.XMLSchema(file=schema_file)
         xml_validator.assert_(self._xml)
 
     def get_zone_data(self, zone_xpath=""):
