@@ -11,6 +11,7 @@ New:
 
   * The XML reaction class now contains lists of nuclide reactants and products in addition to all reactants and product.
   * An Acknowledgments page has been added.
+  * A link to the readthedocs page has been added for more visibility from PYPI and GitHub.
 
 Version 2.5.0
 --------------

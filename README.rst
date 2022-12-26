@@ -15,8 +15,8 @@ typing in your favorite terminal::
 Authors
 -------
 
-- Bradley S. Meyer <mbradle@clemson.edu>
-- Norberto Davila <ndavila@clemson.edu>
+- Bradley S. Meyer <mbradle@g.clemson.edu>
+- Norberto Davila <ndavila@g.clemson.edu>
 
 Contribute
 ----------
@@ -28,6 +28,11 @@ License
 -------
 
 The project is licensed under the GNU Public License v3 (or later).
+
+Documentation
+-------------
+
+The project documentation is available at `<https://wnutils.readthedocs.io>`_.
 
 Usage
 -----
