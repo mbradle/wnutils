@@ -17,6 +17,7 @@ Contents
    changelog
    documentation
    tutorials
+   acknowledgments
 
 
 

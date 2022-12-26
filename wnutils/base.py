@@ -428,3 +428,30 @@ class Base:
 
         title_str = "time (s) = %8.2e" % (time)
         return title_str
+
+    def is_non_nuclide_reaction_element_string(self, name):
+        """Method to check if a string is that of a non-nuclide reaction element.
+
+        Args:
+            ``name`` (:obj:`str`): A string giving the possible non-nuclide
+            reaction element.
+
+        Returns:
+            :obj:`bool`: A boolean with value True if the string is that
+            of a non-nuclide reaction element and False if not.
+
+        """
+
+        non_nuclide_reaction_elements = [
+            "gamma",
+            "electron",
+            "positron",
+            "neutrino_e",
+            "anti-neutrino_e",
+            "neutrino_mu",
+            "anti-neutrino_mu",
+            "neutrino_tau",
+            "anti_neutrino_tau",
+        ]
+
+        return name in non_nuclide_reaction_elements

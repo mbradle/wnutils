@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.6.0
+--------------
+
+New:
+
+  * The XML reaction class now contains lists of nuclide reactants and products in addition to all reactants and product.
+  * An Acknowledgments page has been added.
+
 Version 2.5.0
 --------------
 

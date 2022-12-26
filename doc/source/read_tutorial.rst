@@ -152,12 +152,14 @@ example::
 
     >>> reac = reactions['n + he4 + he4 -> be9 + gamma']
 
-It is then possible to retrieve the `reactants`, `products`, the reaction
-string, and code giving
+It is then possible to retrieve the `reactants`, `nuclide_reactants`,
+`products`, `nuclide_products`, the reaction string, and code giving
 the source by typing::
 
     >>> print(reac.reactants)
+    >>> print(reac.nuclide_reactants)
     >>> print(reac.products)
+    >>> print(reac.nuclide_products)
     >>> print(reac.get_string())
     >>> print(reac.source)
 

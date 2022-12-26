@@ -15,7 +15,9 @@ class Reaction(wb.Base):
 
     def __init__(self):
         self.reactants = []
+        self.nuclide_reactants = []
         self.products = []
+        self.nuclide_products = []
         self.source = ""
         self.data = {}
 
@@ -150,10 +152,14 @@ class Reaction(wb.Base):
         reactants = reaction_node.xpath("reactant")
         for reactant in reactants:
             self.reactants.append(reactant.text)
+            if not self.is_non_nuclide_reaction_element_string(reactant.text):
+                self.nuclide_reactants.append(reactant.text)
 
         products = reaction_node.xpath("product")
         for product in products:
             self.products.append(product.text)
+            if not self.is_non_nuclide_reaction_element_string(product.text):
+                self.nuclide_products.append(product.text)
 
         self.data = self._get_reaction_data(reaction_node)
 
