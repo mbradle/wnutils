@@ -131,6 +131,16 @@ class Base:
                 state += str[i]
         return (elem, mass, state)
 
+    def _create_graphviz_string(self, str):
+        str_T = self._get_species_name_substrings(str)
+        elem = str_T[0]
+        if str_T[1]:
+            elem = str_T[0].title()
+        if str_T[2]:
+            return r"<<sup>%s</sup>%s<sub>%s</sub>>" % (str_T[1], elem, str_T[2])
+        else:
+            return r"<<sup>%s</sup>%s>" % (str_T[1], elem)
+
     def _create_latex_string(self, str):
         l_hash = {
             "gamma": "\\gamma",
@@ -156,6 +166,24 @@ class Base:
             else:
                 return r"^{%s}\rm{%s}" % (str_T[1], elem)
 
+    def get_graphviz_names(self, nuclides):
+        """Method to get graphviz strings of nuclides' names.
+
+        Args:
+            ``nuclides`` (:obj:`list`): A list of strings giving the nuclides.
+
+        Returns:
+            :obj:`dict`: A dictionary of graphviz strings.
+
+        """
+
+        graphviz_names = {}
+        for nuclide in nuclides:
+            name = '{:s}'.format(self._create_graphviz_string(nuclide))
+            graphviz_names[nuclide] = name
+
+        return graphviz_names
+
     def get_latex_names(self, nuclides):
         """Method to get latex strings of nuclides' names.
 
@@ -169,7 +197,8 @@ class Base:
 
         latex_names = {}
         for nuclide in nuclides:
-            name = r"$%s$" % (self._create_latex_string(nuclide))
+#            name = r"$%s$" % (self._create_latex_string(nuclide))
+            name = '${:s}$'.format(self._create_latex_string(nuclide))
             latex_names[nuclide] = name
 
         return latex_names

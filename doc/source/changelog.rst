@@ -4,14 +4,26 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.7.0
+--------------
+
+Internal:
+
+  * Some string methods have been update.  This means the package is no longer
+    supported on Python 2.
+
+New:
+
+  * It is now possible to output a graphviz string for a nuclide.
+
 Version 2.6.0
 --------------
 
 New:
 
-  * The XML reaction class now contains lists of nuclide reactants and products in addition to all reactants and product.
+  * The XML reaction class now contains lists of nuclide reactants and products     in addition to all reactants and product.
   * An Acknowledgments page has been added.
-  * A link to the readthedocs page has been added for more visibility from PYPI and GitHub.
+  * A link to the readthedocs page has been added for more visibility from PYPI     and GitHub.
 
 Version 2.5.0
 --------------
@@ -19,8 +31,8 @@ Version 2.5.0
 Internal:
 
   * Some Webnucleo links have been updated.
-  * The validator now uses XML Catalog. The appropriate schema files are included
-    in the distribution.
+  * The validator now uses XML Catalog. The appropriate schema files are
+    included in the distribution.
 
 Version 2.4.0
 --------------
@@ -31,7 +43,8 @@ Internal:
 
 New:
 
-  * It is now possible to plot zone properties versus a property for an HDF5 group.
+  * It is now possible to plot zone properties versus a property for an HDF5
+    group.
 
 Version 2.3.1
 --------------
