@@ -179,8 +179,9 @@ class Base:
 
         graphviz_names = {}
         for nuclide in nuclides:
-            name = '{:s}'.format(self._create_graphviz_string(nuclide))
-            graphviz_names[nuclide] = name
+            graphviz_names[nuclide] = "{:s}".format(
+                self._create_graphviz_string(nuclide)
+            )
 
         return graphviz_names
 
@@ -197,9 +198,7 @@ class Base:
 
         latex_names = {}
         for nuclide in nuclides:
-#            name = r"$%s$" % (self._create_latex_string(nuclide))
-            name = '${:s}$'.format(self._create_latex_string(nuclide))
-            latex_names[nuclide] = name
+            latex_names[nuclide] = "${:s}$".format(self._create_latex_string(nuclide))
 
         return latex_names
 
