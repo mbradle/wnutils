@@ -9,12 +9,16 @@ Version 2.7.0
 
 Internal:
 
-  * Some string methods have been update.  This means the package is no longer
+  * Some string methods have been updated.  This means the package is no longer
     supported on Python 2.
 
 New:
 
-  * It is now possible to output a graphviz string for a nuclide.
+  * It is now possible to retrieve graphviz strings for nuclides.
+
+Fix:
+
+  * An extraneous and non-functioning search link has been removed.
 
 Version 2.6.0
 --------------
