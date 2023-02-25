@@ -4,6 +4,14 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 2.7.1
+--------------
+
+Fix:
+
+  * The XML write function no longer outputs zone mass fractions if they are
+    zero.
+
 Version 2.7.0
 --------------
 

@@ -1710,11 +1710,12 @@ class New_Xml(wb.Base):
 
         mass_fracs = etree.SubElement(zone_element, "mass_fractions")
         for nuc in zone["mass fractions"]:
-            nuclide = etree.SubElement(mass_fracs, "nuclide")
-            nuclide.set("name", nuc[0])
-            etree.SubElement(nuclide, "z").text = str(nuc[1])
-            etree.SubElement(nuclide, "a").text = str(nuc[2])
-            etree.SubElement(nuclide, "x").text = str(zone["mass fractions"][nuc])
+            if zone["mass fractions"][nuc] != 0:
+                nuclide = etree.SubElement(mass_fracs, "nuclide")
+                nuclide.set("name", nuc[0])
+                etree.SubElement(nuclide, "z").text = str(nuc[1])
+                etree.SubElement(nuclide, "a").text = str(nuc[2])
+                etree.SubElement(nuclide, "x").text = str(zone["mass fractions"][nuc])
 
     def set_zone_data(self, zones):
         """Method to set the zone data.
