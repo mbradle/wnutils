@@ -1,6 +1,9 @@
 # Script to automate build for PyPI.
 
 rm -fr dist
-black wnutils/*.py
+cd wnutils
+git clone https://bitbucket.org/mbradle/libnucnet_xsd.git xsd_pub 2> /dev/null || git -C xsd_pub pull
+black *.py
+cd ..
 python -m pip install --upgrade build
 python -m build
