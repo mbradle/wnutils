@@ -11,6 +11,10 @@ Fix:
 
   * A typo on the non-nuclide reaction element anti-neutrino_tau has been fixed.
 
+Internal:
+
+  * A build script has been added.
+
 Version 2.7.1
 --------------
 
