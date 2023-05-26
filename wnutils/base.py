@@ -479,7 +479,7 @@ class Base:
             "neutrino_mu",
             "anti-neutrino_mu",
             "neutrino_tau",
-            "anti_neutrino_tau",
+            "anti-neutrino_tau",
         ]
 
         return name in non_nuclide_reaction_elements
