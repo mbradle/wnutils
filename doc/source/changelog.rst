@@ -14,7 +14,7 @@ New:
 Fix:
 
   * XML validation has been moved out of the Xml class to a separate routine.
-    This ia a backwards-incompatible change.
+    This is a backwards-incompatible change.
 
 Version 2.7.2
 --------------
