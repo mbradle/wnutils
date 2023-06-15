@@ -116,7 +116,7 @@ You can now read those data into an Xml object by typing
 
 Validate those data against the libnucnet XML nuclear data schema by typing
 
-    >>> xml.validate()
+    >>> wx.validate('updated_nuclear_data.xml')
 
 This will simply return, which shows that the data are valid.  Next, retrieve
 the nuclide data and print out the o16 data:
@@ -155,11 +155,11 @@ Create the new XML, set the data, and write out the XML:
     >>> extended_xml.set_nuclide_data(nuclides)
     >>> extended_xml.write('extended_nuclear_data.xml')
 
-Read in the extended XML, validate, and print out the nuclide data to confirm
+Validate the extended XML, read in, and print out the nuclide data to confirm
 the new species has been added:
 
+    >>> wx.validate('extended_nuclear_data.xml')
     >>> xml = wx.Xml('extended_nuclear_data.xml')
-    >>> xml.validate()
     >>> extended_nuclides = xml.get_nuclide_data()
     >>> for nuc in extended_nuclides:
     ...     print(nuc, extended_nuclides[nuc]['z'], extended_nuclides[nuc]['a'])
@@ -218,10 +218,10 @@ involving *kr85*.  Now create and write to XML:
     >>> subset_xml.set_reaction_data(reactions)
     >>> subset_xml.write('subset_reaction_data.xml')
 
-One can now read in the data and validate:
+One can now validate and read in the data:
 
+    >>> wx.validate('subset_reaction_data.xml')
     >>> xml = wx.Xml('subset_reaction_data.xml')
-    >>> xml.validate()
 
 Now check that the *kr85* reactions have been excluded:
 
@@ -525,8 +525,7 @@ Now create the zone data XML, set the data, and write the file:
 The file *new_zone_data.xml* contains the data you created.
 You can validate it to ensure the data are the right XML format:
 
-    >>> xml = wx.Xml('new_zone_data.xml')
-    >>> xml.validate()
+    >>> wx.validate('new_zone_data.xml')
 
 Libnucnet XML Data
 ..................

@@ -10,6 +10,38 @@ from lxml import etree
 from scipy.interpolate import interp1d
 
 
+def validate(file):
+    """Method to validate input Webnucleo XML.
+
+    Args:
+        ``file`` (:obj:`str`): The name of the xml file to validate.
+
+    Returns:
+        An error message if invalid and nothing if valid.
+
+    """
+
+    parser = etree.XMLParser(remove_blank_text=True)
+    _xml = etree.parse(file, parser)
+    _xml.xinclude()
+    _root = _xml.getroot()
+
+    xsd_dict = {
+        "nuclear_data": "libnucnet__nuc.xsd",
+        "reaction_data": "libnucnet__reac.xsd",
+        "nuclear_network": "libnucnet__net.xsd",
+        "zone_data": "zone_data.xsd",
+        "libnucnet_input": "libnucnet.xsd",
+    }
+
+    schema_file = os.path.join(
+        os.path.dirname(__file__), "xsd_pub", xsd_dict[_root.tag]
+    )
+
+    xml_validator = etree.XMLSchema(file=schema_file)
+    xml_validator.assert_(_xml)
+
+
 class Reaction(wb.Base):
     """A class for storing and retrieving data about reactions."""
 
@@ -1443,29 +1475,6 @@ class Xml(wb.Base):
             anim.save(movie_name, fps=fps)
 
         return anim
-
-    def validate(self):
-        """Method to validate the xml
-
-        Returns:
-            An error message if invalid and nothing if valid.
-
-        """
-
-        xsd_dict = {
-            "nuclear_data": "libnucnet__nuc.xsd",
-            "reaction_data": "libnucnet__reac.xsd",
-            "nuclear_network": "libnucnet__net.xsd",
-            "zone_data": "zone_data.xsd",
-            "libnucnet_input": "libnucnet.xsd",
-        }
-
-        schema_file = os.path.join(
-            os.path.dirname(__file__), "xsd_pub", xsd_dict[self._root.tag]
-        )
-
-        xml_validator = etree.XMLSchema(file=schema_file)
-        xml_validator.assert_(self._xml)
 
     def get_zone_data(self, zone_xpath=""):
         """Method to retrieve zone data from webnucleo XML.

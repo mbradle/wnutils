@@ -4,6 +4,18 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.0.0
+--------------
+
+New:
+
+  * Copy buttons have been added to the tutorial pages.
+
+Fix:
+
+  * XML validation has been moved out of the Xml class to a separate routine.
+    This ia a backwards-incompatible change.
+
 Version 2.7.2
 --------------
 
