@@ -9,7 +9,8 @@ Version 3.0.1
 
 Fix:
 
-  * The copy button requirement has been added to the package.
+  * The copy button requirement has been added to the package to enable proper
+    documentation building.
 
 Version 3.0.0
 --------------
