@@ -26,7 +26,9 @@ class H5(wnb.Base):
 
     def _get_group_zone_property_hash(self, group, zone_index):
 
-        properties = self._h5file["/" + group + "/Zone Properties/" + str(zone_index)]
+        properties = self._h5file[
+            "/" + group + "/Zone Properties/" + str(zone_index)
+        ]
 
         result = {}
 
@@ -298,7 +300,9 @@ class H5(wnb.Base):
         for zone_labels in self.get_zone_labels_for_group(group):
             p = self._get_group_zone_property_hash(
                 group,
-                zone_labels_hash[(zone_labels[0], zone_labels[1], zone_labels[2])],
+                zone_labels_hash[
+                    (zone_labels[0], zone_labels[1], zone_labels[2])
+                ],
             )
             for property in properties:
                 result[property].append(p[property])
@@ -380,7 +384,9 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        result = self.get_zone_properties_in_groups_as_floats(zone, [prop1, prop2])
+        result = self.get_zone_properties_in_groups_as_floats(
+            zone, [prop1, prop2]
+        )
 
         x = result[prop1] / xfactor
         y = result[prop2] / yfactor
@@ -436,7 +442,10 @@ class H5(wnb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print("Number of plotParam elements must equal" + " number of species.")
+                print(
+                    "Number of plotParam elements must equal"
+                    + " number of species."
+                )
                 return
 
         plots = []
@@ -571,7 +580,10 @@ class H5(wnb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print("Number of plotParam elements must equal" + " number of species.")
+                print(
+                    "Number of plotParam elements must equal"
+                    + " number of species."
+                )
                 return
 
         plots = []
@@ -668,7 +680,9 @@ class H5(wnb.Base):
 
         if yfactor:
             if len(yfactor) != len(props):
-                print("yfactor length must be the same as the number of y properties.")
+                print(
+                    "yfactor length must be the same as the number of y properties."
+                )
                 return
         else:
             yfactor = np.full(len(props), 1.0)
@@ -676,7 +690,8 @@ class H5(wnb.Base):
         if plotParams:
             if len(plotParams) != len(props):
                 print(
-                    "Number of plotParam elements must equal" + " number of properties."
+                    "Number of plotParam elements must equal"
+                    + " number of properties."
                 )
                 return
 
@@ -763,7 +778,9 @@ class H5(wnb.Base):
 
         if yfactor:
             if len(yfactor) != len(species):
-                print("yfactor length must be the same as the number of species.")
+                print(
+                    "yfactor length must be the same as the number of species."
+                )
                 return
         else:
             yfactor = np.full(len(species), 1.0)
@@ -868,7 +885,10 @@ class H5(wnb.Base):
         """
         if plotParams:
             if len(plotParams) != len(species):
-                print("Number of plotParam elements must equal" + " number of species.")
+                print(
+                    "Number of plotParam elements must equal"
+                    + " number of species."
+                )
                 return
 
         fig = plt.figure()
@@ -900,7 +920,9 @@ class H5(wnb.Base):
                         groups[i], [property]
                     )
                     plt.plot(
-                        p_prop[property] / xfactor, x[:, nuclide_data[sp]["index"]], **p
+                        p_prop[property] / xfactor,
+                        x[:, nuclide_data[sp]["index"]],
+                        **p
                     )
                 else:
                     plt.plot(x[:, nuclide_data[sp]["index"]], **p)

@@ -92,7 +92,9 @@ class Multi_Xml(wb.Base):
 
         if plotParams:
             if len(xmls) != len(plotParams):
-                print("Number of plotParam elements must equal number of plots.")
+                print(
+                    "Number of plotParam elements must equal number of plots."
+                )
                 return
 
         for i, xml in enumerate(xmls):
@@ -173,7 +175,9 @@ class Multi_Xml(wb.Base):
 
         if plotParams:
             if len(xmls) != len(plotParams):
-                print("Number of plotParam elements must equal number of plots.")
+                print(
+                    "Number of plotParam elements must equal number of plots."
+                )
                 return
 
         for i, xml in enumerate(xmls):

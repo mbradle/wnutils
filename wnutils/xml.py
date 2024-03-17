@@ -635,7 +635,9 @@ class Xml(wb.Base):
                 data = zone.xpath(path)
 
                 if len(data) == 0:
-                    print("Property", self._get_property_name(tup), "not found.")
+                    print(
+                        "Property", self._get_property_name(tup), "not found."
+                    )
                     return None
 
                 my_dict[prop].append(data[0].text)
@@ -888,7 +890,10 @@ class Xml(wb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print("Number of plotParam elements must equal number" + " of species.")
+                print(
+                    "Number of plotParam elements must equal number"
+                    + " of species."
+                )
                 return
 
         plots = []
@@ -975,7 +980,9 @@ class Xml(wb.Base):
 
         if plotParams:
             if y.shape[0] != len(plotParams):
-                print("Number of plotParam elements must equal number of plots.")
+                print(
+                    "Number of plotParam elements must equal number of plots."
+                )
                 return
 
         for i in range(y.shape[0]):
@@ -1128,7 +1135,9 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        x, y = self.get_chain_abundances(nucleon, zone_xpath=zone_xpath, vs_A=plot_vs_A)
+        x, y = self.get_chain_abundances(
+            nucleon, zone_xpath=zone_xpath, vs_A=plot_vs_A
+        )
         props = self.get_properties_as_floats(
             ["time", "t9", "rho"], zone_xpath=zone_xpath
         )
@@ -1559,9 +1568,13 @@ class New_Xml(wb.Base):
                 states_element = etree.SubElement(nuclide_element, "states")
             state_element = etree.SubElement(states_element, "state")
             state_element.set("id", nuclide["state"])
-            etree.SubElement(state_element, "source").text = str(nuclide["source"])
+            etree.SubElement(state_element, "source").text = str(
+                nuclide["source"]
+            )
         else:
-            etree.SubElement(state_element, "source").text = str(nuclide["source"])
+            etree.SubElement(state_element, "source").text = str(
+                nuclide["source"]
+            )
 
         etree.SubElement(state_element, "mass_excess").text = str(
             nuclide["mass excess"]
@@ -1620,7 +1633,9 @@ class New_Xml(wb.Base):
             self._set_xml_data_for_nuclide(nuclide, nuclides[nuc])
 
     def _set_xml_data_for_reaction(self, reaction_element, reaction):
-        etree.SubElement(reaction_element, "source").text = str(reaction.source)
+        etree.SubElement(reaction_element, "source").text = str(
+            reaction.source
+        )
 
         for reactant in reaction.reactants:
             etree.SubElement(reaction_element, "reactant").text = str(reactant)
@@ -1633,7 +1648,9 @@ class New_Xml(wb.Base):
                 reaction.data["rate"]
             )
         elif reaction.data["type"] == "rate_table":
-            rate_table_element = etree.SubElement(reaction_element, "rate_table")
+            rate_table_element = etree.SubElement(
+                reaction_element, "rate_table"
+            )
             t9 = reaction.data["t9"]
             rate = reaction.data["rate"]
             sef = reaction.data["sef"]
@@ -1692,7 +1709,9 @@ class New_Xml(wb.Base):
             return
 
         for reaction in reactions:
-            reaction_data[0].append(etree.Comment(reactions[reaction].get_string()))
+            reaction_data[0].append(
+                etree.Comment(reactions[reaction].get_string())
+            )
             new_reaction = etree.SubElement(reaction_data[0], "reaction")
             self._set_xml_data_for_reaction(new_reaction, reactions[reaction])
 
@@ -1722,7 +1741,9 @@ class New_Xml(wb.Base):
                 nuclide.set("name", nuc[0])
                 etree.SubElement(nuclide, "z").text = str(nuc[1])
                 etree.SubElement(nuclide, "a").text = str(nuc[2])
-                etree.SubElement(nuclide, "x").text = str(zone["mass fractions"][nuc])
+                etree.SubElement(nuclide, "x").text = str(
+                    zone["mass fractions"][nuc]
+                )
 
     def set_zone_data(self, zones):
         """Method to set the zone data.
