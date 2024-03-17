@@ -2,9 +2,9 @@ import os
 import wnutils.base as wb
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+from matplotlib import cm
 from matplotlib.colors import LogNorm
-import matplotlib.animation as animation
+from matplotlib import animation
 import numpy as np
 from lxml import etree
 from scipy.interpolate import interp1d
@@ -138,14 +138,12 @@ class Reaction(wb.Base):
         key = user_rate.xpath("@key")
         result["key"] = key[0]
 
-        properties = user_rate.xpath("properties/property")
-
         props = {}
 
-        for property in properties:
-            name = property.xpath("@name")
-            tag1 = property.xpath("@tag1")
-            tag2 = property.xpath("@tag2")
+        for prop in user_rate.xpath("properties/property"):
+            name = prop.xpath("@name")
+            tag1 = prop.xpath("@tag1")
+            tag2 = prop.xpath("@tag2")
 
             key = name[0]
             if tag1:
@@ -153,7 +151,7 @@ class Reaction(wb.Base):
             if tag2:
                 key += (tag2[0],)
 
-            props[key] = property.text
+            props[key] = prop.text
 
         result = self._merge_dicts(result, props)
 
@@ -176,6 +174,8 @@ class Reaction(wb.Base):
         user_rate = reaction_node.xpath("user_rate")
         if user_rate:
             return self._get_user_rate_data(user_rate[0])
+
+        return None
 
     def _set_data(self, reaction_node):
         if reaction_node.xpath("source"):
@@ -202,25 +202,25 @@ class Reaction(wb.Base):
 
         if t9 < t[0]:
             return np.power(10.0, lr[0]) * sef[0]
-        elif t9 > t[len(t) - 1]:
+        if t9 > t[len(t) - 1]:
             return np.power(10.0, lr[len(t) - 1]) * sef[len(t) - 1]
 
         if len(t) <= 2:
             f1 = interp1d(t, lr, kind="linear")
             f2 = interp1d(t, sef, kind="linear")
             return np.power(10.0, f1(t9)) * f2(t9)
-        else:
-            f1 = interp1d(t, lr, kind="cubic")
-            f2 = interp1d(t, sef, kind="cubic")
-            return np.power(10.0, f1(t9)) * f2(t9)
+
+        f1 = interp1d(t, lr, kind="cubic")
+        f2 = interp1d(t, sef, kind="cubic")
+        return np.power(10.0, f1(t9)) * f2(t9)
 
     def _compute_rate_table_rate(self, t9):
         if isinstance(t9, float):
             return self._compute_rate_table_rate_interpolation(t9)
-        else:
-            return np.array(
-                [self._compute_rate_table_rate_interpolation(x) for x in t9]
-            )
+
+        return np.array(
+            [self._compute_rate_table_rate_interpolation(x) for x in t9]
+        )
 
     def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
         def non_smoker_function(fit, t9):
@@ -237,20 +237,21 @@ class Reaction(wb.Base):
 
         if t9 < fit["Tlowfit"]:
             return non_smoker_function(fit, fit["Tlowfit"])
-        elif t9 > fit["Thighfit"]:
+        if t9 > fit["Thighfit"]:
             return non_smoker_function(fit, fit["Thighfit"])
-        else:
-            return non_smoker_function(fit, t9)
+
+        return non_smoker_function(fit, t9)
 
     def _compute_non_smoker_fit_rate(self, t9):
         fits = self.data["fits"]
+
         if len(fits) != 0:
             result = 0.0
             for fit in fits:
                 result += self._compute_non_smoker_fit_rate_for_fit(fit, t9)
             return result
-        else:
-            return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
+
+        return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
 
     def compute_rate(self, t9, user_funcs=" "):
         """Method to compute rate for a reaction at input t9.
@@ -269,18 +270,18 @@ class Reaction(wb.Base):
 
         if self.data["type"] == "single_rate":
             return self.data["rate"]
-        elif self.data["type"] == "rate_table":
+        if self.data["type"] == "rate_table":
             return self._compute_rate_table_rate(t9)
-        elif self.data["type"] == "non_smoker_fit":
+        if self.data["type"] == "non_smoker_fit":
             return self._compute_non_smoker_fit_rate(t9)
-        elif self.data["type"] == "user_rate":
+        if self.data["type"] == "user_rate":
             if self.data["key"] not in user_funcs:
                 print("Function not defined for key " + self.data["key"])
                 return None
             return user_funcs[self.data["key"]](self, t9)
-        else:
-            print("No such reaction type")
-            return None
+
+        print("No such reaction type")
+        return None
 
     def _get_reactant_and_product_xpath(self):
         reactants = []
@@ -476,18 +477,18 @@ class Xml(wb.Base):
 
         zlim = [[] for i in range(len(zt))]
 
-        for i in range(len(nd)):
-            loc = [j for j, zj in enumerate(zt) if zj == nd[i]["z"]]
-            zlim[loc[0]].append(nd[i]["n"])
+        for n_nd in nd:
+            loc = [j for j, zj in enumerate(zt) if zj == n_nd["z"]]
+            zlim[loc[0]].append(n_nd["n"])
 
         z = np.zeros(len(zlim), dtype=np.int_)
         n_min = np.zeros(len(zlim), dtype=np.int_)
         n_max = np.zeros(len(zlim), dtype=np.int_)
 
-        for i in range(len(zlim)):
+        for i, z_zlim in enumerate(zlim):
             z[i] = int(zt[i])
-            n_min[i] = int(min(zlim[i]))
-            n_max[i] = int(max(zlim[i]))
+            n_min[i] = int(min(z_zlim))
+            n_max[i] = int(max(z_zlim))
 
         return {"z": z, "n_min": n_min, "n_max": n_max}
 
@@ -564,14 +565,14 @@ class Xml(wb.Base):
 
         zones = self._get_zones(zone_xpath)
 
-        for sp in species:
-            result[sp] = np.zeros(len(zones))
+        for _sp in species:
+            result[_sp] = np.zeros(len(zones))
 
-        for i in range(len(zones)):
-            for sp in species:
-                data = zones[i].xpath('mass_fractions/nuclide[@name="%s"]/x' % sp)
+        for i, zone in enumerate(zones):
+            for _sp in species:
+                data = zone.xpath('mass_fractions/nuclide[@name="%s"]/x' % _sp)
                 if len(data) == 1:
-                    result[sp][i] = float(data[0].text)
+                    result[_sp][i] = float(data[0].text)
 
         return result
 
@@ -593,27 +594,27 @@ class Xml(wb.Base):
 
         properties_t = {}
 
-        for property in properties:
-            if isinstance(property, str):
-                properties_t[property] = (property,)
+        for prop in properties:
+            if isinstance(prop, str):
+                properties_t[prop] = (prop,)
             else:
-                properties_t[property] = property
-                if len(properties_t[property]) > 3:
+                properties_t[prop] = prop
+                if len(properties_t[prop]) > 3:
                     print("\nToo many property names (at most 3)!\n")
-                    return
+                    return None
 
-        dict = {}
+        my_dict = {}
 
-        for property in properties:
-            dict[property] = []
+        for prop in properties:
+            my_dict[prop] = []
 
         zones = self._get_zones(zone_xpath)
 
         for zone in zones:
 
-            for property in properties:
+            for prop in properties:
 
-                tup = properties_t[property]
+                tup = properties_t[prop]
 
                 path = "optional_properties/property"
 
@@ -635,29 +636,29 @@ class Xml(wb.Base):
 
                 if len(data) == 0:
                     print("Property", self._get_property_name(tup), "not found.")
-                    return
+                    return None
 
-                dict[property].append(data[0].text)
+                my_dict[prop].append(data[0].text)
 
-        return dict
+        return my_dict
 
     def _get_all_zone_properties(self, zone):
         result = {}
 
         props = zone.xpath("optional_properties/property")
 
-        for property in props:
+        for prop in props:
             p_name = ""
-            name = property.xpath("@name")
-            tag1 = property.xpath("@tag1")
-            tag2 = property.xpath("@tag2")
+            name = prop.xpath("@name")
+            tag1 = prop.xpath("@tag1")
+            tag2 = prop.xpath("@tag2")
             if tag1:
                 p_name = (name[0], tag1[0])
                 if tag2:
                     p_name += (tag2[0],)
             else:
                 p_name = name[0]
-            result[p_name] = property.text
+            result[p_name] = prop.text
 
         return result
 
@@ -674,13 +675,11 @@ class Xml(wb.Base):
 
         """
 
-        result = {}
-
         zones = self._get_zones(zone_xpath)
 
         if len(zones) != 1:
             print("Incorrect number of zones.")
-            return
+            return None
 
         return self._get_all_zone_properties(zones[0])
 
@@ -733,10 +732,9 @@ class Xml(wb.Base):
 
         result = np.zeros((len(zones), z_max + 1, n_max + 1))
 
-        for i in range(len(zones)):
-            sp = self._get_nuclide_data_for_zone(zones[i])
-            for s in sp:
-                result[i, s[1], s[2] - s[1]] += sp[s] / s[2]
+        for i, zone in enumerate(zones):
+            for key, value in self._get_nuclide_data_for_zone(zone):
+                result[i, key[1], key[2] - key[1]] += value / key[2]
 
         return result
 
@@ -759,7 +757,7 @@ class Xml(wb.Base):
 
         if nucleon != "z" and nucleon != "n" and nucleon != "a":
             print("nucleon must be 'z', 'n', or 'a'.")
-            return
+            return None
 
         y = self.get_all_abundances_in_zones(zone_xpath)
 
@@ -768,8 +766,6 @@ class Xml(wb.Base):
         elif nucleon == "n":
             result = np.sum(y, axis=1)
         else:
-            yz = np.sum(y, axis=2)
-            yn = np.sum(y, axis=1)
             result = np.zeros((y.shape[0], y.shape[1] + y.shape[2] + 2))
             for i in range(y.shape[0]):
                 for i_z in range(y.shape[1]):
@@ -1354,7 +1350,7 @@ class Xml(wb.Base):
         fps=15,
         title_func=None,
         rcParams=None,
-        imParams={},
+        imParams=None,
         show_limits=True,
         plotParams={"color": "black"},
         **kwargs
@@ -1430,6 +1426,8 @@ class Xml(wb.Base):
         if "ylim" in kwargs:
             yr = [kwargs["ylim"][0], kwargs["ylim"][1]]
 
+        if imParams is None:
+            imParams = {}
         if "origin" not in imParams:
             imParams = self._merge_dicts({"origin": "lower"}, imParams)
         if "cmap" not in imParams:
@@ -1575,9 +1573,9 @@ class New_Xml(wb.Base):
         t9 = nuclide["t9"]
         partf = nuclide["partf"]
 
-        for i in range(len(t9)):
+        for i, t_t9 in enumerate(t9):
             point = etree.SubElement(partf_element, "point")
-            etree.SubElement(point, "t9").text = str(t9[i])
+            etree.SubElement(point, "t9").text = str(t_t9)
             log10_partf = np.log10(partf[i] / (2.0 * nuclide["spin"] + 1))
             etree.SubElement(point, "log10_partf").text = str(log10_partf)
 
@@ -1659,19 +1657,19 @@ class New_Xml(wb.Base):
             properties = etree.SubElement(user_element, "properties")
             for d in reaction.data:
                 if d != "type" and d != "key":
-                    property = etree.SubElement(properties, "property")
-                    property.text = str(reaction.data[d])
+                    prop = etree.SubElement(properties, "property")
+                    prop.text = str(reaction.data[d])
                     if isinstance(d, tuple):
-                        property.set("name", d[0])
+                        prop.set("name", d[0])
                         if len(d) > 1:
-                            property.set("tag1", d[1])
+                            prop.set("tag1", d[1])
                             if len(d) > 2:
-                                property.set("tag2", d[2])
+                                prop.set("tag2", d[2])
                         if len(d) > 3:
                             print("Improper number of property tags.")
                             exit()
                     else:
-                        property.set("name", d)
+                        prop.set("name", d)
 
     def set_reaction_data(self, reactions):
         """Method to set the reaction data.

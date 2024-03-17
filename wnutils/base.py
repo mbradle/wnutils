@@ -1,22 +1,27 @@
+"""Module providing base class."""
+
+import matplotlib as mpl
+
+
 class Base:
     """Class for setting wnutils parameters and utilities."""
 
     def _get_property_name(self, tup):
         if len(tup) == 1:
-            s = tup[0]
+            _s = tup[0]
         elif len(tup) == 2:
-            s = tup[0] + ", " + tup[1]
+            _s = tup[0] + ", " + tup[1]
         elif len(tup) == 3:
-            s = tup[0] + ", " + tup[1] + ", " + tup[2]
+            _s = tup[0] + ", " + tup[1] + ", " + tup[2]
         else:
-            s = "Invalid property name"
+            _s = "Invalid property name"
 
-        return s
+        return _s
 
-    def _merge_dicts(self, x, y):  # For Python 2
-        z = x.copy()
-        z.update(y)
-        return z
+    def _merge_dicts(self, _x, _y):  # For Python 2
+        _z = _x.copy()
+        _z.update(_y)
+        return _z
 
     def show_or_close(self, plt, kwargs):
         """Method to show or close plot.
@@ -41,10 +46,10 @@ class Base:
     def _class_comparator(self, k):
         if k == "show":
             return 2
-        elif k == "savefig":
+        if k == "savefig":
             return 1
-        else:
-            return 0
+
+        return 0
 
     def set_plot_params(self, my_mpl, my_params):
         """Method to set plot parameters.
@@ -87,12 +92,10 @@ class Base:
 
             try:
                 method = getattr(plt, key)
-            except AttributeError:
+            except AttributeError as e_error:
                 raise NotImplementedError(
-                    "Class `{}` does not implement `{}`".format(
-                        plt.__class__.__name__, method
-                    )
-                )
+                    f"Class {plt.__class__.__name} does not implement {method}"
+                ) from e_error
 
             if isinstance(keyword_params[key], dict):
                 method(**keyword_params[key])
@@ -110,38 +113,35 @@ class Base:
 
         """
 
-        import matplotlib as my_mpl
+        print(mpl.rcParams.keys())
 
-        print(my_mpl.rcParams.keys())
-
-    def _get_species_name_substrings(self, str):
+    def _get_species_name_substrings(self, my_str):
         b_read_elem = False
         b_read_mass = False
         elem = ""
         mass = ""
         state = ""
-        for i in range(len(str)):
-            if str[i].isalpha() and not b_read_elem:
-                elem += str[i]
-            elif str[i].isdigit() and not b_read_mass:
-                mass += str[i]
+        for m_c in my_str:
+            if m_c.isalpha() and not b_read_elem:
+                elem += m_c
+            elif m_c.isdigit() and not b_read_mass:
+                mass += m_c
                 b_read_elem = True
             else:
                 b_read_mass = True
-                state += str[i]
+                state += m_c
         return (elem, mass, state)
 
-    def _create_graphviz_string(self, str):
-        str_T = self._get_species_name_substrings(str)
-        elem = str_T[0]
-        if str_T[1]:
-            elem = str_T[0].title()
-        if str_T[2]:
-            return r"<<sup>%s</sup>%s<sub>%s</sub>>" % (str_T[1], elem, str_T[2])
-        else:
-            return r"<<sup>%s</sup>%s>" % (str_T[1], elem)
+    def _create_graphviz_string(self, my_str):
+        str_t = self._get_species_name_substrings(my_str)
+        elem = str_t[0]
+        if str_t[1]:
+            elem = str_t[0].title()
+        if str_t[2]:
+            return f"<<sup>{str_t[1]}</sup>{elem}<sub>{str_t[2]}</sub>>"
+        return f"<<sup>{str_t[1]}</sup>{elem}>"
 
-    def _create_latex_string(self, str):
+    def _create_latex_string(self, my_str):
         l_hash = {
             "gamma": "\\gamma",
             "electron": "{\\rm e}^-",
@@ -154,17 +154,16 @@ class Base:
             "anti-neutrino_tau": "{\\bar \\nu}_\\tau",
         }
 
-        if str in l_hash:
-            return l_hash[str]
-        else:
-            str_T = self._get_species_name_substrings(str)
-            elem = str_T[0]
-            if str_T[1]:
-                elem = str_T[0].title()
-            if str_T[2]:
-                return r"^{%s}\rm{%s}_{\rm{%s}}" % (str_T[1], elem, str_T[2])
-            else:
-                return r"^{%s}\rm{%s}" % (str_T[1], elem)
+        if my_str in l_hash:
+            return l_hash[my_str]
+
+        str_t = self._get_species_name_substrings(my_str)
+        elem = str_t[0]
+        if str_t[1]:
+            elem = str_t[0].title()
+        if str_t[2]:
+            return r"^{%s}\rm{%s}_{\rm{%s}}" % (str_t[1], elem, str_t[2])
+        return r"^{%s}\rm{%s}" % (str_t[1], elem)
 
     def get_graphviz_names(self, nuclides):
         """Method to get graphviz strings of nuclides' names.
@@ -179,9 +178,9 @@ class Base:
 
         graphviz_names = {}
         for nuclide in nuclides:
-            graphviz_names[nuclide] = "{:s}".format(
-                self._create_graphviz_string(nuclide)
-            )
+            graphviz_names[
+                nuclide
+            ] = f"{self._create_graphviz_string(nuclide)}"
 
         return graphviz_names
 
@@ -198,7 +197,7 @@ class Base:
 
         latex_names = {}
         for nuclide in nuclides:
-            latex_names[nuclide] = "${:s}$".format(self._create_latex_string(nuclide))
+            latex_names[nuclide] = f"${self._create_latex_string(nuclide)}$"
 
         return latex_names
 
@@ -334,24 +333,24 @@ class Base:
 
         if elem_str in s_zname:
             return s_zname.index(elem_str)
-        else:
-            ex_name = self._create_ex_name_array()
-            result = ""
-            for elem_char in elem_str:
-                result += str(ex_name.index(elem_char))
-            return int(result)
 
-    def _create_element_name(self, z):
+        ex_name = self._create_ex_name_array()
+        result = ""
+        for elem_char in elem_str:
+            result += str(ex_name.index(elem_char))
+        return int(result)
+
+    def _create_element_name(self, _z):
 
         s_zname = self._create_zname_array()
 
         ex_name = self._create_ex_name_array()
 
         elem_name = ""
-        if z < len(s_zname):
-            elem_name = s_zname[z]
+        if _z < len(s_zname):
+            elem_name = s_zname[_z]
         else:
-            z_tmp = z
+            z_tmp = _z
             while z_tmp:
                 i = z_tmp % 10
                 elem_name = ex_name[i] + elem_name
@@ -376,9 +375,8 @@ class Base:
         if elem[0] == "n":
             if not mass:
                 return (0, len(elem), state)
-            else:
-                if len(elem) == 1:
-                    return (7, int(mass), state)
+            if len(elem) == 1:
+                return (7, int(mass), state)
 
         return (int(self._get_z_from_element_name(elem)), int(mass), state)
 
@@ -404,7 +402,7 @@ class Base:
 
         if z == 0 and a == 1:
             return "n"
-        elif z == 0 and a == 2:
+        if z == 0 and a == 2:
             return "nn"
 
         # Normal cases
@@ -431,12 +429,9 @@ class Base:
 
         """
 
-        title_str = "time (s) = %8.2e, $T_9$ = %5.2f, rho (g/cc) = %8.2e" % (
-            props["time"][i],
-            props["t9"][i],
-            props["rho"][i],
-        )
-        return title_str
+        return f"time (s) = {props['time'][i]:8.2e}, \
+                    $T_9$ = {props['t9'][i]:5.2f}, \
+                    rho (g/cc) = {props['rho'][i]:8.2e}"
 
     def make_time_title_str(self, time):
         """Method to create a default title string.
@@ -454,8 +449,7 @@ class Base:
 
         """
 
-        title_str = "time (s) = %8.2e" % (time)
-        return title_str
+        return f"time (s) = {time:8.2e}"
 
     def is_non_nuclide_reaction_element_string(self, name):
         """Method to check if a string is that of a non-nuclide reaction element.

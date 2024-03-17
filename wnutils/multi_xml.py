@@ -1,7 +1,7 @@
-import wnutils.base as wb
-import wnutils.xml as wx
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import wnutils.base as wb
+import wnutils.xml as wx
 
 
 class Multi_Xml(wb.Base):
@@ -125,7 +125,6 @@ class Multi_Xml(wb.Base):
         species,
         xfactor=1,
         use_latex_names=False,
-        labels=None,
         rcParams=None,
         plotParams=None,
         **kwargs
