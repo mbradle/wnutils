@@ -1,9 +1,11 @@
-import wnutils.base as wnb
+"""Module providing h5 classes."""
+
+import warnings
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib import animation
 import numpy as np
-import matplotlib.animation as animation
-import warnings
+import wnutils.base as wnb
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=FutureWarning)
@@ -32,10 +34,10 @@ class H5(wnb.Base):
 
         result = {}
 
-        for property in properties:
-            p0 = property[0].decode("ascii")
-            p1 = property[1].decode("ascii")
-            p2 = property[2].decode("ascii")
+        for my_property in properties:
+            p0 = my_property[0].decode("ascii")
+            p1 = my_property[1].decode("ascii")
+            p2 = my_property[2].decode("ascii")
             name = ""
             if p1 == "0" and p2 == "0":
                 name = p0
@@ -43,7 +45,7 @@ class H5(wnb.Base):
                 name = (p0, p1)
             else:
                 name = (p0, p1, p2)
-            result[name] = property[3].decode("ascii")
+            result[name] = my_property[3].decode("ascii")
 
         return result
 
@@ -63,12 +65,12 @@ class H5(wnb.Base):
 
         result = []
 
-        for i in range(len(zone_labels)):
+        for zone_label in zone_labels:
             result.append(
                 (
-                    zone_labels[i][0].decode("ascii"),
-                    zone_labels[i][1].decode("ascii"),
-                    zone_labels[i][2].decode("ascii"),
+                    zone_label[0].decode("ascii"),
+                    zone_label[1].decode("ascii"),
+                    zone_label[2].decode("ascii"),
                 )
             )
 
@@ -80,8 +82,8 @@ class H5(wnb.Base):
 
         result = {}
 
-        for i in range(len(zone_labels_array)):
-            result[zone_labels_array[i]] = i
+        for i, zone_label in enumerate(zone_labels_array):
+            result[zone_label] = i
 
         return result
 
@@ -107,16 +109,16 @@ class H5(wnb.Base):
 
         nuclide_data = self._h5file["/Nuclide Data"]
 
-        for i in range(len(nuclide_data)):
+        for nuc in nuclide_data:
             data = {}
-            data["name"] = nuclide_data[i][0].decode("ascii")
-            data["z"] = nuclide_data[i][2]
-            data["a"] = nuclide_data[i][3]
+            data["name"] = nuc[0].decode("ascii")
+            data["z"] = nuc[2]
+            data["a"] = nuc[3]
             data["n"] = data["a"] - data["z"]
-            data["source"] = nuclide_data[i][4].decode("ascii")
-            data["state"] = nuclide_data[i][5].decode("ascii")
-            data["mass excess"] = nuclide_data[i][6]
-            data["spin"] = nuclide_data[i][7]
+            data["source"] = nuc[4].decode("ascii")
+            data["state"] = nuc[5].decode("ascii")
+            data["mass excess"] = nuc[6]
+            data["spin"] = nuc[7]
             result.append(data)
 
         return result
@@ -136,17 +138,17 @@ class H5(wnb.Base):
 
         result = {}
 
-        for i in range(len(nuclide_data)):
+        for i, nuc in enumerate(nuclide_data):
             data = {}
             data["index"] = i
-            data["z"] = nuclide_data[i]["z"]
-            data["a"] = nuclide_data[i]["a"]
-            data["n"] = nuclide_data[i]["n"]
-            data["source"] = nuclide_data[i]["source"]
-            data["state"] = nuclide_data[i]["state"]
-            data["mass excess"] = nuclide_data[i]["mass excess"]
-            data["spin"] = nuclide_data[i]["spin"]
-            result[nuclide_data[i]["name"]] = data
+            data["z"] = nuc["z"]
+            data["a"] = nuc["a"]
+            data["n"] = nuc["n"]
+            data["source"] = nuc["source"]
+            data["state"] = nuc["state"]
+            data["mass excess"] = nuc["mass excess"]
+            data["spin"] = nuc["spin"]
+            result[nuc["name"]] = data
 
         return result
 
@@ -237,14 +239,14 @@ class H5(wnb.Base):
 
         result = {}
 
-        for property in properties:
-            result[property] = []
+        for my_property in properties:
+            result[my_property] = []
 
         for group_name in self.get_iterable_groups():
             zone_index = self._get_group_zone_labels_hash(group_name)[zone]
             p = self._get_group_zone_property_hash(group_name, zone_index)
-            for property in properties:
-                result[property].append(p[property])
+            for my_property in properties:
+                result[my_property].append(p[my_property])
 
         return result
 
@@ -269,8 +271,8 @@ class H5(wnb.Base):
 
         props = self.get_zone_properties_in_groups(zone, properties)
 
-        for prop in props:
-            result[prop] = np.array(props[prop], np.float_)
+        for key, value in props.items():
+            result[key] = np.array(value, np.float_)
 
         return result
 
@@ -292,8 +294,8 @@ class H5(wnb.Base):
 
         result = {}
 
-        for property in properties:
-            result[property] = []
+        for my_property in properties:
+            result[my_property] = []
 
         zone_labels_hash = self._get_group_zone_labels_hash(group)
 
@@ -304,8 +306,8 @@ class H5(wnb.Base):
                     (zone_labels[0], zone_labels[1], zone_labels[2])
                 ],
             )
-            for property in properties:
-                result[property].append(p[property])
+            for my_property in properties:
+                result[my_property].append(p[my_property])
 
         return result
 
@@ -329,8 +331,8 @@ class H5(wnb.Base):
 
         props = self.get_group_properties_in_zones(group, properties)
 
-        for prop in props:
-            result[prop] = np.array(props[prop], np.float_)
+        for key, value in props.items():
+            result[key] = np.array(value, np.float_)
 
         return result
 
@@ -486,7 +488,7 @@ class H5(wnb.Base):
         self.show_or_close(plt, kwargs)
 
     def plot_group_property_in_zones(
-        self, group, property, rcParams=None, plotParams=None, **kwargs
+        self, group, g_property, rcParams=None, plotParams=None, **kwargs
     ):
         """Method to plot a group property vs. zone.
 
@@ -494,8 +496,8 @@ class H5(wnb.Base):
 
             ``group`` (:obj:`str`): A string giving the group.
 
-            ``property`` (:obj:`str` or :obj:`tuple`): A string or tuple
-            of up to three strings giving the group.
+            ``g_property`` (:obj:`str` or :obj:`tuple`): A string or tuple
+            of up to three strings giving the group property.
 
             ``rcParams``` (:obj:`dict`, optional): A dictionary of
             :obj:`matplotlib.rcParams` to be applied to the plot.
@@ -515,15 +517,17 @@ class H5(wnb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        prop = self.get_group_properties_in_zones_as_floats(group, [property])
+        prop = self.get_group_properties_in_zones_as_floats(
+            group, [g_property]
+        )
 
         if plotParams:
-            plt.plot(prop[property], **plotParams)
+            plt.plot(prop[g_property], **plotParams)
         else:
-            plt.plot(prop[property])
+            plt.plot(prop[g_property])
 
         if "ylabel" not in kwargs:
-            plt.ylabel(property)
+            plt.ylabel(g_property)
 
         self.apply_class_methods(plt, kwargs)
 
@@ -823,7 +827,7 @@ class H5(wnb.Base):
         self,
         species,
         movie_name="",
-        property=None,
+        x_property=None,
         fps=15,
         xfactor=1,
         use_latex_names=False,
@@ -842,7 +846,7 @@ class H5(wnb.Base):
             ``movie_name`` (:obj:`str`): A string giving the name of the
             resultin movie file.
 
-            ``property`` (:obj:`str`, optional): A string giving property
+            ``x_property`` (:obj:`str`, optional): A string giving property
             to be the x axis.  Defaults to zone index.
 
             ``fps`` (:obj:`float`, optional): A float giving the frames
@@ -889,7 +893,7 @@ class H5(wnb.Base):
                     "Number of plotParam elements must equal"
                     + " number of species."
                 )
-                return
+                return None
 
         fig = plt.figure()
 
@@ -915,12 +919,12 @@ class H5(wnb.Base):
                         p = self._merge_dicts(p, {"label": latex_names[sp]})
                     else:
                         p = self._merge_dicts(p, {"label": sp})
-                if property:
+                if x_property:
                     p_prop = self.get_group_properties_in_zones_as_floats(
-                        groups[i], [property]
+                        groups[i], [x_property]
                     )
                     plt.plot(
-                        p_prop[property] / xfactor,
+                        p_prop[x_property] / xfactor,
                         x[:, nuclide_data[sp]["index"]],
                         **p
                     )
@@ -1031,7 +1035,7 @@ class New_H5(wnb.Base):
         my_data = np.array([], dtype=my_type)
 
         for zone in zones:
-            if type(zone) is tuple:
+            if isinstance(zone, tuple):
                 tup = zone
             else:
                 tup = (zone, "0", "0")
@@ -1057,7 +1061,7 @@ class New_H5(wnb.Base):
                 tag1 = "0"
                 tag2 = "0"
                 value = str(props[prop])
-                if type(prop) is tuple:
+                if isinstance(prop, tuple):
                     name = str(prop[0])
                     tag1 = str(prop[1])
                     if len(prop) == 3:
@@ -1071,7 +1075,6 @@ class New_H5(wnb.Base):
             i += 1
 
     def _add_zone_mass_fractions_to_group(self, g, zones):
-        dt = h5py.string_dtype()
 
         my_data = np.zeros((len(zones), len(self.nucs)), dtype=float)
 

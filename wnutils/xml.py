@@ -1,4 +1,4 @@
-"""Module providing xml class."""
+"""Module providing xml classes."""
 
 import os
 import sys
