@@ -1,17 +1,11 @@
-import requests, io
 import wnutils.xml as wx
 
-
 def get_xml():
-    xml = wx.Xml(
-        io.BytesIO(requests.get("https://osf.io/kyhbs/download").content)
-    )
+    xml = wx.Xml('my_output1.xml')
     return xml
 
 def test_validate():
-    assert wx.validate(
-        io.BytesIO(requests.get("https://osf.io/kyhbs/download").content)
-    ) == None
+    assert wx.validate('my_output1.xml') == None
 
 def test_load():
     xml = get_xml()
