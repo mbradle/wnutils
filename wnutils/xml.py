@@ -1416,7 +1416,7 @@ class Xml(wb.Base):
         """
 
         if plotParams is None:
-            plotParams={"color": "black"}
+            plotParams = {"color": "black"}
 
         fig = plt.figure()
 
