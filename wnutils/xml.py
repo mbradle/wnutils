@@ -701,7 +701,7 @@ class Xml(wb.Base):
         props = self.get_properties(properties, zone_xpath)
 
         for prop in props:
-            props[prop] = np.array(props[prop], np.float_)
+            props[prop] = np.array(props[prop], np.float64)
 
         return props
 
