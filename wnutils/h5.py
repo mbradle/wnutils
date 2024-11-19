@@ -272,7 +272,7 @@ class H5(wnb.Base):
         props = self.get_zone_properties_in_groups(zone, properties)
 
         for key, value in props.items():
-            result[key] = np.array(value, np.float_)
+            result[key] = np.array(value, np.float64)
 
         return result
 
@@ -332,7 +332,7 @@ class H5(wnb.Base):
         props = self.get_group_properties_in_zones(group, properties)
 
         for key, value in props.items():
-            result[key] = np.array(value, np.float_)
+            result[key] = np.array(value, np.float64)
 
         return result
 
