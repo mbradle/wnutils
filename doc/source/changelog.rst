@@ -4,20 +4,17 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
-Version 3.1.1
---------------
-
-Fix:
-
-  * Float type has been adjust to be consistent with new NumPy standard.
-
-
 Version 3.1.0
 --------------
 
 New:
 
   * Linting and testing have been added to the project integration.
+
+Fix:
+
+  * Float type has been adjusted to be consistent with new NumPy standard.
+
 
 Version 3.0.1
 --------------
