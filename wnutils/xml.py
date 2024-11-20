@@ -383,7 +383,9 @@ class Xml(wb.Base):
 
             for reactant in reactants:
                 _r.reactants.append(reactant.text)
-                if not _r.is_non_nuclide_reaction_element_string(reactant.text):
+                if not _r.is_non_nuclide_reaction_element_string(
+                    reactant.text
+                ):
                     _r.nuclide_reactants.append(reactant.text)
 
             products = reaction_node.xpath("product")
