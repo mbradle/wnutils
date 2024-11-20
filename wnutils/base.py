@@ -380,14 +380,14 @@ class Base:
 
         return (int(self._get_z_from_element_name(elem)), int(mass), state)
 
-    def create_nuclide_name(self, z, a, state):
+    def create_nuclide_name(self, z_c, a_c, state):
         """Method to create the name of a nuclide.
 
         Args:
-            ``z`` (:obj:`int`): An integer giving the nuclide's atomic
+            ``z_c`` (:obj:`int`): An integer giving the nuclide's atomic
             number.
 
-            ``a`` (:obj:`int`): An integer giving the nuclide's mass
+            ``a_c`` (:obj:`int`): An integer giving the nuclide's mass
             number.
 
             ``state`` (:obj:`str`): A string giving the nuclide's state
@@ -400,14 +400,14 @@ class Base:
 
         # Special cases
 
-        if z == 0 and a == 1:
+        if z_c == 0 and a_c == 1:
             return "n"
-        if z == 0 and a == 2:
+        if z_c == 0 and a_c == 2:
             return "nn"
 
         # Normal cases
 
-        name = self._create_element_name(z) + str(a) + state
+        name = self._create_element_name(z_c) + str(a_c) + state
 
         return name
 

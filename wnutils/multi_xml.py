@@ -1,3 +1,5 @@
+"""Module providing the multi_xml class."""
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import wnutils.base as wb
@@ -99,12 +101,12 @@ class Multi_Xml(wb.Base):
 
         for i, xml in enumerate(xmls):
             result = xml.get_properties_as_floats([prop1, prop2])
-            x = result[prop1] / xfactor
-            y = result[prop2] / yfactor
+            _x = result[prop1] / xfactor
+            _y = result[prop2] / yfactor
             if plotParams:
-                plt.plot(x, y, **plotParams[i])
+                plt.plot(_x, _y, **plotParams[i])
             else:
-                plt.plot(x, y)
+                plt.plot(_x, _y)
 
         if "xlabel" not in kwargs:
             plt.xlabel(prop1)
@@ -181,22 +183,22 @@ class Multi_Xml(wb.Base):
                 return
 
         for i, xml in enumerate(xmls):
-            x = xml.get_properties_as_floats([prop])[prop] / xfactor
-            y = xml.get_mass_fractions([species])
+            _x = xml.get_properties_as_floats([prop])[prop] / xfactor
+            _y = xml.get_mass_fractions([species])
             if plotParams:
-                plt.plot(x, y[species], **plotParams[i])
+                plt.plot(_x, _y[species], **plotParams[i])
             else:
-                plt.plot(x, y[species])
+                plt.plot(_x, _y[species])
 
         if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
         if "ylabel" not in kwargs:
             if use_latex_names:
-                s = "$X(" + latex_names[species][1:-1] + ")$"
+                _s = "$X(" + latex_names[species][1:-1] + ")$"
             else:
-                s = species
-            plt.ylabel(s)
+                _s = species
+            plt.ylabel(_s)
 
         if "legend" not in kwargs:
             if plotParams:

@@ -56,65 +56,65 @@ class Reaction(wb.Base):
         self.source = ""
         self.data = {}
 
-    def _compute_rate_table_rate_interpolation(self, t9):
-        t = self.data["t9"]
-        lr = np.log10(self.data["rate"])
+    def _compute_rate_table_rate_interpolation(self, t_9):
+        _t = self.data["t9"]
+        _lr = np.log10(self.data["rate"])
         sef = self.data["sef"]
 
-        if t9 < t[0]:
-            return np.power(10.0, lr[0]) * sef[0]
-        if t9 > t[len(t) - 1]:
-            return np.power(10.0, lr[len(t) - 1]) * sef[len(t) - 1]
+        if t_9 < _t[0]:
+            return np.power(10.0, _lr[0]) * sef[0]
+        if t_9 > _t[len(_t) - 1]:
+            return np.power(10.0, _lr[len(_t) - 1]) * sef[len(_t) - 1]
 
-        if len(t) <= 2:
-            f1 = interp1d(t, lr, kind="linear")
-            f2 = interp1d(t, sef, kind="linear")
-            return np.power(10.0, f1(t9)) * f2(t9)
+        if len(_t) <= 2:
+            _f1 = interp1d(_t, _lr, kind="linear")
+            _f2 = interp1d(_t, sef, kind="linear")
+            return np.power(10.0, _f1(t_9)) * _f2(t_9)
 
-        f1 = interp1d(t, lr, kind="cubic")
-        f2 = interp1d(t, sef, kind="cubic")
-        return np.power(10.0, f1(t9)) * f2(t9)
+        _f1 = interp1d(_t, _lr, kind="cubic")
+        _f2 = interp1d(_t, sef, kind="cubic")
+        return np.power(10.0, _f1(t_9)) * _f2(t_9)
 
-    def _compute_rate_table_rate(self, t9):
-        if isinstance(t9, float):
-            return self._compute_rate_table_rate_interpolation(t9)
+    def _compute_rate_table_rate(self, t_9):
+        if isinstance(t_9, float):
+            return self._compute_rate_table_rate_interpolation(t_9)
 
         return np.array(
-            [self._compute_rate_table_rate_interpolation(x) for x in t9]
+            [self._compute_rate_table_rate_interpolation(x) for x in t_9]
         )
 
-    def _compute_non_smoker_fit_rate_for_fit(self, fit, t9):
-        def non_smoker_function(fit, t9):
-            x = (
+    def _compute_non_smoker_fit_rate_for_fit(self, fit, t_9):
+        def non_smoker_function(fit, t_9):
+            x_fit = (
                 fit["a1"]
-                + fit["a2"] / t9
-                + fit["a3"] / np.power(t9, 1.0 / 3.0)
-                + fit["a4"] * np.power(t9, 1.0 / 3.0)
-                + fit["a5"] * t9
-                + fit["a6"] * np.power(t9, 5.0 / 3.0)
-                + fit["a7"] * np.log(t9)
+                + fit["a2"] / t_9
+                + fit["a3"] / np.power(t_9, 1.0 / 3.0)
+                + fit["a4"] * np.power(t_9, 1.0 / 3.0)
+                + fit["a5"] * t_9
+                + fit["a6"] * np.power(t_9, 5.0 / 3.0)
+                + fit["a7"] * np.log(t_9)
             )
-            return np.exp(x)
+            return np.exp(x_fit)
 
-        if t9 < fit["Tlowfit"]:
+        if t_9 < fit["Tlowfit"]:
             return non_smoker_function(fit, fit["Tlowfit"])
-        if t9 > fit["Thighfit"]:
+        if t_9 > fit["Thighfit"]:
             return non_smoker_function(fit, fit["Thighfit"])
 
-        return non_smoker_function(fit, t9)
+        return non_smoker_function(fit, t_9)
 
-    def _compute_non_smoker_fit_rate(self, t9):
+    def _compute_non_smoker_fit_rate(self, t_9):
         fits = self.data["fits"]
 
         if len(fits) != 0:
             result = 0.0
             for fit in fits:
-                result += self._compute_non_smoker_fit_rate_for_fit(fit, t9)
+                result += self._compute_non_smoker_fit_rate_for_fit(fit, t_9)
             return result
 
-        return self._compute_non_smoker_fit_rate_for_fit(self.data, t9)
+        return self._compute_non_smoker_fit_rate_for_fit(self.data, t_9)
 
-    def compute_rate(self, t9, user_funcs=" "):
+    def compute_rate(self, t_9, user_funcs=" "):
         """Method to compute rate for a reaction at input t9.
 
         Args:
@@ -132,30 +132,30 @@ class Reaction(wb.Base):
         if self.data["type"] == "single_rate":
             return self.data["rate"]
         if self.data["type"] == "rate_table":
-            return self._compute_rate_table_rate(t9)
+            return self._compute_rate_table_rate(t_9)
         if self.data["type"] == "non_smoker_fit":
-            return self._compute_non_smoker_fit_rate(t9)
+            return self._compute_non_smoker_fit_rate(t_9)
         if self.data["type"] == "user_rate":
             if self.data["key"] not in user_funcs:
                 print("Function not defined for key " + self.data["key"])
                 return None
-            return user_funcs[self.data["key"]](self, t9)
+            return user_funcs[self.data["key"]](self, t_9)
 
         print("No such reaction type")
         return None
 
     def _get_reactant_and_product_xpath(self):
         reactants = []
-        for r in self.reactants:
-            reactants.append(r)
+        for _r in self.reactants:
+            reactants.append(_r)
         products = []
-        for p in self.products:
-            products.append(p)
+        for _p in self.products:
+            products.append(_p)
         result = "[reactant = '" + reactants[0] + "'"
         for i in range(1, len(reactants)):
             result += " and reactant = '" + reactants[i] + "'"
-        for p in products:
-            result += " and product = '" + p + "'"
+        for _p in products:
+            result += " and product = '" + _p + "'"
         result += "]"
         return result
 
@@ -168,19 +168,19 @@ class Reaction(wb.Base):
         """
 
         l_reactants = []
-        for r in self.reactants:
-            l_reactants.append(self._create_latex_string(r))
+        for _r in self.reactants:
+            l_reactants.append(self._create_latex_string(_r))
 
         l_products = []
-        for p in self.products:
-            l_products.append(self._create_latex_string(p))
+        for _p in self.products:
+            l_products.append(self._create_latex_string(_p))
 
-        s = r"$"
-        s += " + ".join(l_reactants)
-        s += " \\to "
-        s += " + ".join(l_products)
-        s += "$"
-        return s
+        _s = r"$"
+        _s += " + ".join(l_reactants)
+        _s += " \\to "
+        _s += " + ".join(l_products)
+        _s += "$"
+        return _s
 
     def get_data(self):
         """Method to return the data for a reaction.
@@ -200,10 +200,10 @@ class Reaction(wb.Base):
 
         """
 
-        s = " + ".join(self.reactants)
-        s += " -> "
-        s += " + ".join(self.products)
-        return s
+        _s = " + ".join(self.reactants)
+        _s += " -> "
+        _s += " + ".join(self.products)
+        return _s
 
 
 class Xml(wb.Base):
@@ -298,8 +298,8 @@ class Xml(wb.Base):
         result = {}
         nuclides = self._get_nuclide_data_array(nuc_xpath)
         for i, nuc in enumerate(nuclides):
-            s = self.create_nuclide_name(nuc["z"], nuc["a"], nuc["state"])
-            result[s] = nuclides[i]
+            _s = self.create_nuclide_name(nuc["z"], nuc["a"], nuc["state"])
+            result[_s] = nuclides[i]
 
         return result
 
@@ -320,51 +320,51 @@ class Xml(wb.Base):
 
         """
 
-        nd = self._get_nuclide_data_array(nuc_xpath)
+        n_d = self._get_nuclide_data_array(nuc_xpath)
 
-        zs = set()
+        z_s = set()
 
-        for _nnd in nd:
-            if _nnd["z"] not in zs:
-                zs.add(_nnd["z"])
+        for _nnd in n_d:
+            if _nnd["z"] not in z_s:
+                z_s.add(_nnd["z"])
 
-        zt = []
-        for zz in zs:
-            zt.append(zz)
+        z_t = []
+        for z_z in z_s:
+            z_t.append(z_z)
 
-        zt.sort()
+        z_t.sort()
 
-        zlim = [[] for i in range(len(zt))]
+        zlim = [[] for i in range(len(z_t))]
 
-        for n_nd in nd:
-            loc = [j for j, zj in enumerate(zt) if zj == n_nd["z"]]
+        for n_nd in n_d:
+            loc = [j for j, zj in enumerate(z_t) if zj == n_nd["z"]]
             zlim[loc[0]].append(n_nd["n"])
 
-        z = np.zeros(len(zlim), dtype=np.int_)
+        _z = np.zeros(len(zlim), dtype=np.int_)
         n_min = np.zeros(len(zlim), dtype=np.int_)
         n_max = np.zeros(len(zlim), dtype=np.int_)
 
         for i, z_zlim in enumerate(zlim):
-            z[i] = int(zt[i])
+            _z[i] = int(z_t[i])
             n_min[i] = int(min(z_zlim))
             n_max[i] = int(max(z_zlim))
 
-        return {"z": z, "n_min": n_min, "n_max": n_max}
+        return {"z": _z, "n_min": n_min, "n_max": n_max}
 
     def _get_nuclide_data_for_zone(self, zone):
         result = {}
 
         species = zone.xpath("mass_fractions/nuclide")
 
-        for sp in species:
-            z = int((sp.xpath("z"))[0].text)
-            a = int((sp.xpath("a"))[0].text)
-            name_array = sp.xpath("@name")
+        for s_sp in species:
+            _z = int((s_sp.xpath("z"))[0].text)
+            _a = int((s_sp.xpath("a"))[0].text)
+            name_array = s_sp.xpath("@name")
             if len(name_array) == 0:
-                name = self.create_nuclide_name(z, a, "")
+                name = self.create_nuclide_name(_z, _a, "")
             else:
                 name = name_array[0]
-            result[(name, z, a)] = float((sp.xpath("x"))[0].text)
+            result[(name, _z, _a)] = float((s_sp.xpath("x"))[0].text)
 
         return result
 
@@ -374,28 +374,28 @@ class Xml(wb.Base):
         reactions = self._root.xpath("//reaction_data/reaction" + reac_xpath)
 
         for reaction_node in reactions:
-            r = Reaction()
+            _r = Reaction()
 
             if reaction_node.xpath("source"):
-                r.source = reaction_node.xpath("source")[0].text
+                _r.source = reaction_node.xpath("source")[0].text
 
             reactants = reaction_node.xpath("reactant")
 
             for reactant in reactants:
-                r.reactants.append(reactant.text)
-                if not r.is_non_nuclide_reaction_element_string(reactant.text):
-                    r.nuclide_reactants.append(reactant.text)
+                _r.reactants.append(reactant.text)
+                if not _r.is_non_nuclide_reaction_element_string(reactant.text):
+                    _r.nuclide_reactants.append(reactant.text)
 
             products = reaction_node.xpath("product")
 
             for product in products:
-                r.products.append(product.text)
-                if not r.is_non_nuclide_reaction_element_string(product.text):
-                    r.nuclide_products.append(product.text)
+                _r.products.append(product.text)
+                if not _r.is_non_nuclide_reaction_element_string(product.text):
+                    _r.nuclide_products.append(product.text)
 
-            r.data = self._get_reaction_data(reaction_node)
+            _r.data = self._get_reaction_data(reaction_node)
 
-            result.append(r)
+            result.append(_r)
 
         return result
 
@@ -758,18 +758,18 @@ class Xml(wb.Base):
             print("nucleon must be 'z', 'n', or 'a'.")
             return None
 
-        y = self.get_all_abundances_in_zones(zone_xpath)
+        _y = self.get_all_abundances_in_zones(zone_xpath)
 
         if nucleon == "z":
-            result = np.sum(y, axis=2)
+            result = np.sum(_y, axis=2)
         elif nucleon == "n":
-            result = np.sum(y, axis=1)
+            result = np.sum(_y, axis=1)
         else:
-            result = np.zeros((y.shape[0], y.shape[1] + y.shape[2] + 2))
-            for i in range(y.shape[0]):
-                for i_z in range(y.shape[1]):
-                    for i_n in range(y.shape[2]):
-                        result[i, i_z + i_n] += y[i, i_z, i_n]
+            result = np.zeros((_y.shape[0], _y.shape[1] + _y.shape[2] + 2))
+            for i in range(_y.shape[0]):
+                for i_z in range(_y.shape[1]):
+                    for i_n in range(_y.shape[2]):
+                        result[i, i_z + i_n] += _y[i, i_z, i_n]
 
         return result
 
@@ -821,13 +821,13 @@ class Xml(wb.Base):
 
         result = self.get_properties_as_floats([prop1, prop2])
 
-        x = result[prop1] / xfactor
-        y = result[prop2] / yfactor
+        _x = result[prop1] / xfactor
+        _y = result[prop2] / yfactor
 
         if plotParams:
-            plt.plot(x, y, **plotParams)
+            plt.plot(_x, _y, **plotParams)
         else:
-            plt.plot(x, y)
+            plt.plot(_x, _y)
 
         if "xlabel" not in kwargs:
             plt.xlabel(prop1)
@@ -895,24 +895,24 @@ class Xml(wb.Base):
 
         plots = []
 
-        x = self.get_properties_as_floats([prop])[prop] / xfactor
+        _x = self.get_properties_as_floats([prop])[prop] / xfactor
 
-        y = self.get_mass_fractions(species)
+        _y = self.get_mass_fractions(species)
 
         if use_latex_names:
             latex_names = self.get_latex_names(species)
 
-        for i, sp in enumerate(species):
+        for i, s_sp in enumerate(species):
             if plotParams is None:
-                p = {}
+                _p = {}
             else:
-                p = plotParams[i]
-            if "label" not in p:
+                _p = plotParams[i]
+            if "label" not in _p:
                 if use_latex_names:
-                    p = self._merge_dicts(p, {"label": latex_names[sp]})
+                    _p = self._merge_dicts(_p, {"label": latex_names[s_sp]})
                 else:
-                    p = self._merge_dicts(p, {"label": sp})
-            plots.append(plt.plot(x, y[sp], **p))
+                    _p = self._merge_dicts(_p, {"label": s_sp})
+            plots.append(plt.plot(_x, _y[s_sp], **_p))
 
         if len(species) > 1 and "legend" not in kwargs:
             plt.legend()
@@ -925,10 +925,10 @@ class Xml(wb.Base):
                 plt.ylabel("Mass Fraction")
             else:
                 if use_latex_names:
-                    s = "$X(" + latex_names[species[0]][1:-1] + ")$"
+                    _s = "$X(" + latex_names[species[0]][1:-1] + ")$"
                 else:
-                    s = species[0]
-                plt.ylabel(s)
+                    _s = species[0]
+                plt.ylabel(_s)
 
         self.apply_class_methods(plt, kwargs)
 
@@ -973,27 +973,27 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        y = self.get_abundances_vs_nucleon_number(nucleon, zone_xpath)
+        _y = self.get_abundances_vs_nucleon_number(nucleon, zone_xpath)
 
         if plotParams:
-            if y.shape[0] != len(plotParams):
+            if _y.shape[0] != len(plotParams):
                 print(
                     "Number of plotParam elements must equal number of plots."
                 )
                 return
 
-        for i in range(y.shape[0]):
+        for i in range(_y.shape[0]):
             if plotParams:
-                plt.plot(y[i, :], **plotParams[i])
+                plt.plot(_y[i, :], **plotParams[i])
             else:
-                plt.plot(y[i, :])
+                plt.plot(_y[i, :])
 
         if "xlabel" not in kwargs:
             plt.xlabel(nucleon)
 
         if "ylabel" not in kwargs:
-            s = "Y(" + nucleon + ")"
-            plt.ylabel(s)
+            _s = "Y(" + nucleon + ")"
+            plt.ylabel(_s)
 
         if "legend" not in kwargs:
             if plotParams:
@@ -1029,20 +1029,20 @@ class Xml(wb.Base):
         """
         abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
         if nucleon[0] == "z":
-            x = range(abunds.shape[2])
+            _x = range(abunds.shape[2])
         elif nucleon[0] == "n":
-            x = range(abunds.shape[1])
+            _x = range(abunds.shape[1])
         else:
             print("Invalid nucleon")
             return None
         if vs_A:
-            x = [xx + nucleon[1] for xx in x]
+            _x = [x_x + nucleon[1] for x_x in _x]
         if nucleon[0] == "z":
-            y = abunds[:, nucleon[1], :]
+            _y = abunds[:, nucleon[1], :]
         elif nucleon[0] == "n":
-            y = abunds[:, :, nucleon[1]]
+            _y = abunds[:, :, nucleon[1]]
 
-        return (x, y)
+        return (_x, _y)
 
     def make_abundance_chain_movie(
         self,
@@ -1132,7 +1132,7 @@ class Xml(wb.Base):
 
         self.set_plot_params(mpl, rcParams)
 
-        x, y = self.get_chain_abundances(
+        _x, _y = self.get_chain_abundances(
             nucleon, zone_xpath=zone_xpath, vs_A=plot_vs_A
         )
         props = self.get_properties_as_floats(
@@ -1143,7 +1143,7 @@ class Xml(wb.Base):
 
         if extraCurves:
             for tup in extraCurves:
-                if tup[1].shape[0] != y.shape[0]:
+                if tup[1].shape[0] != _y.shape[0]:
                     print("Extra curve does not have the right length.")
                     return None
 
@@ -1151,9 +1151,9 @@ class Xml(wb.Base):
             fig.clear()
 
             if plotParams:
-                plt.plot(x, y[i], **plotParams)
+                plt.plot(_x, _y[i], **plotParams)
             else:
-                plt.plot(x, y[i])
+                plt.plot(_x, _y[i])
 
             if extraFixedCurves:
                 for tup in extraFixedCurves:
@@ -1170,12 +1170,12 @@ class Xml(wb.Base):
                         plt.plot(tup[0], tup[1][i], **tup[2])
 
             if title_func:
-                tf = title_func(i)
-                if tf:
-                    if isinstance(tf, tuple):
-                        plt.title(tf[0], **tf[1])
-                    elif isinstance(tf, str):
-                        plt.title(tf)
+                t_f = title_func(i)
+                if t_f:
+                    if isinstance(t_f, tuple):
+                        plt.title(t_f[0], **t_f[1])
+                    elif isinstance(t_f, str):
+                        plt.title(t_f)
                     else:
                         print("Invalid return from title function.")
                         return
@@ -1199,7 +1199,7 @@ class Xml(wb.Base):
             self.apply_class_methods(plt, kwargs)
             plt.draw()
 
-        anim = animation.FuncAnimation(fig, updatefig, y.shape[0])
+        anim = animation.FuncAnimation(fig, updatefig, _y.shape[0])
         if movie_name:
             anim.save(movie_name, fps=fps)
 
@@ -1325,12 +1325,12 @@ class Xml(wb.Base):
                         plt.plot(tup[0], tup[1][i], **tup[2])
 
             if title_func:
-                tf = title_func(i)
-                if tf:
-                    if isinstance(tf, tuple):
-                        plt.title(tf[0], **tf[1])
-                    elif isinstance(tf, str):
-                        plt.title(tf)
+                t_f = title_func(i)
+                if t_f:
+                    if isinstance(t_f, tuple):
+                        plt.title(t_f[0], **t_f[1])
+                    elif isinstance(t_f, str):
+                        plt.title(t_f)
                     else:
                         print("Invalid return from title function.")
                         return
@@ -1460,11 +1460,11 @@ class Xml(wb.Base):
                     plt.plot(lim["n_min"], lim["z"])
                     plt.plot(lim["n_max"], lim["z"])
             if title_func:
-                _tf = title_func(i)
-                if isinstance(_tf, str):
-                    plt.title(_tf)
-                elif isinstance(_tf, tuple):
-                    plt.title(_tf[0], _tf[1])
+                t_f = title_func(i)
+                if isinstance(t_f, str):
+                    plt.title(t_f)
+                elif isinstance(t_f, tuple):
+                    plt.title(t_f[0], t_f[1])
                 else:
                     print("Invalid return from title function.")
                     return

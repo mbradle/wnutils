@@ -1,7 +1,9 @@
+"""Module providing the multi_h5 class."""
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 import wnutils.base as wb
 import wnutils.h5 as w5
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 
 
 class Multi_H5(wb.Base):
@@ -99,16 +101,16 @@ class Multi_H5(wb.Base):
                 print("Number of plot args must equal number of plots.")
                 return
 
-        for i, h5 in enumerate(h5s):
-            result = h5.get_zone_properties_in_groups_as_floats(
+        for i, _h5 in enumerate(h5s):
+            result = _h5.get_zone_properties_in_groups_as_floats(
                 zone, [prop1, prop2]
             )
-            x = result[prop1] / xfactor
-            y = result[prop2] / yfactor
+            _x = result[prop1] / xfactor
+            _y = result[prop2] / yfactor
             if plotParams:
-                plt.plot(x, y, **plotParams[i])
+                plt.plot(_x, _y, **plotParams[i])
             else:
-                plt.plot(x, y)
+                plt.plot(_x, _y)
 
         if "xlabel" not in kwargs:
             plt.xlabel(prop1)
@@ -189,26 +191,26 @@ class Multi_H5(wb.Base):
                 )
                 return
 
-        for i, h5 in enumerate(h5s):
-            x = (
-                h5.get_zone_properties_in_groups_as_floats(zone, [prop])[prop]
+        for i, _h5 in enumerate(h5s):
+            _x = (
+                _h5.get_zone_properties_in_groups_as_floats(zone, [prop])[prop]
                 / xfactor
             )
-            y = h5.get_zone_mass_fractions_in_groups(zone, [species])
+            _y = _h5.get_zone_mass_fractions_in_groups(zone, [species])
             if plotParams:
-                plt.plot(x, y[species], **plotParams[i])
+                plt.plot(_x, _y[species], **plotParams[i])
             else:
-                plt.plot(x, y[species])
+                plt.plot(_x, _y[species])
 
         if "xlabel" not in kwargs:
             plt.xlabel(prop)
 
         if "ylabel" not in kwargs:
             if use_latex_names:
-                s = "$X(" + latex_names[species][1:-1] + ")$"
+                _s = "$X(" + latex_names[species][1:-1] + ")$"
             else:
-                s = species
-            plt.ylabel(s)
+                _s = species
+            plt.ylabel(_s)
 
         if "legend" not in kwargs:
             if plotParams:
