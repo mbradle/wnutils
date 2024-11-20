@@ -1030,19 +1030,18 @@ class Xml(wb.Base):
 
         """
         abunds = self.get_all_abundances_in_zones(zone_xpath=zone_xpath)
+
+        assert nucleon[0] in ("z", "n"), "Invalid nucleon"
+
         if nucleon[0] == "z":
             _x = range(abunds.shape[2])
-        elif nucleon[0] == "n":
-            _x = range(abunds.shape[1])
+            _y = abunds[:, nucleon[1], :]
         else:
-            print("Invalid nucleon")
-            return None
+            _x = range(abunds.shape[1])
+            _y = abunds[:, :, nucleon[1]]
+
         if vs_A:
             _x = [x_x + nucleon[1] for x_x in _x]
-        if nucleon[0] == "z":
-            _y = abunds[:, nucleon[1], :]
-        elif nucleon[0] == "n":
-            _y = abunds[:, :, nucleon[1]]
 
         return (_x, _y)
 
