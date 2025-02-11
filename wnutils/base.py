@@ -178,9 +178,9 @@ class Base:
 
         graphviz_names = {}
         for nuclide in nuclides:
-            graphviz_names[
-                nuclide
-            ] = f"{self._create_graphviz_string(nuclide)}"
+            graphviz_names[nuclide] = (
+                f"{self._create_graphviz_string(nuclide)}"
+            )
 
         return graphviz_names
 
@@ -429,9 +429,7 @@ class Base:
 
         """
 
-        return f"time (s) = {props['time'][i]:8.2e}, \
-                    $T_9$ = {props['t9'][i]:5.2f}, \
-                    rho (g/cc) = {props['rho'][i]:8.2e}"
+        return f"time (s) = {props['time'][i]:8.2e}, $T_9$ = {props['t9'][i]:5.2f}, rho (g/cc) = {props['rho'][i]:8.2e}"
 
     def make_time_title_str(self, time):
         """Method to create a default title string.

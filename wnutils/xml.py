@@ -734,7 +734,7 @@ class Xml(wb.Base):
         result = np.zeros((len(zones), z_max + 1, n_max + 1))
 
         for i, zone in enumerate(zones):
-            for key, value in self._get_nuclide_data_for_zone(zone):
+            for key, value in self._get_nuclide_data_for_zone(zone).items():
                 result[i, key[1], key[2] - key[1]] += value / key[2]
 
         return result
