@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["wnutils"]
+exclude = ["tutorial*"]
+
+[project]
+name = "wnutils"
+version = "3.1.0"
+dependencies = ["lxml", "matplotlib", "numpy", "h5py", "scipy"]
+requires-python = ">=3.0"
+authors = [
+  {name = "Bradley S. Meyer", email = "mbradle@g.clemson.edu"},
+]
+maintainers = [
+  {name = "Bradley S. Meyer", email = "mbradle@g.clemson.edu"},
+]
+description = "Package for handling webnucleo reaction networks"
+readme = "README.rst"
+license = "GPL-3.0-or-later"
+license-files = ["LICEN[CS]E.*"]
+keywords = ["astronomy, nuclear astrophysics"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Programming Language :: Python :: 3"
+]
+
+[project.optional-dependencies]
+
+[project.urls]
+Documentation = "https://wnnet.readthedocs.org"
+Repository = "https://github.com/mbradle/wnnet.git"
+"Bug Tracker" = "https://github.com/mbradle/wnnet/issues"
+
+[project.scripts]
+
+[project.gui-scripts]
+
+[project.entry-points."spam.magical"]
