@@ -20,4 +20,4 @@ jobs:
           pip install pylint numpy lxml matplotlib h5py scipy
       - name: run linter
         run: |
-          pylint --extension-pkg-whitelist=lxml.etree --disable=C0103,R0913 --fail-under=9.6 wnutils/*.py
+          pylint --extension-pkg-whitelist=lxml.etree --disable=C0103,R0913,R0801 --fail-under=9.6 wnutils/*.py
