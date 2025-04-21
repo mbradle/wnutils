@@ -1,6 +1,9 @@
 Overview
 ========
 
+.. image:: https://zenodo.org/badge/132929199.svg
+  :target: https://doi.org/10.5281/zenodo.15258550
+
 wnutils is a python package for reading and plotting
 `webnucleo <http://webnucleo.org/>`_ files.
 

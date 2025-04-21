@@ -4,6 +4,17 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.1.1
+--------------
+
+New:
+
+  * The zenodo DOI has been updated.
+
+Fix:
+
+  * A requirement for proper documentation building has been added.
+
 Version 3.1.0
 --------------
 

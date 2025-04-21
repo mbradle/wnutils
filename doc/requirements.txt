@@ -3,5 +3,6 @@ lxml
 matplotlib
 numpy
 scipy
+sphinx_rtd_theme
 sphinx-copybutton
 #readthedocs-sphinx-search==0.1.1

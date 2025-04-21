@@ -5,7 +5,7 @@ authors:
   given-names: "Bradley Stewart"
   orcid: "https://orcid.org/0000-0001-6307-9818"
 title: "wnutils"
-version: 3.1.0
-doi: 10.5281/zenodo.13338378
+version: 3.1.1
+doi: 10.5281/zenodo.15258550
 date-released: 2025-04-21
 url: "https://github.com/mbradle/wnutils"
