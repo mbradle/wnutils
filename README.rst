@@ -53,11 +53,11 @@ You may also want to visit our `galleries <https://github.com/mbradle/wnutils/wi
 .. |doc_stat| image:: https://readthedocs.org/projects/wnutils/badge/?version=latest
     :target: https://wnutils.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
-.. |test| image:: https://github.com/mbradle/wnutils/actions/workflows/test.yml/badge.svg?branch=main&event=push
+.. |test| image:: https://github.com/mbradle/wnutils/actions/workflows/test.yml/badge.svg?branch=master&event=push
         :target: https://github.com/mbradle/wnutils/actions/workflows/test.yml
 .. |lint| image:: https://img.shields.io/badge/linting-pylint-yellowgreen
     :target: https://github.com/pylint-dev/pylint
-.. |lint-test| image:: https://github.com/mbradle/wnutils/actions/workflows/lint.yml/badge.svg?branch=main&event=push
+.. |lint-test| image:: https://github.com/mbradle/wnutils/actions/workflows/lint.yml/badge.svg?branch=master&event=push
         :target: https://github.com/mbradle/wnutils/actions/workflows/lint.yml 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
