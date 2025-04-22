@@ -8,7 +8,7 @@ exclude = ["tutorial*"]
 
 [project]
 name = "wnutils"
-version = "3.1.1"
+version = "3.1.2"
 dependencies = ["lxml", "matplotlib", "numpy", "h5py", "scipy"]
 requires-python = ">=3.0"
 authors = [
