@@ -19,7 +19,7 @@ for module in ("h5py", "matplotlib", "scipy", "wnutils.h5", "wnutils.xml"):
 
 
 def test_top_level_public_api():
-    assert wnutils.__version__ == "4.0.0"
+    assert wnutils.__version__ == "4.0.1"
     assert wnutils.__all__ == [
         "Base",
         "H5",

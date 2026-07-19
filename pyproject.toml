@@ -23,7 +23,7 @@ target-version = ["py39", "py310", "py311", "py312", "py313", "py314"]
 
 [project]
 name = "wnutils"
-version = "4.0.0"
+version = "4.0.1"
 dependencies = ["lxml", "matplotlib", "numpy", "h5py", "scipy"]
 requires-python = ">=3.9"
 authors = [
