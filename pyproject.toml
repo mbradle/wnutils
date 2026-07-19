@@ -6,11 +6,15 @@ build-backend = "setuptools.build_meta"
 include = ["wnutils"]
 exclude = ["tutorial*"]
 
+[tool.black]
+line-length = 79
+target-version = ["py39", "py310", "py311", "py312", "py313", "py314"]
+
 [project]
 name = "wnutils"
-version = "3.1.3"
+version = "3.2.0"
 dependencies = ["lxml", "matplotlib", "numpy", "h5py", "scipy"]
-requires-python = ">=3.0"
+requires-python = ">=3.9"
 authors = [
   {name = "Bradley S. Meyer", email = "mbradle@g.clemson.edu"},
 ]
@@ -26,7 +30,13 @@ classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Science/Research",
   "Topic :: Scientific/Engineering :: Astronomy",
-  "Programming Language :: Python :: 3"
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 
 [project.optional-dependencies]

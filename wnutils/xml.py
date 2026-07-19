@@ -66,7 +66,7 @@ class Reaction(wb.Base):
         if t_9 > _t[len(_t) - 1]:
             return np.power(10.0, _lr[len(_t) - 1]) * sef[len(_t) - 1]
 
-        if len(_t) <= 2:
+        if len(_t) <= 3:
             _f1 = interp1d(_t, _lr, kind="linear")
             _f2 = interp1d(_t, sef, kind="linear")
             return np.power(10.0, _f1(t_9)) * _f2(t_9)
@@ -225,23 +225,17 @@ class Xml(wb.Base):
 
     def _get_state_data(self, state_data, node):
         data = {}
-        if node.xpath("@id"):
-            data["state"] = (node.xpath("@id"))[0]
-        else:
-            data["state"] = ""
-        if node.xpath("source"):
-            data["source"] = (node.xpath("source"))[0].text
-        else:
-            data["source"] = ""
-        data["mass excess"] = float((node.xpath("mass_excess"))[0].text)
-        data["spin"] = float((node.xpath("spin"))[0].text)
-        partf = node.xpath("partf_table/point")
+        data["state"] = node.get("id", "")
+        data["source"] = node.findtext("source", default="")
+        data["mass excess"] = float(node.findtext("mass_excess"))
+        data["spin"] = float(node.findtext("spin"))
+        partf = node.findall("partf_table/point")
         data["t9"] = np.zeros(len(partf))
         data["partf"] = np.zeros(len(partf))
         for i, elem in enumerate(partf):
-            data["t9"][i] = float((elem.xpath("t9")[0].text).strip())
+            data["t9"][i] = float(elem.findtext("t9").strip())
             data["partf"][i] = np.power(
-                10.0, float((elem.xpath("log10_partf")[0].text).strip())
+                10.0, float(elem.findtext("log10_partf").strip())
             ) * (2.0 * data["spin"] + 1.0)
         ind = data["t9"].argsort()
         data["t9"] = data["t9"][ind]
@@ -256,11 +250,12 @@ class Xml(wb.Base):
 
         for nuc in nuclides:
             data = {}
-            data["z"] = int((nuc.xpath("z"))[0].text)
-            data["a"] = int((nuc.xpath("a"))[0].text)
+            data["z"] = int(nuc.findtext("z"))
+            data["a"] = int(nuc.findtext("a"))
             data["n"] = data["a"] - data["z"]
-            if nuc.xpath("states"):
-                for state in nuc.xpath("states/state"):
+            states = nuc.findall("states/state")
+            if states:
+                for state in states:
                     state_data = {}
                     state_data.update(data)
                     self._get_state_data(state_data, state)
@@ -320,51 +315,36 @@ class Xml(wb.Base):
 
         """
 
-        n_d = self._get_nuclide_data_array(nuc_xpath)
+        nuclides = self._root.xpath("//nuclear_data/nuclide" + nuc_xpath)
+        limits = {}
 
-        z_s = set()
+        for nuclide in nuclides:
+            z = int(nuclide.findtext("z"))
+            n = int(nuclide.findtext("a")) - z
+            if z in limits:
+                limits[z][0] = min(limits[z][0], n)
+                limits[z][1] = max(limits[z][1], n)
+            else:
+                limits[z] = [n, n]
 
-        for _nnd in n_d:
-            if _nnd["z"] not in z_s:
-                z_s.add(_nnd["z"])
-
-        z_t = []
-        for z_z in z_s:
-            z_t.append(z_z)
-
-        z_t.sort()
-
-        zlim = [[] for i in range(len(z_t))]
-
-        for n_nd in n_d:
-            loc = [j for j, zj in enumerate(z_t) if zj == n_nd["z"]]
-            zlim[loc[0]].append(n_nd["n"])
-
-        _z = np.zeros(len(zlim), dtype=np.int_)
-        n_min = np.zeros(len(zlim), dtype=np.int_)
-        n_max = np.zeros(len(zlim), dtype=np.int_)
-
-        for i, z_zlim in enumerate(zlim):
-            _z[i] = int(z_t[i])
-            n_min[i] = int(min(z_zlim))
-            n_max[i] = int(max(z_zlim))
+        _z = np.array(sorted(limits), dtype=np.int_)
+        n_min = np.array([limits[z][0] for z in _z], dtype=np.int_)
+        n_max = np.array([limits[z][1] for z in _z], dtype=np.int_)
 
         return {"z": _z, "n_min": n_min, "n_max": n_max}
 
     def _get_nuclide_data_for_zone(self, zone):
         result = {}
 
-        species = zone.xpath("mass_fractions/nuclide")
+        species = zone.findall("mass_fractions/nuclide")
 
         for s_sp in species:
-            _z = int((s_sp.xpath("z"))[0].text)
-            _a = int((s_sp.xpath("a"))[0].text)
-            name_array = s_sp.xpath("@name")
-            if len(name_array) == 0:
+            _z = int(s_sp.findtext("z"))
+            _a = int(s_sp.findtext("a"))
+            name = s_sp.get("name")
+            if name is None:
                 name = self.create_nuclide_name(_z, _a, "")
-            else:
-                name = name_array[0]
-            result[(name, _z, _a)] = float((s_sp.xpath("x"))[0].text)
+            result[(name, _z, _a)] = float(s_sp.findtext("x"))
 
         return result
 
@@ -570,10 +550,16 @@ class Xml(wb.Base):
             result[_sp] = np.zeros(len(zones))
 
         for i, zone in enumerate(zones):
-            for _sp in species:
-                data = zone.xpath(f'mass_fractions/nuclide[@name="{_sp}"]/x')
-                if len(data) == 1:
-                    result[_sp][i] = float(data[0].text)
+            values = {}
+            counts = {}
+            for nuclide in zone.findall("mass_fractions/nuclide"):
+                name = nuclide.get("name")
+                if name in result:
+                    counts[name] = counts.get(name, 0) + 1
+                    values[name] = nuclide.findtext("x")
+            for name, count in counts.items():
+                if count == 1:
+                    result[name][i] = float(values[name])
 
         return result
 
@@ -597,9 +583,9 @@ class Xml(wb.Base):
 
         for prop in properties:
             if isinstance(prop, str):
-                properties_t[prop] = (prop,)
+                properties_t[prop] = (prop.strip(),)
             else:
-                properties_t[prop] = prop
+                properties_t[prop] = tuple(value.strip() for value in prop)
                 if len(properties_t[prop]) > 3:
                     print("\nToo many property names (at most 3)!\n")
                     return None
@@ -612,53 +598,55 @@ class Xml(wb.Base):
         zones = self._get_zones(zone_xpath)
 
         for zone in zones:
+            by_name = {}
+            by_name_tag1 = {}
+            by_name_tag1_tag2 = {}
+
+            for node in zone.findall("optional_properties/property"):
+                name = node.get("name")
+                tag1 = node.get("tag1")
+                tag2 = node.get("tag2")
+                by_name.setdefault(name, node)
+                if tag1 is not None:
+                    by_name_tag1.setdefault((name, tag1), node)
+                    if tag2 is not None:
+                        by_name_tag1_tag2.setdefault((name, tag1, tag2), node)
+
             for prop in properties:
                 tup = properties_t[prop]
 
-                path = "optional_properties/property"
-
                 if len(tup) == 1:
-                    path += f'[@name="{tup[0].strip()}"]'
+                    data = by_name.get(tup[0])
                 elif len(tup) == 2:
-                    path += (
-                        f'[@name="{tup[0].strip()}" and'
-                        f' @tag1="{tup[1].strip()}"]'
-                    )
+                    data = by_name_tag1.get(tup)
                 else:
-                    path += (
-                        f'[@name="{tup[0].strip()}" and'
-                        f' @tag1="{tup[1].strip()}" and'
-                        f' @tag2="{tup[2].strip()}"]'
-                    )
+                    data = by_name_tag1_tag2.get(tup)
 
-                data = zone.xpath(path)
-
-                if len(data) == 0:
+                if data is None:
                     print(
                         "Property", self._get_property_name(tup), "not found."
                     )
                     return None
 
-                my_dict[prop].append(data[0].text)
+                my_dict[prop].append(data.text)
 
         return my_dict
 
     def _get_all_zone_properties(self, zone):
         result = {}
 
-        props = zone.xpath("optional_properties/property")
+        props = zone.findall("optional_properties/property")
 
         for prop in props:
-            p_name = ""
-            name = prop.xpath("@name")
-            tag1 = prop.xpath("@tag1")
-            tag2 = prop.xpath("@tag2")
-            if tag1:
-                p_name = (name[0], tag1[0])
-                if tag2:
-                    p_name += (tag2[0],)
+            name = prop.get("name")
+            tag1 = prop.get("tag1")
+            tag2 = prop.get("tag2")
+            if tag1 is not None:
+                p_name = (name, tag1)
+                if tag2 is not None:
+                    p_name += (tag2,)
             else:
-                p_name = name[0]
+                p_name = name
             result[p_name] = prop.text
 
         return result
@@ -734,8 +722,10 @@ class Xml(wb.Base):
         result = np.zeros((len(zones), z_max + 1, n_max + 1))
 
         for i, zone in enumerate(zones):
-            for key, value in self._get_nuclide_data_for_zone(zone).items():
-                result[i, key[1], key[2] - key[1]] += value / key[2]
+            for nuclide in zone.findall("mass_fractions/nuclide"):
+                z = int(nuclide.findtext("z"))
+                a = int(nuclide.findtext("a"))
+                result[i, z, a - z] += float(nuclide.findtext("x")) / a
 
         return result
 
@@ -1555,27 +1545,31 @@ class New_Xml(wb.Base):
             etree.SubElement(self._root, "zone_data")
 
     def _set_xml_data_for_nuclide(self, nuclide_element, nuclide):
-        states = nuclide_element.xpath("states")
-
-        if len(states) > 0:
-            states_element = states[0]
-        else:
+        if nuclide_element.find("z") is None:
             etree.SubElement(nuclide_element, "z").text = str(nuclide["z"])
             etree.SubElement(nuclide_element, "a").text = str(nuclide["a"])
+
+        states_element = nuclide_element.find("states")
+
+        if states_element is None and nuclide["state"]:
+            states_element = etree.Element("states")
+            direct_state = nuclide_element.find("mass_excess")
+            if direct_state is not None:
+                ground_state = etree.SubElement(states_element, "state")
+                ground_state.set("id", "g")
+                for tag in ("source", "mass_excess", "spin", "partf_table"):
+                    child = nuclide_element.find(tag)
+                    if child is not None:
+                        ground_state.append(child)
+            nuclide_element.append(states_element)
+
+        if states_element is not None:
+            state_element = etree.SubElement(states_element, "state")
+            state_element.set("id", nuclide["state"] or "g")
+        else:
             state_element = nuclide_element
 
-        if nuclide["state"]:
-            if len(states) == 0:
-                states_element = etree.SubElement(nuclide_element, "states")
-            state_element = etree.SubElement(states_element, "state")
-            state_element.set("id", nuclide["state"])
-            etree.SubElement(state_element, "source").text = str(
-                nuclide["source"]
-            )
-        else:
-            etree.SubElement(state_element, "source").text = str(
-                nuclide["source"]
-            )
+        etree.SubElement(state_element, "source").text = str(nuclide["source"])
 
         etree.SubElement(state_element, "mass_excess").text = str(
             nuclide["mass excess"]

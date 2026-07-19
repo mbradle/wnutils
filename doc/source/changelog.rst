@@ -4,6 +4,42 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
+Version 3.2.0
+--------------
+
+New:
+
+  * Element symbols can now be retrieved from scalar or array-like atomic
+    numbers, and atomic numbers can be retrieved from case-insensitive element
+    symbols.  The methods support systematic temporary symbols without an
+    artificial upper atomic-number limit.
+
+Fix:
+
+  * Creation of XML nuclide data now handles ground and excited states
+    correctly regardless of their insertion order.
+  * Applying an unsupported plotting method now raises the intended error and
+    identifies the missing method.
+  * Three-point reaction-rate tables now use linear interpolation instead of
+    attempting an invalid cubic interpolation.
+  * HDF5 nuclide source and state values are now read by field name, preventing
+    them from being interchanged when compound-field order differs.
+
+Internal:
+
+  * XML nuclide, property, mass-fraction, network-limit, and abundance parsing
+    has been optimized to avoid repeated fine-grained XPath evaluations and
+    unnecessary intermediate data structures.
+  * HDF5 reads now cache immutable nuclide and zone-label metadata and retrieve
+    requested mass-fraction columns in batches.
+  * HDF5 output arrays are now constructed in a single pass instead of through
+    repeated NumPy array appends.
+  * The minimum supported Python version is now 3.9, and Black is configured
+    explicitly for supported Python versions through 3.14.
+  * Fast XML and HDF5 tests now use compact repository fixtures.  The larger
+    OSF tutorial-data tests are checksum-verified and run locally by the build
+    script without requiring an OSF data download in GitHub Actions.
+
 Version 3.1.3
 --------------
 
@@ -422,4 +458,3 @@ Version 1.0.0
 New:
 
   * Initial release
-

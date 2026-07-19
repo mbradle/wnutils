@@ -2,26 +2,31 @@ name: pytest
 
 on:
   push:
-      branches:
-        - develop
-        - master
+    branches:
+      - develop
+      - master
+  pull_request:
 
 jobs:
   test:
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.x"]
     steps:
       - name: Check out repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Setup Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: ${{ matrix.python-version }}
       - name: install dependencies
         run: |
           git clone https://bitbucket.org/mbradle/libnucnet_xsd.git wnutils/xsd_pub
           python -m pip install --upgrade pip
-          pip install pytest requests
+          pip install pytest
           pip install -e .
       - name: run test
         run: |
-          pytest -v .github/workflows/wnutils_test.py
+          pytest -v tests --ignore=tests/integration

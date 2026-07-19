@@ -25,6 +25,9 @@ class H5(wnb.Base):
 
     def __init__(self, file):
         self._h5file = h5py.File(file, "r")
+        self._nuclide_data_cache = None
+        self._zone_labels_cache = {}
+        self._zone_label_indexes = {}
 
     def _get_group_zone_property_hash(self, group, zone_index):
 
@@ -61,31 +64,29 @@ class H5(wnb.Base):
 
         """
 
-        zone_labels = self._h5file["/" + group + "/Zone Labels"]
-
-        result = []
-
-        for zone_label in zone_labels:
-            result.append(
+        if group not in self._zone_labels_cache:
+            zone_labels = self._h5file["/" + group + "/Zone Labels"]
+            self._zone_labels_cache[group] = tuple(
                 (
                     zone_label[0].decode("ascii"),
                     zone_label[1].decode("ascii"),
                     zone_label[2].decode("ascii"),
                 )
+                for zone_label in zone_labels
             )
 
-        return result
+        return list(self._zone_labels_cache[group])
 
     def _get_group_zone_labels_hash(self, group):
+        if group not in self._zone_label_indexes:
+            self._zone_label_indexes[group] = {
+                zone_label: i
+                for i, zone_label in enumerate(
+                    self.get_zone_labels_for_group(group)
+                )
+            }
 
-        zone_labels_array = self.get_zone_labels_for_group(group)
-
-        result = {}
-
-        for i, zone_label in enumerate(zone_labels_array):
-            result[zone_label] = i
-
-        return result
+        return self._zone_label_indexes[group]
 
     def get_iterable_groups(self):
         """Method to return the non-nuclide data groups in an hdf5 file.
@@ -111,14 +112,14 @@ class H5(wnb.Base):
 
         for nuc in nuclide_data:
             data = {}
-            data["name"] = nuc[0].decode("ascii")
-            data["z"] = nuc[2]
-            data["a"] = nuc[3]
+            data["name"] = nuc["Name"].decode("ascii")
+            data["z"] = nuc["Z"]
+            data["a"] = nuc["A"]
             data["n"] = data["a"] - data["z"]
-            data["source"] = nuc[4].decode("ascii")
-            data["state"] = nuc[5].decode("ascii")
-            data["mass excess"] = nuc[6]
-            data["spin"] = nuc[7]
+            data["source"] = nuc["Source"].decode("ascii")
+            data["state"] = nuc["State"].decode("ascii")
+            data["mass excess"] = nuc["Mass Excess"]
+            data["spin"] = nuc["Spin"]
             result.append(data)
 
         return result
@@ -134,23 +135,26 @@ class H5(wnb.Base):
 
         """
 
-        nuclide_data = self._get_nuclide_data_array()
+        if self._nuclide_data_cache is None:
+            nuclide_data = self._get_nuclide_data_array()
+            self._nuclide_data_cache = {}
 
-        result = {}
+            for i, nuc in enumerate(nuclide_data):
+                self._nuclide_data_cache[nuc["name"]] = {
+                    "index": i,
+                    "z": nuc["z"],
+                    "a": nuc["a"],
+                    "n": nuc["n"],
+                    "source": nuc["source"],
+                    "state": nuc["state"],
+                    "mass excess": nuc["mass excess"],
+                    "spin": nuc["spin"],
+                }
 
-        for i, nuc in enumerate(nuclide_data):
-            data = {}
-            data["index"] = i
-            data["z"] = nuc["z"]
-            data["a"] = nuc["a"]
-            data["n"] = nuc["n"]
-            data["source"] = nuc["source"]
-            data["state"] = nuc["state"]
-            data["mass excess"] = nuc["mass excess"]
-            data["spin"] = nuc["spin"]
-            result[nuc["name"]] = data
-
-        return result
+        return {
+            name: data.copy()
+            for name, data in self._nuclide_data_cache.items()
+        }
 
     def get_group_mass_fractions(self, group):
         """Method to return mass fractions from a group in an hdf5 file.
@@ -185,20 +189,24 @@ class H5(wnb.Base):
         """
 
         nuclide_hash = self.get_nuclide_data()
+        groups = self.get_iterable_groups()
+        result = {name: np.empty(len(groups)) for name in species}
 
-        result = {}
+        if not result:
+            return result
 
-        for s_sp in species:
-            result[s_sp] = np.array([])
+        columns = {name: nuclide_hash[name]["index"] for name in result}
+        selected_columns = sorted(set(columns.values()))
+        column_positions = {
+            column: i for i, column in enumerate(selected_columns)
+        }
 
-        for group_name in self.get_iterable_groups():
-            zone_index = self._get_group_zone_labels_hash(group_name)
-            _x = self.get_group_mass_fractions(group_name)
-            for s_sp in species:
-                result[s_sp] = np.append(
-                    result[s_sp],
-                    _x[zone_index[zone], nuclide_hash[s_sp]["index"]],
-                )
+        for i, group_name in enumerate(groups):
+            zone_index = self._get_group_zone_labels_hash(group_name)[zone]
+            mass_fractions = self.get_group_mass_fractions(group_name)
+            values = mass_fractions[zone_index, selected_columns]
+            for name, column in columns.items():
+                result[name][i] = values[column_positions[column]]
 
         return result
 
@@ -346,7 +354,7 @@ class H5(wnb.Base):
         yfactor=1,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot a property vs. a property in a zone.
 
@@ -410,7 +418,7 @@ class H5(wnb.Base):
         use_latex_names=False,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot group mass fractions vs. zone.
 
@@ -543,7 +551,7 @@ class H5(wnb.Base):
         use_latex_names=False,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot group mass fractions vs. zone property.
 
@@ -642,7 +650,7 @@ class H5(wnb.Base):
         yfactor=None,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot group mass fractions vs. zone property.
 
@@ -735,7 +743,7 @@ class H5(wnb.Base):
         use_latex_names=False,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot zone mass fractions vs. zone property.
 
@@ -835,7 +843,7 @@ class H5(wnb.Base):
         title_func=None,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to make a movie of mass fractions in the zones.
 
@@ -929,7 +937,7 @@ class H5(wnb.Base):
                     plt.plot(
                         my_prop[x_property] / xfactor,
                         _x[:, nuclide_data[s_sp]["index"]],
-                        **_p
+                        **_p,
                     )
                 else:
                     plt.plot(_x[:, nuclide_data[s_sp]["index"]], **_p)
@@ -1004,28 +1012,23 @@ class New_H5(wnb.Base):
             ("Spin", "float"),
         ]
 
-        my_data = np.array([], dtype=my_type)
-
-        i = 0
-        for nuc in nucs:
+        records = []
+        for i, nuc in enumerate(nucs):
             my_nuc = nucs[nuc]
-            my_data = np.append(
-                my_data,
-                np.array(
-                    (
-                        nuc,
-                        i,
-                        my_nuc["z"],
-                        my_nuc["a"],
-                        my_nuc["state"],
-                        my_nuc["source"],
-                        my_nuc["mass excess"],
-                        my_nuc["spin"],
-                    ),
-                    dtype=my_type,
-                ),
+            records.append(
+                (
+                    nuc,
+                    i,
+                    my_nuc["z"],
+                    my_nuc["a"],
+                    my_nuc["state"],
+                    my_nuc["source"],
+                    my_nuc["mass excess"],
+                    my_nuc["spin"],
+                )
             )
-            i += 1
+
+        my_data = np.array(records, dtype=my_type)
 
         self.file.create_dataset("Nuclide Data", data=my_data)
 
@@ -1035,16 +1038,15 @@ class New_H5(wnb.Base):
 
         my_type = [("Label 1", d_t), ("Label 2", d_t), ("Label 3", d_t)]
 
-        my_data = np.array([], dtype=my_type)
-
+        records = []
         for zone in zones:
             if isinstance(zone, tuple):
                 tup = zone
             else:
                 tup = (zone, "0", "0")
-            my_data = np.append(
-                my_data, np.array((tup[0], tup[1], tup[2]), dtype=my_type)
-            )
+            records.append((tup[0], tup[1], tup[2]))
+
+        my_data = np.array(records, dtype=my_type)
 
         _g.create_dataset("Zone Labels", data=my_data)
 
@@ -1060,12 +1062,10 @@ class New_H5(wnb.Base):
             ("Value", d_t),
         ]
 
-        i = 0
-        for zone in zones:
-            my_data = np.array([], dtype=my_type)
+        for i, zone in enumerate(zones):
+            records = []
             props = zones[zone]["properties"]
             for prop in props:
-                name = str(prop[0])
                 tag1 = "0"
                 tag2 = "0"
                 value = str(props[prop])
@@ -1076,22 +1076,18 @@ class New_H5(wnb.Base):
                         tag2 = str(prop[2])
                 else:
                     name = str(prop)
-                my_data = np.append(
-                    my_data, np.array((name, tag1, tag2, value), dtype=my_type)
-                )
+                records.append((name, tag1, tag2, value))
+            my_data = np.array(records, dtype=my_type)
             g_p.create_dataset(str(i), data=my_data, dtype=my_type)
-            i += 1
 
     def _add_zone_mass_fractions_to_group(self, _g, zones):
 
         my_data = np.zeros((len(zones), len(self.nucs)), dtype=float)
 
-        i = 0
-        for zone in zones:
+        for i, zone in enumerate(zones):
             mass_fracs = zones[zone]["mass fractions"]
             for key in mass_fracs:
-                my_data[i][self.nuc_dict[key[0]]] = mass_fracs[key]
-            i += 1
+                my_data[i, self.nuc_dict[key[0]]] = mass_fracs[key]
 
         _g.create_dataset("Mass Fractions", data=my_data)
 

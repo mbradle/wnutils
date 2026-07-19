@@ -1,6 +1,9 @@
 """Module providing base class."""
 
+from numbers import Integral
+
 import matplotlib as mpl
+import numpy as np
 
 
 class Base:
@@ -94,7 +97,7 @@ class Base:
                 method = getattr(plt, key)
             except AttributeError as e_error:
                 raise NotImplementedError(
-                    f"Class {plt.__class__.__name} does not implement {method}"
+                    f"Class {plt.__class__.__name__} does not implement {key}"
                 ) from e_error
 
             if isinstance(keyword_params[key], dict):
@@ -201,9 +204,10 @@ class Base:
 
         return latex_names
 
-    def _create_zname_array(self):
+    @staticmethod
+    def _create_zname_array():
 
-        return [
+        return (
             "n",
             "h",
             "he",
@@ -323,22 +327,144 @@ class Base:
             "lv",
             "ts",
             "og",
-        ]
+        )
 
-    def _create_ex_name_array(self):
-        return ["n", "u", "b", "t", "q", "p", "h", "s", "o", "e"]
+    @staticmethod
+    def _create_ex_name_array():
+        return ("n", "u", "b", "t", "q", "p", "h", "s", "o", "e")
+
+    def _atomic_number_from_element_symbol(self, symbol):
+        if not isinstance(symbol, str):
+            raise TypeError("Element symbols must be strings.")
+        if not symbol or not symbol.isascii() or not symbol.isalpha():
+            raise ValueError(f"Invalid element symbol: {symbol!r}.")
+
+        normalized = symbol.casefold()
+        element_symbols = self._create_zname_array()
+
+        try:
+            return element_symbols.index(normalized, 1)
+        except ValueError:
+            pass
+
+        digit_symbols = {
+            digit_symbol: digit
+            for digit, digit_symbol in enumerate(self._create_ex_name_array())
+        }
+        atomic_number = 0
+        try:
+            for character in normalized:
+                atomic_number = atomic_number * 10 + digit_symbols[character]
+        except KeyError as error:
+            raise ValueError(f"Invalid element symbol: {symbol!r}.") from error
+
+        if (
+            atomic_number <= 118
+            or self._create_element_name(atomic_number) != normalized
+        ):
+            raise ValueError(f"Invalid element symbol: {symbol!r}.")
+
+        return atomic_number
+
+    def _element_symbol_from_atomic_number(self, atomic_number, lowercase):
+        if isinstance(atomic_number, bool) or not isinstance(
+            atomic_number, Integral
+        ):
+            raise TypeError("Atomic numbers must be integers.")
+        if atomic_number < 1:
+            raise ValueError("Atomic numbers must be positive.")
+
+        symbol = self._create_element_name(int(atomic_number))
+        if lowercase:
+            return symbol
+        return symbol[0].upper() + symbol[1:]
+
+    def _convert_scalar_or_collection(self, values, converter):
+        if isinstance(values, np.ndarray):
+            result = np.empty(values.shape, dtype=object)
+            for index in np.ndindex(values.shape):
+                value = values[index]
+                if isinstance(value, np.generic):
+                    value = value.item()
+                result[index] = converter(value)
+            return result
+        if isinstance(values, list):
+            return [
+                self._convert_scalar_or_collection(value, converter)
+                for value in values
+            ]
+        if isinstance(values, tuple):
+            return tuple(
+                self._convert_scalar_or_collection(value, converter)
+                for value in values
+            )
+        return converter(values)
+
+    def get_element_symbol(self, atomic_number, lowercase=False):
+        """Return element symbols for one or more atomic numbers.
+
+        Official symbols are used through Z = 118.  Larger atomic numbers use
+        systematic temporary symbols with no upper limit.
+
+        Args:
+            ``atomic_number`` (:obj:`int`, :obj:`list`, :obj:`tuple`, or
+            :obj:`numpy.ndarray`): One or more positive atomic numbers.
+
+            ``lowercase`` (:obj:`bool`, optional): Return lowercase symbols
+            instead of conventionally capitalized symbols.  Defaults to
+            ``False``.
+
+        Returns:
+            A :obj:`str`, :obj:`list`, :obj:`tuple`, or object-dtype
+            :obj:`numpy.ndarray`, matching the input container.
+
+        Raises:
+            :obj:`TypeError`: If an atomic number is not an integer or
+            ``lowercase`` is not a boolean.
+
+            :obj:`ValueError`: If an atomic number is less than one.
+
+        """
+
+        if not isinstance(lowercase, bool):
+            raise TypeError("lowercase must be a boolean.")
+
+        return self._convert_scalar_or_collection(
+            atomic_number,
+            lambda value: self._element_symbol_from_atomic_number(
+                value, lowercase
+            ),
+        )
+
+    def get_atomic_number(self, element_symbol):
+        """Return atomic numbers for one or more element symbols.
+
+        Symbol matching is case-insensitive.  Official symbols and systematic
+        temporary symbols are accepted.  In this element API, ``"n"`` means
+        nitrogen (Z = 7), not a neutron.
+
+        Args:
+            ``element_symbol`` (:obj:`str`, :obj:`list`, :obj:`tuple`, or
+            :obj:`numpy.ndarray`): One or more element symbols.
+
+        Returns:
+            An :obj:`int`, :obj:`list`, :obj:`tuple`, or object-dtype
+            :obj:`numpy.ndarray`, matching the input container.  Atomic
+            numbers are returned as arbitrary-precision Python integers.
+
+        Raises:
+            :obj:`TypeError`: If an element symbol is not a string.
+
+            :obj:`ValueError`: If an element symbol is invalid.
+
+        """
+
+        return self._convert_scalar_or_collection(
+            element_symbol, self._atomic_number_from_element_symbol
+        )
 
     def _get_z_from_element_name(self, elem_str):
-        s_zname = self._create_zname_array()
-
-        if elem_str in s_zname:
-            return s_zname.index(elem_str)
-
-        ex_name = self._create_ex_name_array()
-        result = ""
-        for elem_char in elem_str:
-            result += str(ex_name.index(elem_char))
-        return int(result)
+        return self._atomic_number_from_element_symbol(elem_str)
 
     def _create_element_name(self, _z):
 

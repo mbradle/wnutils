@@ -51,7 +51,7 @@ class Multi_H5(wb.Base):
         yfactor=1,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot a property vs. a property in the files.
 
@@ -136,7 +136,7 @@ class Multi_H5(wb.Base):
         use_latex_names=False,
         rcParams=None,
         plotParams=None,
-        **kwargs
+        **kwargs,
     ):
         """Method to plot a mass fraction versus a property.
 
