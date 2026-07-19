@@ -1,7 +1,8 @@
 """Module providing xml classes."""
 
-import os
-import sys
+from numbers import Real
+from pathlib import Path
+from urllib.parse import urlparse
 from lxml import etree
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -11,6 +12,39 @@ from matplotlib import animation
 import numpy as np
 from scipy.interpolate import interp1d
 import wnutils.base as wb
+
+_SCHEMA_DIRECTORY = Path(__file__).parent / "xsd_pub"
+_ROOT_SCHEMAS = {
+    "nuclear_data": "libnucnet__nuc.xsd",
+    "reaction_data": "libnucnet__reac.xsd",
+    "nuclear_network": "libnucnet__net.xsd",
+    "zone_data": "zone_data.xsd",
+    "libnucnet_input": "libnucnet.xsd",
+}
+_LOCAL_SCHEMA_FILES = frozenset(
+    {
+        *_ROOT_SCHEMAS.values(),
+        "input_nuclide_z_a.xsd",
+        "libnucnet__nuc__types.xsd",
+        "libnucnet__reac__types.xsd",
+        "xml.xsd",
+        "zone_data_types.xsd",
+    }
+)
+
+
+class _LocalSchemaResolver(etree.Resolver):
+    def resolve(self, url, _public_id, context):
+        parsed_url = urlparse(url)
+        filename = Path(parsed_url.path).name
+        if parsed_url.scheme in ("http", "https") and (
+            filename in _LOCAL_SCHEMA_FILES
+        ):
+            return self.resolve_filename(
+                str(_SCHEMA_DIRECTORY / filename), context
+            )
+
+        return None
 
 
 def validate(file):
@@ -29,19 +63,14 @@ def validate(file):
     _xml.xinclude()
     _root = _xml.getroot()
 
-    xsd_dict = {
-        "nuclear_data": "libnucnet__nuc.xsd",
-        "reaction_data": "libnucnet__reac.xsd",
-        "nuclear_network": "libnucnet__net.xsd",
-        "zone_data": "zone_data.xsd",
-        "libnucnet_input": "libnucnet.xsd",
-    }
-
-    schema_file = os.path.join(
-        os.path.dirname(__file__), "xsd_pub", xsd_dict[_root.tag]
+    schema_file = _SCHEMA_DIRECTORY / _ROOT_SCHEMAS[_root.tag]
+    schema_parser = etree.XMLParser(no_network=True)
+    schema_parser.resolvers.add(  # pylint: disable=no-member
+        _LocalSchemaResolver()
     )
+    schema_document = etree.parse(str(schema_file), schema_parser)
 
-    xml_validator = etree.XMLSchema(file=schema_file)
+    xml_validator = etree.XMLSchema(schema_document)
     xml_validator.assertValid(_xml)
 
 
@@ -76,7 +105,7 @@ class Reaction(wb.Base):
         return np.power(10.0, _f1(t_9)) * _f2(t_9)
 
     def _compute_rate_table_rate(self, t_9):
-        if isinstance(t_9, float):
+        if isinstance(t_9, Real):
             return self._compute_rate_table_rate_interpolation(t_9)
 
         return np.array(
@@ -114,7 +143,7 @@ class Reaction(wb.Base):
 
         return self._compute_non_smoker_fit_rate_for_fit(self.data, t_9)
 
-    def compute_rate(self, t_9, user_funcs=" "):
+    def compute_rate(self, t_9, user_funcs=None):
         """Method to compute rate for a reaction at input t9.
 
         Args:
@@ -136,13 +165,13 @@ class Reaction(wb.Base):
         if self.data["type"] == "non_smoker_fit":
             return self._compute_non_smoker_fit_rate(t_9)
         if self.data["type"] == "user_rate":
-            if self.data["key"] not in user_funcs:
-                print("Function not defined for key " + self.data["key"])
-                return None
+            if user_funcs is None or self.data["key"] not in user_funcs:
+                raise KeyError(
+                    f"No user function defined for key {self.data['key']!r}."
+                )
             return user_funcs[self.data["key"]](self, t_9)
 
-        print("No such reaction type")
-        return None
+        raise ValueError(f"Unsupported reaction type: {self.data['type']!r}.")
 
     def _get_reactant_and_product_xpath(self):
         reactants = []
@@ -501,7 +530,7 @@ class Xml(wb.Base):
         if user_rate:
             return self._get_user_rate_data(user_rate[0])
 
-        return None
+        raise ValueError("Reaction does not contain supported rate data.")
 
     def get_reaction_data(self, reac_xpath=" "):
         """Method to retrieve reaction data from webnucleo XML.
@@ -586,9 +615,11 @@ class Xml(wb.Base):
                 properties_t[prop] = (prop.strip(),)
             else:
                 properties_t[prop] = tuple(value.strip() for value in prop)
-                if len(properties_t[prop]) > 3:
-                    print("\nToo many property names (at most 3)!\n")
-                    return None
+                if not 1 <= len(properties_t[prop]) <= 3:
+                    raise ValueError(
+                        "Property names must contain between one and three "
+                        "elements."
+                    )
 
         my_dict = {}
 
@@ -623,10 +654,9 @@ class Xml(wb.Base):
                     data = by_name_tag1_tag2.get(tup)
 
                 if data is None:
-                    print(
-                        "Property", self._get_property_name(tup), "not found."
+                    raise KeyError(
+                        f"Property {self._get_property_name(tup)!r} not found."
                     )
-                    return None
 
                 my_dict[prop].append(data.text)
 
@@ -667,8 +697,9 @@ class Xml(wb.Base):
         zones = self._get_zones(zone_xpath)
 
         if len(zones) != 1:
-            print("Incorrect number of zones.")
-            return None
+            raise ValueError(
+                f"Zone XPath must select exactly one zone; found {len(zones)}."
+            )
 
         return self._get_all_zone_properties(zones[0])
 
@@ -747,8 +778,7 @@ class Xml(wb.Base):
         """
 
         if nucleon not in ("z", "n", "a"):
-            print("nucleon must be 'z', 'n', or 'a'.")
-            return None
+            raise ValueError("nucleon must be 'z', 'n', or 'a'.")
 
         _y = self.get_all_abundances_in_zones(zone_xpath)
 
@@ -879,11 +909,9 @@ class Xml(wb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print(
-                    "Number of plotParam elements must equal number"
-                    + " of species."
+                raise ValueError(
+                    "Number of plotParam elements must equal number of species."
                 )
-                return
 
         plots = []
 
@@ -969,10 +997,9 @@ class Xml(wb.Base):
 
         if plotParams:
             if _y.shape[0] != len(plotParams):
-                print(
+                raise ValueError(
                     "Number of plotParam elements must equal number of plots."
                 )
-                return
 
         for i in range(_y.shape[0]):
             if plotParams:
@@ -1135,8 +1162,9 @@ class Xml(wb.Base):
         if extraCurves:
             for tup in extraCurves:
                 if tup[1].shape[0] != _y.shape[0]:
-                    print("Extra curve does not have the right length.")
-                    return None
+                    raise ValueError(
+                        "Extra curve length must equal the number of frames."
+                    )
 
         def updatefig(i):
             fig.clear()
@@ -1168,8 +1196,9 @@ class Xml(wb.Base):
                     elif isinstance(t_f, str):
                         plt.title(t_f)
                     else:
-                        print("Invalid return from title function.")
-                        return
+                        raise TypeError(
+                            "Title function must return a string or tuple."
+                        )
             else:
                 if nucleon[0] == "z":
                     pre_str = f"Z = {nucleon[1]:d}, "
@@ -1290,8 +1319,9 @@ class Xml(wb.Base):
         if extraCurves:
             for tup in extraCurves:
                 if tup[1].shape[0] != abunds.shape[0]:
-                    print("Extra curve does not have the right length.")
-                    return None
+                    raise ValueError(
+                        "Extra curve length must equal the number of frames."
+                    )
 
         def updatefig(i):
             fig.clear()
@@ -1323,8 +1353,9 @@ class Xml(wb.Base):
                     elif isinstance(t_f, str):
                         plt.title(t_f)
                     else:
-                        print("Invalid return from title function.")
-                        return
+                        raise TypeError(
+                            "Title function must return a string or tuple."
+                        )
             else:
                 plt.title(self.make_time_t9_rho_title_str(props, i))
             if "xlabel" not in kwargs:
@@ -1457,8 +1488,9 @@ class Xml(wb.Base):
                 elif isinstance(t_f, tuple):
                     plt.title(t_f[0], t_f[1])
                 else:
-                    print("Invalid return from title function.")
-                    return
+                    raise TypeError(
+                        "Title function must return a string or tuple."
+                    )
             else:
                 plt.title(self.make_time_t9_rho_title_str(props, i))
             if "xlabel" not in kwargs:
@@ -1525,14 +1557,14 @@ class New_Xml(wb.Base):
     """
 
     def __init__(self, xml_type="nuclear_network"):
-        if xml_type not in [
+        if xml_type not in (
             "nuclear_data",
             "reaction_data",
             "nuclear_network",
             "zone_data",
             "libnucnet_input",
-        ]:
-            print("Invalid xml_type.")
+        ):
+            raise ValueError(f"Invalid XML type: {xml_type!r}.")
         self._root = etree.Element(xml_type)
         self._xml = etree.ElementTree(self._root)
         if xml_type == "nuclear_network":
@@ -1604,8 +1636,7 @@ class New_Xml(wb.Base):
         nuclear_data = self._xml.xpath("//nuclear_data")
 
         if len(nuclear_data) == 0:
-            print("Attempting to set non-existent nuclear_data.")
-            return
+            raise ValueError("This XML type does not contain nuclear_data.")
 
         for nuc in nuclides:
             my_nuc = nuclides[nuc]
@@ -1663,12 +1694,17 @@ class New_Xml(wb.Base):
                         fit_element.set("note", fit[_d])
                     else:
                         etree.SubElement(fit_element, _d).text = str(fit[_d])
-        else:
+        elif reaction.data["type"] == "user_rate":
             user_element = etree.SubElement(reaction_element, "user_rate")
             user_element.set("key", reaction.data["key"])
             properties = etree.SubElement(user_element, "properties")
             for _d in reaction.data:
                 if _d not in ("type", "key"):
+                    if isinstance(_d, tuple) and not 1 <= len(_d) <= 3:
+                        raise ValueError(
+                            "Reaction property names must contain between one "
+                            "and three elements."
+                        )
                     prop = etree.SubElement(properties, "property")
                     prop.text = str(reaction.data[_d])
                     if isinstance(_d, tuple):
@@ -1677,11 +1713,12 @@ class New_Xml(wb.Base):
                             prop.set("tag1", _d[1])
                             if len(_d) > 2:
                                 prop.set("tag2", _d[2])
-                        if len(_d) > 3:
-                            print("Improper number of property tags.")
-                            sys.exit()
                     else:
                         prop.set("name", _d)
+        else:
+            raise ValueError(
+                f"Unsupported reaction type: {reaction.data['type']!r}."
+            )
 
     def set_reaction_data(self, reactions):
         """Method to set the reaction data.
@@ -1700,8 +1737,7 @@ class New_Xml(wb.Base):
         reaction_data = self._xml.xpath("//reaction_data")
 
         if len(reaction_data) == 0:
-            print("Attempting to set non-existent reaction_data.")
-            return
+            raise ValueError("This XML type does not contain reaction_data.")
 
         for reaction in reactions:
             reaction_data[0].append(
@@ -1714,6 +1750,14 @@ class New_Xml(wb.Base):
         if len(zone["properties"]) > 0:
             props = etree.SubElement(zone_element, "optional_properties")
             for my_property in zone["properties"]:
+                if (
+                    isinstance(my_property, tuple)
+                    and not 1 <= len(my_property) <= 3
+                ):
+                    raise ValueError(
+                        "Zone property names must contain between one and "
+                        "three elements."
+                    )
                 prop = etree.SubElement(props, "property")
                 prop.text = str(zone["properties"][my_property])
                 if isinstance(my_property, tuple):
@@ -1722,9 +1766,6 @@ class New_Xml(wb.Base):
                         prop.set("tag1", my_property[1])
                         if len(my_property) > 2:
                             prop.set("tag2", my_property[2])
-                            if len(my_property) > 3:
-                                print("Improper number of property tags.")
-                                sys.exit()
                 else:
                     prop.set("name", my_property)
 
@@ -1756,8 +1797,7 @@ class New_Xml(wb.Base):
         zone_data = self._xml.xpath("//zone_data")
 
         if len(zone_data) == 0:
-            print("Attempting to set non-existent zone_data.")
-            return
+            raise ValueError("This XML type does not contain zone_data.")
 
         for zone in zones:
             new_zone = etree.SubElement(zone_data[0], "zone")

@@ -128,7 +128,8 @@ You can retrieve the reaction data in the webnucleo XML file by typing::
     >>> reactions = my_xml.get_reaction_data()
 
 This returns a dictionary with the key being the reaction string and each
-value being a :class:`.Reaction`.  To see a list of the reactions, type::
+value being a :class:`wnutils.xml.Reaction`.  To see a list of the reactions,
+type::
 
     >>> for r in reactions:
     ...     print(r)
@@ -681,4 +682,3 @@ Use the methods on the individual instances.  For example, type::
     ...     props = h5s[i].get_zone_properties_in_groups(('0','0','0'), ['time'])
     ...     print(files[i],'has',len(props['time']),'groups.')
     ...
-

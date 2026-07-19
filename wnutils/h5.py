@@ -29,6 +29,16 @@ class H5(wnb.Base):
         self._zone_labels_cache = {}
         self._zone_label_indexes = {}
 
+    def close(self):
+        """Close the underlying HDF5 file."""
+        self._h5file.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback):
+        self.close()
+
     def _get_group_zone_property_hash(self, group, zone_index):
 
         properties = self._h5file[
@@ -453,11 +463,9 @@ class H5(wnb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print(
-                    "Number of plotParam elements must equal"
-                    + " number of species."
+                raise ValueError(
+                    "Number of plotParam elements must equal number of species."
                 )
-                return
 
         plots = []
 
@@ -593,11 +601,9 @@ class H5(wnb.Base):
 
         if plotParams:
             if len(plotParams) != len(species):
-                print(
-                    "Number of plotParam elements must equal"
-                    + " number of species."
+                raise ValueError(
+                    "Number of plotParam elements must equal number of species."
                 )
-                return
 
         plots = []
 
@@ -693,20 +699,17 @@ class H5(wnb.Base):
 
         if yfactor:
             if len(yfactor) != len(props):
-                print(
-                    "yfactor length must be the same as the number of y properties."
+                raise ValueError(
+                    "yfactor length must equal the number of y properties."
                 )
-                return
         else:
             yfactor = np.full(len(props), 1.0)
 
         if plotParams:
             if len(plotParams) != len(props):
-                print(
-                    "Number of plotParam elements must equal"
-                    + " number of properties."
+                raise ValueError(
+                    "Number of plotParam elements must equal number of properties."
                 )
-                return
 
         _x = self.get_group_properties_in_zones_as_floats(group, [prop])[prop]
         _y = self.get_group_properties_in_zones_as_floats(group, props)
@@ -791,10 +794,9 @@ class H5(wnb.Base):
 
         if yfactor:
             if len(yfactor) != len(species):
-                print(
-                    "yfactor length must be the same as the number of species."
+                raise ValueError(
+                    "yfactor length must equal the number of species."
                 )
-                return
         else:
             yfactor = np.full(len(species), 1.0)
 
@@ -898,11 +900,9 @@ class H5(wnb.Base):
         """
         if plotParams:
             if len(plotParams) != len(species):
-                print(
-                    "Number of plotParam elements must equal"
-                    + " number of species."
+                raise ValueError(
+                    "Number of plotParam elements must equal number of species."
                 )
-                return None
 
         fig = plt.figure()
 
@@ -950,8 +950,9 @@ class H5(wnb.Base):
                     elif isinstance(t_f, str):
                         plt.title(t_f)
                     else:
-                        print("Invalid return from title function.")
-                        return
+                        raise TypeError(
+                            "Title function must return a string or tuple."
+                        )
             else:
                 props = self.get_group_properties_in_zones_as_floats(
                     groups[i], ["time"]
@@ -995,8 +996,15 @@ class New_H5(wnb.Base):
             self.nuc_dict[nuc] = i
             i += 1
 
-    def __del__(self):
+    def close(self):
+        """Close the underlying HDF5 file."""
         self.file.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback):
+        self.close()
 
     def _add_nuclide_data(self, nucs):
         d_t = h5py.string_dtype()

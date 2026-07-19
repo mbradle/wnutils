@@ -20,8 +20,23 @@ class Multi_H5(wb.Base):
     def __init__(self, files):
         self._files = files
         self._h5 = []
-        for file in files:
-            self._h5.append(w5.H5(file))
+        try:
+            for file in files:
+                self._h5.append(w5.H5(file))
+        except Exception:
+            self.close()
+            raise
+
+    def close(self):
+        """Close all underlying HDF5 files."""
+        for h5_file in self._h5:
+            h5_file.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _exc_type, _exc_value, _traceback):
+        self.close()
 
     def get_files(self):
         """Method to return the names of the input files.
@@ -98,8 +113,9 @@ class Multi_H5(wb.Base):
 
         if plotParams:
             if len(h5s) != len(plotParams):
-                print("Number of plot args must equal number of plots.")
-                return
+                raise ValueError(
+                    "Number of plotParam elements must equal number of plots."
+                )
 
         for i, _h5 in enumerate(h5s):
             result = _h5.get_zone_properties_in_groups_as_floats(
@@ -186,10 +202,9 @@ class Multi_H5(wb.Base):
 
         if plotParams:
             if len(h5s) != len(plotParams):
-                print(
+                raise ValueError(
                     "Number of plotParam elements must equal number of plots."
                 )
-                return
 
         for i, _h5 in enumerate(h5s):
             _x = (

@@ -4,8 +4,16 @@ Changelog
 All notable changes to this project will be documented in this file.  This
 project adheres to `Semantic Versioning <http://semver.org/spec/v2.0.0.html>`_.
 
-Version 3.2.0
+Version 4.0.0
 --------------
+
+Breaking:
+
+  * Invalid inputs now raise appropriate exceptions instead of printing an
+    error and returning ``None``.  Invalid XML property tags no longer
+    terminate the calling application with ``sys.exit()``.
+  * Invalid XML types and operations that attempt to add unavailable data
+    sections now raise :obj:`ValueError`.
 
 New:
 
@@ -13,6 +21,10 @@ New:
     numbers, and atomic numbers can be retrieved from case-insensitive element
     symbols.  The methods support systematic temporary symbols without an
     artificial upper atomic-number limit.
+  * HDF5 readers, writers, and multi-file readers now support deterministic
+    cleanup through ``close()`` and the context-manager protocol.
+  * The top-level package now provides an explicit, lazily loaded public API
+    and exposes ``wnutils.__version__``.
 
 Fix:
 
@@ -22,8 +34,10 @@ Fix:
     identifies the missing method.
   * Three-point reaction-rate tables now use linear interpolation instead of
     attempting an invalid cubic interpolation.
+  * Rate-table interpolation now accepts integer scalar temperatures.
   * HDF5 nuclide source and state values are now read by field name, preventing
     them from being interchanged when compound-field order differs.
+  * Project metadata now points to the wnutils documentation and repository.
 
 Internal:
 
@@ -34,6 +48,12 @@ Internal:
     requested mass-fraction columns in batches.
   * HDF5 output arrays are now constructed in a single pass instead of through
     repeated NumPy array appends.
+  * XML schema imports now resolve locally without modifying the process-wide
+    ``XML_CATALOG_FILES`` environment variable.
+  * Importing ``wnutils`` no longer eagerly imports Matplotlib, SciPy, h5py, or
+    the XML and HDF5 implementation modules.
+  * Formatting and lint checks now run for pull requests, and CI verifies the
+    contents of the built wheel.
   * The minimum supported Python version is now 3.9, and Black is configured
     explicitly for supported Python versions through 3.14.
   * Fast XML and HDF5 tests now use compact repository fixtures.  The larger

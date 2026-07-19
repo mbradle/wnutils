@@ -2,17 +2,18 @@ name: black
 
 on:
   push:
-      branches:
-        - develop
-        - master
+    branches:
+      - develop
+      - master
+  pull_request:
 
 jobs:
   black:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "./wnutils"
+          src: "./wnutils ./tests"
           version: "~= 26.0"

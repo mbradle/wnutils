@@ -21,12 +21,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: install dependencies
+      - name: Install dependencies
         run: |
           git clone https://bitbucket.org/mbradle/libnucnet_xsd.git wnutils/xsd_pub
           python -m pip install --upgrade pip
-          pip install pytest
+          pip install build pytest
           pip install -e .
-      - name: run test
+      - name: Run tests
         run: |
           pytest -v tests --ignore=tests/integration
+      - name: Build and verify wheel contents
+        if: matrix.python-version == '3.x'
+        run: |
+          python -m build
+          python -m pip install --force-reinstall --no-deps dist/*.whl
+          cd /tmp
+          python -I -c "from importlib.resources import files; import wnutils; schemas = files('wnutils') / 'xsd_pub'; assert (schemas / 'catalog').is_file(); assert (schemas / 'libnucnet.xsd').is_file(); assert (schemas / 'xml.xsd').is_file(); assert wnutils.__version__ == '4.0.0'"

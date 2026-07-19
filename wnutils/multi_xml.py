@@ -94,10 +94,9 @@ class Multi_Xml(wb.Base):
 
         if plotParams:
             if len(xmls) != len(plotParams):
-                print(
+                raise ValueError(
                     "Number of plotParam elements must equal number of plots."
                 )
-                return
 
         for i, xml in enumerate(xmls):
             result = xml.get_properties_as_floats([prop1, prop2])
@@ -177,10 +176,9 @@ class Multi_Xml(wb.Base):
 
         if plotParams:
             if len(xmls) != len(plotParams):
-                print(
+                raise ValueError(
                     "Number of plotParam elements must equal number of plots."
                 )
-                return
 
         for i, xml in enumerate(xmls):
             _x = xml.get_properties_as_floats([prop])[prop] / xfactor
