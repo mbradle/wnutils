@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<libnucnet_input>
+  <nuclear_network>
+    <nuclear_data>
+      <nuclide>
+        <z>0</z>
+        <a>1</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>8.071317</mass_excess>
+        <spin>0.5</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>1</z>
+        <a>1</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>7.288971</mass_excess>
+        <spin>0.5</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>1</z>
+        <a>2</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>13.135721</mass_excess>
+        <spin>1.0</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>2</z>
+        <a>4</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>2.424915</mass_excess>
+        <spin>0.0</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>7</z>
+        <a>14</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>2.863417</mass_excess>
+        <spin>1.0</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>13</z>
+        <a>26</a>
+        <states>
+          <state id="g">
+            <source>wnutils test fixture</source>
+            <mass_excess>-12.2101</mass_excess>
+            <spin>5.0</spin>
+            <partf_table>
+              <point>
+                <t9>2.0</t9>
+                <log10_partf>0.30103</log10_partf>
+              </point>
+              <point>
+                <t9>1.0</t9>
+                <log10_partf>0.0</log10_partf>
+              </point>
+              <point>
+                <t9>3.0</t9>
+                <log10_partf>0.477121</log10_partf>
+              </point>
+            </partf_table>
+          </state>
+          <state id="m">
+            <source>wnutils test fixture</source>
+            <mass_excess>-11.9818</mass_excess>
+            <spin>0.0</spin>
+            <partf_table>
+              <point>
+                <t9>1.0</t9>
+                <log10_partf>0.0</log10_partf>
+              </point>
+              <point>
+                <t9>2.0</t9>
+                <log10_partf>0.176091</log10_partf>
+              </point>
+            </partf_table>
+          </state>
+        </states>
+      </nuclide>
+      <nuclide>
+        <z>14</z>
+        <a>27</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>-12.384</mass_excess>
+        <spin>2.5</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>26</z>
+        <a>56</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>-60.606</mass_excess>
+        <spin>0.0</spin>
+        <partf_table/>
+      </nuclide>
+      <nuclide>
+        <z>26</z>
+        <a>57</a>
+        <source>wnutils test fixture</source>
+        <mass_excess>-60.180</mass_excess>
+        <spin>0.5</spin>
+        <partf_table/>
+      </nuclide>
+    </nuclear_data>
+    <reaction_data>
+      <reaction>
+        <source>wnutils single-rate fixture</source>
+        <reactant>al26m</reactant>
+        <product>al26g</product>
+        <product>gamma</product>
+        <single_rate>1.5</single_rate>
+      </reaction>
+      <reaction>
+        <source>wnutils table-rate fixture</source>
+        <reactant>n</reactant>
+        <reactant>fe56</reactant>
+        <product>fe57</product>
+        <product>gamma</product>
+        <rate_table>
+          <point>
+            <t9>2.0</t9>
+            <rate>30.0</rate>
+            <sef>1.2</sef>
+          </point>
+          <point>
+            <t9>0.1</t9>
+            <rate>10.0</rate>
+            <sef>1.0</sef>
+          </point>
+          <point>
+            <t9>1.0</t9>
+            <rate>20.0</rate>
+            <sef>1.1</sef>
+          </point>
+        </rate_table>
+      </reaction>
+      <reaction>
+        <source>wnutils non-smoker fixture</source>
+        <reactant>h1</reactant>
+        <reactant>al26g</reactant>
+        <product>si27</product>
+        <product>gamma</product>
+        <non_smoker_fit>
+          <fit note="constant exponential test fit">
+            <Zt>13</Zt>
+            <At>26</At>
+            <Zf>14</Zf>
+            <Af>27</Af>
+            <Q>7.0</Q>
+            <spint>5.0</spint>
+            <spinf>2.5</spinf>
+            <TlowHf>0.01</TlowHf>
+            <Tlowfit>0.1</Tlowfit>
+            <Thighfit>10.0</Thighfit>
+            <acc>0.01</acc>
+            <a1>1.0</a1>
+            <a2>0.0</a2>
+            <a3>0.0</a3>
+            <a4>0.0</a4>
+            <a5>0.0</a5>
+            <a6>0.0</a6>
+            <a7>0.0</a7>
+            <a8>0.0</a8>
+          </fit>
+        </non_smoker_fit>
+      </reaction>
+      <reaction>
+        <source>wnutils user-rate fixture</source>
+        <reactant>h1</reactant>
+        <reactant>al26m</reactant>
+        <product>si27</product>
+        <product>gamma</product>
+        <user_rate key="fixture user rate">
+          <properties>
+            <property name="coefficient">2.5</property>
+            <property name="coefficient" tag1="linear">0.5</property>
+            <property name="coefficient" tag1="quadratic" tag2="t9">0.1</property>
+          </properties>
+        </user_rate>
+      </reaction>
+    </reaction_data>
+  </nuclear_network>
+  <zone_data>
+    <zone label1="0">
+      <optional_properties>
+        <property name="time">0.0</property>
+        <property name="t9">3.0</property>
+        <property name="rho">1000000.0</property>
+        <property name="note">core</property>
+        <property name="rate scale" tag1="weak">1.0</property>
+        <property name="rate scale" tag1="capture" tag2="forward">1.1</property>
+      </optional_properties>
+      <mass_fractions>
+        <nuclide name="h1"><z>1</z><a>1</a><x>0.50</x></nuclide>
+        <nuclide name="he4"><z>2</z><a>4</a><x>0.25</x></nuclide>
+        <nuclide name="al26g"><z>13</z><a>26</a><x>0.15</x></nuclide>
+        <nuclide name="al26m"><z>13</z><a>26</a><x>0.10</x></nuclide>
+      </mass_fractions>
+    </zone>
+    <zone label1="1" label2="shell">
+      <optional_properties>
+        <property name="time">1.0</property>
+        <property name="t9">2.0</property>
+        <property name="rho">100000.0</property>
+        <property name="note">middle shell</property>
+        <property name="rate scale" tag1="weak">1.2</property>
+        <property name="rate scale" tag1="capture" tag2="forward">1.3</property>
+      </optional_properties>
+      <mass_fractions>
+        <nuclide name="n"><z>0</z><a>1</a><x>0.10</x></nuclide>
+        <nuclide name="h1"><z>1</z><a>1</a><x>0.20</x></nuclide>
+        <nuclide name="he4"><z>2</z><a>4</a><x>0.20</x></nuclide>
+        <nuclide name="n14"><z>7</z><a>14</a><x>0.10</x></nuclide>
+        <nuclide name="al26g"><z>13</z><a>26</a><x>0.10</x></nuclide>
+        <nuclide name="al26m"><z>13</z><a>26</a><x>0.05</x></nuclide>
+        <nuclide name="fe56"><z>26</z><a>56</a><x>0.15</x></nuclide>
+        <nuclide name="fe57"><z>26</z><a>57</a><x>0.10</x></nuclide>
+      </mass_fractions>
+    </zone>
+    <zone label1="2" label2="shell" label3="outer">
+      <optional_properties>
+        <property name="time">2.0</property>
+        <property name="t9">1.0</property>
+        <property name="rho">10000.0</property>
+        <property name="note">outer shell</property>
+        <property name="rate scale" tag1="weak">1.4</property>
+        <property name="rate scale" tag1="capture" tag2="forward">1.5</property>
+      </optional_properties>
+      <mass_fractions>
+        <nuclide name="h1"><z>1</z><a>1</a><x>0.10</x></nuclide>
+        <nuclide name="he4"><z>2</z><a>4</a><x>0.10</x></nuclide>
+        <nuclide name="al26g"><z>13</z><a>26</a><x>0.20</x></nuclide>
+        <nuclide name="al26m"><z>13</z><a>26</a><x>0.10</x></nuclide>
+        <nuclide name="si27"><z>14</z><a>27</a><x>0.10</x></nuclide>
+        <nuclide name="fe56"><z>26</z><a>56</a><x>0.20</x></nuclide>
+        <nuclide name="fe57"><z>26</z><a>57</a><x>0.20</x></nuclide>
+      </mass_fractions>
+    </zone>
+  </zone_data>
+</libnucnet_input>
