@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!--////////////////////////////////////////////////////////////////////////////
+// <file>
+//   <license>
+//      Copyright (c) 2006-2022 Clemson University.
+//
+//      This file is part of the Clemson Webnucleo group's
+//      libnucnet module, originally developed by David C. Adams
+//      and Bradley S. Meyer.  For more information,
+//      please see http://www.webnucleo.org.
+//
+//      This is free software; you can redistribute it and/or modify it
+//      under the terms of the GNU General Public License as published by
+//      the Free Software Foundation; either version 2 of the License, or
+//      (at your option) any later version.
+//
+//      This software is distributed in the hope that it will be useful,
+//      but WITHOUT ANY WARRANTY; without even the implied warranty of
+//      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//      GNU General Public License for more details.
+//
+//      To obtain a copy of the GNU GPL, write to the Free Software
+//      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+//      USA
+//   </license>
+//
+//   <description>
+//     <abstract>
+//       XML schema to validate a nuclides.xml file for extracting nuclides
+//       from an input libnucnet file.
+//     </abstract>
+//     <keywords>
+//       nuclear, data, schema, valid
+//     </keywords>
+//   </description>
+//
+//   <authors>
+//     <current>
+//       <author userid="mbradle" start_date="2007/09/25" />
+//     </current>
+//     <previous>
+//     </previous>
+//   </authors>
+//
+//   <compatibility>
+//     Tested with xmllint: using libxml version 20629
+//     compiled with: Threads Tree Output Push Reader Patterns Writer SAXv1
+//     FTP HTTP DTDValid HTML Legacy C14N Catalog XPath XPointer XInclude
+//     Iconv ISO8859X Unicode Regexps Automata Expr Schemas Schematron 
+//     odules Debug Zlib 
+//   </compatibility>
+//
+// </file>
+/////////////////////////////////////////////////////////////////////////////-->
+
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:ndt="https://libnucnet.sf.net/xsd_pub/2022-10-08/libnucnet__nuc__types/"
+>
+
+<!--============================================================================
+// Import types.
+//===========================================================================-->
+
+<xsd:import
+  namespace="https://libnucnet.sf.net/xsd_pub/2022-10-08/libnucnet__nuc__types/"
+  schemaLocation="https://libnucnet.sf.net/xsd_pub/2022-10-08/libnucnet__nuc__types.xsd"
+/>  
+
+<!--============================================================================
+// Complex type.
+//===========================================================================-->
+
+<xsd:complexType name="nuclide_type">
+  <xsd:sequence>
+    <xsd:element name="z" type="ndt:z_type"/>
+    <xsd:element name="a" type="ndt:a_type"/>
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="nuclide_collection">
+  <xsd:sequence>
+    <xsd:element name="nuclide" type="nuclide_type" maxOccurs="unbounded" />
+  </xsd:sequence>
+</xsd:complexType>
+
+<!--============================================================================
+// Root type.
+//===========================================================================-->
+
+<xsd:element
+  name="input_nuclides"
+  type="nuclide_collection"
+>
+
+  <xsd:unique name="unique_nuclide">
+    <xsd:selector xpath="nuclide"/>
+    <xsd:field xpath="z"/>
+    <xsd:field xpath="a"/>
+  </xsd:unique>
+
+</xsd:element>
+
+</xsd:schema>

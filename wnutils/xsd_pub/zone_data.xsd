@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+
+<!--////////////////////////////////////////////////////////////////////////////
+// <file>
+//   <license>
+//      Copyright (c) 2006-2022 Clemson University.
+//
+//      This file is part of the Clemson Webnucleo group's
+//      libnucnet module, originally developed by David C. Adams
+//      and Bradley S. Meyer.  For more information,
+//      please see http://www.webnucleo.org.
+//
+//      This is free software; you can redistribute it and/or modify it
+//      under the terms of the GNU General Public License as published by
+//      the Free Software Foundation; either version 2 of the License, or
+//      (at your option) any later version.
+//
+//      This software is distributed in the hope that it will be useful,
+//      but WITHOUT ANY WARRANTY; without even the implied warranty of
+//      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//      GNU General Public License for more details.
+//
+//      To obtain a copy of the GNU GPL, write to the Free Software
+//      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+//      USA
+//   </license>
+//
+//   <description>
+//     <abstract>
+//       XML schema to validate a libnucnet initial mass fractions file.
+//     </abstract>
+//     <keywords>
+//       initial, mass, fractions, data, schema, valid
+//     </keywords>
+//   </description>
+//
+//   <authors>
+//     <current>
+//       <author userid="mbradle" start_date="2007/08/12" />
+//     </current>
+//     <previous>
+//     </previous>
+//   </authors>
+//
+//   <note>
+//     Zone label uniqueness check only works if all three labels specified.
+//   </note>
+//
+//   <note>
+//     Ideally, we should import all types.  Unfortunately this doesn't
+//     work right now with xmllint/libxml2 for unique tags.
+//   </note>
+//
+//   <compatibility>
+//     Tested with xmllint: using libxml version 20629
+//     compiled with: Threads Tree Output Push Reader Patterns Writer SAXv1
+//     FTP HTTP DTDValid HTML Legacy C14N Catalog XPath XPointer XInclude
+//     Iconv ISO8859X Unicode Regexps Automata Expr Schemas Schematron 
+//     odules Debug Zlib 
+//   </compatibility>
+//
+// </file>
+/////////////////////////////////////////////////////////////////////////////-->
+
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:zdt="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/zone_data_types/"
+  xmlns:zd="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/zone_data/"
+>
+
+<!--============================================================================
+// Import types.
+//===========================================================================-->
+
+<xsd:import
+  namespace="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/zone_data_types/"
+  schemaLocation="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/zone_data_types.xsd"
+/>  
+
+<!--============================================================================
+// Root element.
+//===========================================================================-->
+
+<xsd:element name="zone_data" type="zdt:zone_data_type">
+  <xsd:unique name="unique_zone_labels">
+    <xsd:selector xpath="zone"/>
+    <xsd:field xpath="@label1"/>
+    <xsd:field xpath="@label2"/>
+    <xsd:field xpath="@label3"/>
+  </xsd:unique>
+</xsd:element>
+
+</xsd:schema>

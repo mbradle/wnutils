@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/input_nuclide_z_a.xsd"
+    uri="input_nuclide_z_a.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet.xsd"
+    uri="libnucnet.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__net.xsd"
+    uri="libnucnet__net.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__nuc.xsd"
+    uri="libnucnet__nuc.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__nuc__types.xsd"
+    uri="libnucnet__nuc__types.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__reac.xsd"
+    uri="libnucnet__reac.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__reac__types.xsd"
+    uri="libnucnet__reac__types.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/zone_data.xsd"
+    uri="zone_data.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/zone_data_types.xsd"
+    uri="zone_data_types.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__reac__types.xsd"
+    uri="libnucnet__reac__types.xsd"/>
+
+  <system
+    systemId="https://libnucnet.sourceforge.net/xsd_pub/w3c_copy/2005/08/xml.xsd"
+    uri="xml.xsd"/>
+
+</catalog>

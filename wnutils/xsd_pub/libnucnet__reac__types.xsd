@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+
+<!--////////////////////////////////////////////////////////////////////////////
+// <file>
+//   <license>
+//      Copyright (c) 2006-2022 Clemson University.
+//
+//      This file is part of the Clemson Webnucleo group's
+//      libnucnet module, originally developed by David C. Adams
+//      and Bradley S. Meyer.  For more information,
+//      please see http://www.webnucleo.org.
+//
+//      This is free software; you can redistribute it and/or modify it
+//      under the terms of the GNU General Public License as published by
+//      the Free Software Foundation; either version 2 of the License, or
+//      (at your option) any later version.
+//
+//      This software is distributed in the hope that it will be useful,
+//      but WITHOUT ANY WARRANTY; without even the implied warranty of
+//      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//      GNU General Public License for more details.
+//
+//      To obtain a copy of the GNU GPL, write to the Free Software
+//      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+//      USA
+//   </license>
+//
+//   <description>
+//     <abstract>
+//       XML schema defining types to use with the Libnucnet__Reac schema.
+//     </abstract>
+//     <keywords>
+//       nuclear, reaction data, schema, valid, types
+//     </keywords>
+//   </description>
+//
+//   <authors>
+//     <current>
+//       <author userid="mbradle" start_date="2007/08/06" />
+//       <author userid="pallen" start_date="2007/08/06" />
+//     </current>
+//     <previous>
+//     </previous>
+//   </authors>
+//
+//   <compatibility>
+//     Tested with xmllint: using libxml version 20629
+//     compiled with: Threads Tree Output Push Reader Patterns Writer SAXv1
+//     FTP HTTP DTDValid HTML Legacy C14N Catalog XPath XPointer XInclude
+//     Iconv ISO8859X Unicode Regexps Automata Expr Schemas Schematron 
+//     odules Debug Zlib 
+//   </compatibility>
+//
+// </file>
+/////////////////////////////////////////////////////////////////////////////-->
+
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:rdt="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__reac__types/"
+  targetNamespace="https://libnucnet.sourceforge.net/xsd_pub/2022-10-08/libnucnet__reac__types/"  
+>
+
+<xsd:import
+  namespace="http://www.w3.org/XML/1998/namespace"
+  schemaLocation="https://libnucnet.sourceforge.net/xsd_pub/w3c_copy/2005/08/xml.xsd"
+/>
+
+<!--============================================================================
+// Simple types.
+//===========================================================================-->
+
+<xsd:simpleType name="source_type">
+  <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+<xsd:simpleType name="note_type">
+  <xsd:restriction base="xsd:string"/>
+</xsd:simpleType>
+
+<xsd:simpleType name="reactant_type">
+  <xsd:restriction base="xsd:string">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="product_type">
+  <xsd:restriction base="xsd:string">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="t9_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:minInclusive value="1.e-11"/>
+    <xsd:maxInclusive value="1.e8"/>
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="rate_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="sef_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="single_rate_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:minInclusive value="0."/>
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="Zt_type">
+  <xsd:restriction base="xsd:nonNegativeInteger">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="At_type">
+  <xsd:restriction base="xsd:nonNegativeInteger">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="Zf_type">
+  <xsd:restriction base="xsd:nonNegativeInteger">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="Af_type">
+  <xsd:restriction base="xsd:nonNegativeInteger">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="Q_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="spint_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="spinf_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="Tfit_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="acc_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="a_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="data_type">
+  <xsd:restriction base="xsd:float">
+    <xsd:whiteSpace value="collapse"/>
+  </xsd:restriction>
+</xsd:simpleType>
+
+<!--============================================================================
+// Complex types.
+//===========================================================================-->
+
+<xsd:complexType name="reaction_data_type">
+  <xsd:sequence>
+    <xsd:element name="reaction" type="rdt:reaction_type"
+      minOccurs="0" maxOccurs="unbounded"
+    />
+  </xsd:sequence>
+</xsd:complexType>
+
+
+<xsd:complexType name="reaction_type">
+  <xsd:sequence>
+    <xsd:element name="source" type="rdt:source_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="reactant" type="rdt:reactant_type"
+      minOccurs="1" maxOccurs="unbounded"
+    />
+    <xsd:element name="product" type="rdt:product_type"
+      minOccurs="1" maxOccurs="unbounded"
+    />
+    <xsd:choice>
+      <xsd:element name="rate_table" type="rdt:rate_table_type"/>
+      <xsd:element name="single_rate" type="rdt:single_rate_type"/>
+      <xsd:element name="non_smoker_fit" type="rdt:non_smoker_fit_type"/>
+      <xsd:element name="user_rate" type="rdt:user_rate_type"/>
+    </xsd:choice>
+  </xsd:sequence>
+  <xsd:attribute ref="xml:base"/>
+</xsd:complexType>
+
+<xsd:complexType name="rate_table_type">
+  <xsd:sequence>
+    <xsd:element name="point" type="rdt:point_type"
+      minOccurs="1" maxOccurs="unbounded"
+    />
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="point_type">
+  <xsd:sequence>
+    <xsd:element name="t9" type="rdt:t9_type" />
+    <xsd:element name="rate" type="rdt:rate_type" />
+    <xsd:element name="sef" type="rdt:sef_type" />
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="non_smoker_fit_type">
+  <xsd:choice>
+    <xsd:group ref="rdt:non_smoker_fits_group"/>
+    <xsd:group ref="rdt:non_smoker_fit_group"/>
+  </xsd:choice>
+</xsd:complexType>
+
+<xsd:group name="non_smoker_fits_group">
+  <xsd:sequence>
+    <xsd:element
+      name="fit"
+      type="rdt:nsf_fit_type"
+      maxOccurs="unbounded"
+    />
+  </xsd:sequence>
+</xsd:group>
+
+<xsd:complexType name="nsf_fit_type">
+  <xsd:group ref="rdt:non_smoker_fit_group"/>
+  <xsd:attribute name="note" type="rdt:note_type" use="optional"/>
+</xsd:complexType>
+
+<xsd:group name="non_smoker_fit_group">
+  <xsd:sequence>
+    <xsd:element name="Zt" type="rdt:Zt_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="At" type="rdt:At_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="Zf" type="rdt:Zf_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="Af" type="rdt:Af_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="Q" type="rdt:Q_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="spint" type="rdt:spint_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="spinf" type="rdt:spinf_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="TlowHf" type="rdt:Tfit_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="Tlowfit" type="rdt:Tfit_type" />
+    <xsd:element
+       name="Thighfit"
+       type="rdt:Tfit_type"
+       minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="acc" type="rdt:acc_type"
+    />
+    <xsd:element name="a1" type="rdt:a_type" />
+    <xsd:element name="a2" type="rdt:a_type" />
+    <xsd:element name="a3" type="rdt:a_type" />
+    <xsd:element name="a4" type="rdt:a_type" />
+    <xsd:element name="a5" type="rdt:a_type" />
+    <xsd:element name="a6" type="rdt:a_type" />
+    <xsd:element name="a7" type="rdt:a_type" />
+    <xsd:element name="a8" type="rdt:a_type"
+      minOccurs="0" maxOccurs="1"
+    />
+    <xsd:element name="Sef" type="rdt:Sef_type"
+      minOccurs="0" maxOccurs="1"
+    />
+
+  </xsd:sequence>
+</xsd:group>
+
+<xsd:complexType name="Sef_type">
+  <xsd:sequence>
+    <xsd:element name="data" type="rdt:data_type"
+      minOccurs="1" maxOccurs="unbounded"
+    />
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="user_rate_type">
+  <xsd:sequence>
+    <xsd:element
+       name="properties"
+       type="rdt:properties_type"
+       minOccurs="0"
+    />
+  </xsd:sequence>
+  <xsd:attribute name="key" type="xsd:string" use="required"/>
+</xsd:complexType>
+
+<xsd:complexType name="properties_type">
+  <xsd:sequence>
+    <xsd:element
+      name="property"
+      type="rdt:property_type"
+      maxOccurs="unbounded"
+    />
+  </xsd:sequence>
+</xsd:complexType>
+
+<xsd:complexType name="property_type">
+  <xsd:simpleContent>
+    <xsd:extension base="xsd:string">
+      <xsd:attribute
+        name="name"
+        type="xsd:string"
+        use="required"
+      />
+      <xsd:attribute
+        name="tag1"
+        type="xsd:string"
+        use="optional"
+      />
+      <xsd:attribute
+        name="tag2"
+        type="xsd:string"
+        use="optional"
+      />
+    </xsd:extension>
+  </xsd:simpleContent>
+</xsd:complexType>
+
+<!--============================================================================
+// Root type.
+//===========================================================================-->
+
+<xsd:element name="reaction_data" type="rdt:reaction_data_type"/>
+
+</xsd:schema> 
+
