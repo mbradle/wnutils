@@ -4,7 +4,6 @@ set -e
 
 rm -fr dist
 cd wnutils
-git clone https://bitbucket.org/mbradle/libnucnet_xsd.git xsd_pub 2> /dev/null || git -C xsd_pub pull
 black *.py
 pylint --extension-pkg-whitelist=lxml.etree --disable=C0103,R0913,R0801 --fail-under=9.6 *.py
 cd ..

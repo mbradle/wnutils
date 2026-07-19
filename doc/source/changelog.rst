@@ -54,6 +54,9 @@ Internal:
     the XML and HDF5 implementation modules.
   * Formatting and lint checks now run for pull requests, and CI verifies the
     contents of the built wheel.
+  * XML schemas are now vendored at a recorded upstream revision, so
+    checkouts, tests, and builds no longer fetch schemas or depend on mutable
+    upstream schema state.  A maintainer tool performs deliberate updates.
   * The minimum supported Python version is now 3.9, and Black is configured
     explicitly for supported Python versions through 3.14.
   * Fast XML and HDF5 tests now use compact repository fixtures.  The larger

@@ -10,7 +10,12 @@ include = ["wnutils"]
 exclude = ["tutorial*"]
 
 [tool.setuptools.package-data]
-wnutils = ["xsd_pub/*"]
+wnutils = [
+  "xsd_pub/catalog",
+  "xsd_pub/*.xsd",
+  "xsd_pub/README.md",
+  "xsd_pub/W3C_LICENSE.txt",
+]
 
 [tool.black]
 line-length = 79

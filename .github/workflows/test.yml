@@ -23,7 +23,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          git clone https://bitbucket.org/mbradle/libnucnet_xsd.git wnutils/xsd_pub
           python -m pip install --upgrade pip
           pip install build pytest
           pip install -e .
@@ -36,4 +35,4 @@ jobs:
           python -m build
           python -m pip install --force-reinstall --no-deps dist/*.whl
           cd /tmp
-          python -I -c "from importlib.resources import files; import wnutils; schemas = files('wnutils') / 'xsd_pub'; assert (schemas / 'catalog').is_file(); assert (schemas / 'libnucnet.xsd').is_file(); assert (schemas / 'xml.xsd').is_file(); assert wnutils.__version__ == '4.0.0'"
+          python -I -c "from importlib.resources import files; import wnutils; schemas = files('wnutils') / 'xsd_pub'; assert (schemas / 'catalog').is_file(); assert (schemas / 'libnucnet.xsd').is_file(); assert (schemas / 'xml.xsd').is_file(); assert (schemas / 'README.md').is_file(); assert (schemas / 'W3C_LICENSE.txt').is_file(); assert wnutils.__version__ == '4.0.0'"

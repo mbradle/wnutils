@@ -1,3 +1,4 @@
 *.pyc
 __pycache__
-xsd_pub
+xsd_pub/.git/
+xsd_pub/*/
